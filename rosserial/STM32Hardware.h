@@ -47,21 +47,11 @@
 
 class STM32Hardware {
 public:
-    BufferUARTDMA dma_buffer;
-    UART_HandleTypeDef *huart;
-protected:
-    const static uint16_t rx_buf_len = 512;
-    uint8_t rx_buf[rx_buf_len];
-    uint32_t rx_read_index;
-
-    const static uint16_t tx_buf_len = 512;
-    uint8_t tx_buf[tx_buf_len];
-    uint32_t tx_write_index, tx_send_index;
+    BufferUARTDMA<1024, 1024> dma_buffer;
 
 public:
     STM32Hardware() :
-            dma_buffer(&huart1, 512, 512), rx_read_index(0), tx_write_index(0), tx_send_index(
-                    0) {
+            dma_buffer(&huart1) {
     }
 
     void init() {
@@ -75,7 +65,7 @@ public:
     void write(uint8_t* data, int length) {
         int ret = dma_buffer.write(data, length);
         if (ret != length) {
-            _Error_Handler(__FILE__, __LINE__);
+            _Error_Handler((char*)__FILE__, __LINE__);
         }
     }
 

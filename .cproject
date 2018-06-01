@@ -108,12 +108,6 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="fr.ac6.managedbuild.config.gnu.cross.exe.debug.1783413899.789797237" name="bmx055.c" rcbsApplicability="disable" resourcePath="Drivers/BMX055/bmx055.c" toolsToInvoke="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1714138014.868475836">
-						<tool id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1714138014.868475836" name="MCU GCC Compiler" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.1714138014">
-							<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.1798103522" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c"/>
-							<inputType id="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s.1903101079" superClass="fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.s"/>
-						</tool>
-					</fileInfo>
 					<sourceEntries>
 						<entry excluding="BMX055/bmx055.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Inc"/>

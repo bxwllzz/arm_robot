@@ -111,7 +111,7 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
-void loop_forever();
+void loop_forever(void);
 #ifdef __cplusplus
 }
 #endif

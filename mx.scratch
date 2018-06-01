@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Project>
-<ProjectName>E:\OneDrive\trico-robot\STM32 board\program\arm_robot\\arm_robot</ProjectName>
+<ProjectName>I:\arm_robot\\arm_robot</ProjectName>
 <ProjectNature>C</ProjectNature> 
 <CMSIS>..\Drivers\CMSIS</CMSIS>
 <HAL_Driver>I:\STM32Cube\Repository\STM32Cube_FW_F1_V1.6.1\Drivers\CMSIS</HAL_Driver>
@@ -26,8 +26,8 @@
   <config>
     <name>arm_robot</name>				
     <device>STM32F103RCTx</device>		 
-    <heapSize>0x8000</heapSize>
-    <stackSize>0x2000</stackSize>
+    <heapSize>0x2000</heapSize>
+    <stackSize>0x1000</stackSize>
     
     	<cpuclock>72</cpuclock>
     	<board>custom</board>

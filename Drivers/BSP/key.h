@@ -71,29 +71,6 @@ extern uint32_t HUST_BUTTOM_STOP1_STATUS_FLAG ;      //BUF_STOP1标志位
 extern uint32_t HUST_BUTTOM_STOP2_STATUS_FLAG ;      //BUF_STOP2标志位
 
  /***************************************
-* 函数功能：检测是否有按键按下
- ***************************************/
-static StateStatus KeyStatus_Once(GPIO_TypeDef* GPIOx,uint16_t GPIO_Pin,uint8_t Down_state);
-
-/******************************************************************************
-  * 函数名  ：  KeyStatus_Continue
-  * 函数功能：  检测按键是否被长按
- ******************************************************************************/
-static Continue_StateStatus KeyStatus_Continue(GPIO_TypeDef* GPIOx,uint16_t GPIO_Pin,uint8_t Down_state);
-
-/******************************************************************************
-  * 函数名  ：  Buttom_Status_Continue_Down
-  * 函数功能：  检测按键是否被长按后没有松开
- ******************************************************************************/
-static Continue_State_Down_Status Buttom_Status_Continue_Down(GPIO_TypeDef* GPIOx,uint16_t GPIO_Pin,uint8_t Down_state);
-
-/******************************************************************************
-  * 函数名  ：  Buttom_Status_Continue_Release
-  * 函数功能：  检测按键是否被长按后没有松开
- ******************************************************************************/
-static Continue_State_Release_Status Buttom_Status_Continue_Release(GPIO_TypeDef* GPIOx,uint16_t GPIO_Pin,uint8_t Down_state);
-
- /***************************************
 * 函数功能：记录BUT_START按键按下次数
  ***************************************/
 void HUST_BUTTOM_START_STATUS(void);

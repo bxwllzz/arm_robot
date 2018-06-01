@@ -53,6 +53,9 @@ public:
   virtual int publish(int id, const Msg* msg) = 0;
   virtual int spinOnce() = 0;
   virtual bool connected() = 0;
+  virtual ~NodeHandleBase_() {
+
+  }
 };
 }
 
@@ -99,8 +102,8 @@ using rosserial_msgs::TopicInfo;
 template<class Hardware,
          int MAX_SUBSCRIBERS = 25,
          int MAX_PUBLISHERS = 25,
-         int INPUT_SIZE = 512,
-         int OUTPUT_SIZE = 512>
+         int INPUT_SIZE = 8192,
+         int OUTPUT_SIZE = 8192>
 class NodeHandle_ : public NodeHandleBase_
 {
 protected:
@@ -175,6 +178,10 @@ public:
     topic_ = 0;
   };
 
+  ~NodeHandle_() {
+
+  }
+
   /**
    * @brief Sets the maximum time in millisconds that spinOnce() can work.
    * This will not effect the processing of the buffer, as spinOnce processes
@@ -247,14 +254,8 @@ public:
       if (data < 0)
         break;
       checksum_ += data;
-      if (mode_ == MODE_MESSAGE)          /* message data being recieved */
-      {
-        message_in[index_++] = data;
-        bytes_--;
-        if (bytes_ == 0)                 /* is message complete? if so, checksum */
-          mode_ = MODE_MSG_CHECKSUM;
-      }
-      else if (mode_ == MODE_FIRST_FF)
+      
+      if (mode_ == MODE_FIRST_FF)
       {
         if (data == 0xff)
         {
@@ -311,6 +312,13 @@ public:
         topic_ += data << 8;
         mode_ = MODE_MESSAGE;
         if (bytes_ == 0)
+          mode_ = MODE_MSG_CHECKSUM;
+      }
+      else if (mode_ == MODE_MESSAGE)          /* message data being recieved */
+      {
+        message_in[index_++] = data;
+        bytes_--;
+        if (bytes_ == 0)                 /* is message complete? if so, checksum */
           mode_ = MODE_MSG_CHECKSUM;
       }
       else if (mode_ == MODE_MSG_CHECKSUM)    /* do checksum */

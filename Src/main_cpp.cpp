@@ -20,7 +20,7 @@
 #include "bmx055.h"
 #include "BufferUARTDMA.hpp"
 
-BufferUARTDMA terminal(&huart3, 512, 128);
+BufferUARTDMA<512, 128> terminal(&huart3);
 
 ros::NodeHandle nh;
 
@@ -35,12 +35,12 @@ extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 void soft_timer_1s_callback(uint32_t count) {
     str_msg.data = "STM32: Hello world!";
     chatter.publish(&str_msg);
-    terminal.nprintf(20, "count %d\n", count);
+    terminal.nprintf("count %d\n", count);
     HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
     HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
 }
 
-extern "C" void loop_forever() {
+extern "C" void loop_forever(void) {
 
     terminal.init();
 

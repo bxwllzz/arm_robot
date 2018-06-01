@@ -13,39 +13,24 @@
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_uart.h"
 
+template <int tx_buf_len, int rx_buf_len>
 class BufferUARTDMA {
 private:
     UART_HandleTypeDef *huart;
 
-    const size_t tx_buf_len;
-    uint8_t* tx_buf = NULL;
+    uint8_t tx_buf[tx_buf_len];
     volatile bool tx_is_writing = false;
     size_t tx_write_index = 0;
     size_t tx_need_send = 0;
 
-    const size_t rx_buf_len;
-    uint8_t* rx_buf = NULL;
+    uint8_t rx_buf[rx_buf_len];
     size_t rx_read_index = 0;
 public:
-    BufferUARTDMA(UART_HandleTypeDef* _huart, size_t _tx_buf_len,
-            size_t _rx_buf_len) :
-            huart(_huart), tx_buf_len(_tx_buf_len), rx_buf_len(_rx_buf_len) {
+    BufferUARTDMA(UART_HandleTypeDef* _huart) :
+            huart(_huart) {
     }
 
     int init() {
-        if (tx_buf || rx_buf) {
-            return -2;
-        }
-        tx_buf = (uint8_t*)malloc(tx_buf_len);
-        if (!tx_buf) {
-            return -1;
-        }
-        rx_buf = (uint8_t*)malloc(rx_buf_len);
-        if (!rx_buf) {
-            free(tx_buf);
-            tx_buf = NULL;
-            return -1;
-        }
         tx_write_index = 0;
         rx_read_index = 0;
 
@@ -55,18 +40,14 @@ public:
         // start UART Rx DMA
         if (HAL_UART_Receive_DMA(huart, rx_buf, (uint16_t) rx_buf_len)
                 != HAL_OK) {
-            _Error_Handler(__FILE__, __LINE__);
+            _Error_Handler((char*)__FILE__, __LINE__);
         }
         return 0;
     }
 
     ~BufferUARTDMA() {
-        if (tx_buf || rx_buf) {
-            free(tx_buf);
-            free(rx_buf);
-        }
         if (HAL_UART_DMAStop(huart)) {
-            _Error_Handler(__FILE__, __LINE__);
+            _Error_Handler((char*)__FILE__, __LINE__);
         }
     }
 
@@ -235,17 +216,14 @@ public:
     }
 
     // 返回实际输出的字符数, 失败则返回0
-    int nprintf(size_t max_len, const char* fmt...) {
-        uint8_t* buf = (uint8_t*)malloc(max_len);
-        if (!buf) {
-            return -1;
-        }
+    template <int max_len=20> 
+    int nprintf(const char* fmt...) {
+        uint8_t buf[max_len];
         std::va_list args;
         va_start(args, fmt); //获得可变参数列表
         int n = vsnprintf((char*)buf, max_len, fmt, args);
         va_end(args);//释放资源
         int ret = write(buf, n);
-        free(buf);
         return ret;
     }
 
