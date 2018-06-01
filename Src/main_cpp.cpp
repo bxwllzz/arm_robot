@@ -27,6 +27,12 @@ ros::NodeHandle nh;
 std_msgs::String str_msg;
 ros::Publisher chatter("chatter", &str_msg);
 
+void ros_receiver_callback(const std_msgs::String& msg) {
+    str_msg.data = msg.data;
+    chatter.publish(&str_msg);
+}
+ros::Subscriber<std_msgs::String> receiver("receiver", ros_receiver_callback);
+
 extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
     nh.getHardware()->dma_buffer.on_tx_dma_complete(huart);
     terminal.on_tx_dma_complete(huart);
@@ -68,6 +74,7 @@ extern "C" void loop_forever(void) {
     // initialize ros::node_handler
     nh.initNode();
     nh.advertise(chatter);
+    nh.subscribe(receiver);
 
     uint32_t soft_timer_1s = 0;
 
