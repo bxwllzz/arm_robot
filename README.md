@@ -7,21 +7,24 @@ STM32 project for control board of double 7-DOF mobile robot from HUST AC
 
 # Peripherals
 - PWM
-  - Camera servo pitch (LD-1501MG)
-  - Camera servo yaw (LD-3015MG)
-  - Lifter (customized)
+  - [ ] Camera servo pitch (LD-1501MG)
+  - [ ] Camera servo yaw (LD-3015MG)
+  - [ ] Lifter (customized)
 - UART
-  - PC Debug
-  - rosserial
+  - [x] PC Debug
+  - [x] rosserial
 - RS-485
-  - left arm (7-DOF customized from zeda-tech.com)
-  - right arm (7-DOF customized from zeda-tech.com)
+  - [ ] left arm (7-DOF customized from zeda-tech.com)
+  - [ ] right arm (7-DOF customized from zeda-tech.com)
 - I2C
-  - IMU beside camera (BMX055)
-  - IMU top (BMX055)
-  - IMU bottom (BMX055)
+  - [ ] IMU beside camera (BMX055)
+  - [ ] IMU top (BMX055)
+  - [ ] IMU bottom (BMX055)
 - CAN
-  - Left front wheel (C620 Brushless DC Motor Speed Controller)
-  - Left back wheel (C620 Brushless DC Motor Speed Controller)
-  - Right back wheel (C620 Brushless DC Motor Speed Controller)
-  - Right front wheel (C620 Brushless DC Motor Speed Controller)
+  - [ ] Left front wheel (C620 Brushless DC Motor Speed Controller)
+  - [ ] Left back wheel (C620 Brushless DC Motor Speed Controller)
+  - [ ] Right back wheel (C620 Brushless DC Motor Speed Controller)
+  - [ ] Right front wheel (C620 Brushless DC Motor Speed Controller)
+- GPIO
+  - [ ] Button
+  - [ ] LED
