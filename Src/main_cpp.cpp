@@ -20,7 +20,7 @@
 #include "bmx055.h"
 #include "BufferUARTDMA.hpp"
 
-BufferUARTDMA uart_logger(&huart3, 512, 128);
+BufferUARTDMA terminal(&huart3, 512, 128);
 
 ros::NodeHandle nh;
 
@@ -28,46 +28,43 @@ std_msgs::String str_msg;
 ros::Publisher chatter("chatter", &str_msg);
 
 extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
-    if (huart == nh.getHardware()->huart) {
-        nh.getHardware()->_flush();
-    }
+    nh.getHardware()->dma_buffer.on_tx_dma_complete(huart);
+    terminal.on_tx_dma_complete(huart);
 }
 
 void soft_timer_1s_callback(uint32_t count) {
     str_msg.data = "STM32: Hello world!";
     chatter.publish(&str_msg);
-    static char strbuf[10];
-    sprintf(strbuf, "count %d\n", (int)count);
-    HAL_UART_Transmit_DMA(&huart3, (uint8_t*)strbuf, strlen(strbuf));
+    terminal.nprintf(20, "count %d\n", count);
     HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
     HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
 }
 
 extern "C" void loop_forever() {
 
-    uart_logger.init();
+    terminal.init();
 
     // initialize servo
-    uart_logger.write_string("servo initializing...");
+    terminal.write_string("servo initializing...");
     servo_yaw.start();
     servo_pitch.start();
-    uart_logger.write_string("finished!\n");
+    terminal.write_string("finished!\n");
     // initialize led
-    uart_logger.write_string("led initializing...");
+    terminal.write_string("led initializing...");
     HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
-    uart_logger.write_string("finished!\n");
+    terminal.write_string("finished!\n");
     // initialize imu
-    uart_logger.write_string("imu initializing...");
-    bmx055_t bmx055;
-    int imu_fail_count = 0;
-    while (bmx055_init(&bmx055) < 0) {
-        imu_fail_count++;
-        uart_logger.nprintf(20, "failed %d!\n", imu_fail_count);
-        HAL_Delay(50);
-        uart_logger.write_string("imu initializing...");
-    }
-    uart_logger.write_string("ok!\n");
+//    terminal.write_string("imu initializing...");
+//    bmx055_t bmx055;
+//    int imu_fail_count = 0;
+//    while (bmx055_init(&bmx055) < 0) {
+//        imu_fail_count++;
+//        terminal.nprintf(20, "failed %d!\n", imu_fail_count);
+//        HAL_Delay(50);
+//        terminal.write_string("imu initializing...");
+//    }
+//    terminal.write_string("ok!\n");
     // initialize ros::node_handler
     nh.initNode();
     nh.advertise(chatter);
@@ -79,6 +76,9 @@ extern "C" void loop_forever() {
             soft_timer_1s += 1000;
             soft_timer_1s_callback(soft_timer_1s / 1000);
         }
+        uint8_t buf[128];
+        int n = terminal.readsome(buf, 128);
+        terminal.write(buf, n);
         nh.spinOnce();
     }
 

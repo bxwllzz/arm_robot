@@ -20,7 +20,6 @@ private:
     const size_t tx_buf_len;
     uint8_t* tx_buf = NULL;
     volatile bool tx_is_writing = false;
-    volatile bool tx_is_sending = false;
     size_t tx_write_index = 0;
     size_t tx_need_send = 0;
 
@@ -166,11 +165,8 @@ public:
     }
 
     void _flush() {
-        while (!tx_is_writing && !tx_is_sending && tx_need_send > 0) {
-            tx_is_sending = true;
-
-            ENTER_CRITICAL();
-
+        ENTER_CRITICAL();
+        if (!tx_is_writing && huart->gState == HAL_UART_STATE_READY && tx_need_send > 0) {
             if (tx_need_send > 0) {
                 size_t block_begin_index;
                 size_t block_len;
@@ -186,11 +182,8 @@ public:
                     tx_need_send -= block_len;
                 }
             }
-
-            EXIT_CRITICAL();
-
-            tx_is_sending = false;
         }
+        EXIT_CRITICAL();
     }
 
     // 获取当前可用的输出缓冲区尺寸
@@ -243,12 +236,17 @@ public:
 
     // 返回实际输出的字符数, 失败则返回0
     int nprintf(size_t max_len, const char* fmt...) {
-        uint8_t buf[max_len];
-        va_list args;
+        uint8_t* buf = (uint8_t*)malloc(max_len);
+        if (!buf) {
+            return -1;
+        }
+        std::va_list args;
         va_start(args, fmt); //获得可变参数列表
         int n = vsnprintf((char*)buf, max_len, fmt, args);
         va_end(args);//释放资源
-        return write(buf, n);
+        int ret = write(buf, n);
+        free(buf);
+        return ret;
     }
 
 #undef ENTER_CRITICAL

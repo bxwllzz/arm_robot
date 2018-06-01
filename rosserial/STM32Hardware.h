@@ -43,8 +43,11 @@
 
 #include "usart.h"
 
+#include "BufferUARTDMA.hpp"
+
 class STM32Hardware {
 public:
+    BufferUARTDMA dma_buffer;
     UART_HandleTypeDef *huart;
 protected:
     const static uint16_t rx_buf_len = 512;
@@ -57,104 +60,23 @@ protected:
 
 public:
     STM32Hardware() :
-            huart(&huart1), rx_read_index(0), tx_write_index(0), tx_send_index(
+            dma_buffer(&huart1, 512, 512), rx_read_index(0), tx_write_index(0), tx_send_index(
                     0) {
     }
 
     void init() {
-        _start_dma();
-    }
-
-    void _start_dma(void) {
-        // reinitialize Rx DMA to set circular mode
-        huart->hdmarx->Init.Mode = DMA_CIRCULAR;
-        if (HAL_DMA_Init(huart->hdmarx) != HAL_OK) {
-            _Error_Handler(__FILE__, __LINE__);
-        }
-        // start USART Rx DMA
-        if (HAL_UART_Receive_DMA(huart, rx_buf, rx_buf_len) != HAL_OK) {
-            _Error_Handler(__FILE__, __LINE__);
-        }
-    }
-
-    void _stop_dma(void) {
-        if (HAL_UART_DMAStop(huart)) {
-            _Error_Handler(__FILE__, __LINE__);
-        }
-    }
-
-    uint32_t _get_rx_dma_index(void) {
-        return rx_buf_len - __HAL_DMA_GET_COUNTER(huart->hdmarx);
+        dma_buffer.init();
     }
 
     int read() {
-        int c = -1;
-        if (rx_read_index != _get_rx_dma_index()) {
-            c = rx_buf[rx_read_index];
-            rx_read_index++;
-            rx_read_index %= rx_buf_len;
-        }
-        return c;
-    }
-
-    void _flush(void) {
-        static bool mutex = false;
-
-        if ((huart->gState == HAL_UART_STATE_READY) && !mutex) {
-            mutex = true;
-
-            if (tx_write_index != tx_send_index) {
-                uint16_t len =
-                        tx_send_index < tx_write_index ?
-                                tx_write_index - tx_send_index :
-                                tx_buf_len - tx_send_index;
-                if (HAL_UART_Transmit_DMA(huart, &(tx_buf[tx_send_index]), len)
-                        != HAL_OK) {
-                    _Error_Handler(__FILE__, __LINE__);
-                }
-                tx_send_index = (tx_send_index + len) % tx_buf_len;
-            }
-            mutex = false;
-        }
-    }
-
-    uint32_t _get_available_tx_buf_size() {
-        if (huart->gState == HAL_UART_STATE_READY) {
-            // dma transmitted
-            return tx_buf_len;
-        } else {
-            // dma transmitting
-            uint32_t tx_sending_index = tx_send_index
-                    - __HAL_DMA_GET_COUNTER(huart->hdmatx);
-            if (tx_sending_index < tx_write_index) {
-                return tx_sending_index + tx_buf_len - tx_write_index;
-            } else {
-                return tx_sending_index - tx_write_index;
-            }
-        }
+        return dma_buffer.get();
     }
 
     void write(uint8_t* data, int length) {
-        int n = length;
-
-        if (n > (int)_get_available_tx_buf_size()) {
+        int ret = dma_buffer.write(data, length);
+        if (ret != length) {
             _Error_Handler(__FILE__, __LINE__);
         }
-
-        if (n <= (int)tx_buf_len - tx_write_index) {
-            // no need to split data
-            memcpy(&(tx_buf[tx_write_index]), data, n);
-            tx_write_index = (tx_write_index + n) % tx_buf_len;
-        } else {
-            // need to split data
-            int n_tail = tx_buf_len - tx_write_index;
-            memcpy(&(tx_buf[tx_write_index]), data, n_tail);
-            tx_write_index = (tx_write_index + n_tail) % tx_buf_len;
-            memcpy(tx_buf, &(data[n_tail]), n - n_tail);
-            tx_write_index = (tx_write_index + n - n_tail) % tx_buf_len;
-        }
-
-        _flush();
     }
 
     unsigned long time() {
