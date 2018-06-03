@@ -34,7 +34,6 @@
 
 #ifndef ROS_STM32_HARDWARE_H_
 #define ROS_STM32_HARDWARE_H_
-
 #include <cstring>
 
 #include "stm32f1xx_hal.h"
@@ -43,11 +42,13 @@
 
 #include "usart.h"
 
-#include "BufferUARTDMA.hpp"
+#include "dmabuffer_uart.hpp"
+
+using namespace hustac;
 
 class STM32Hardware {
 public:
-    BufferUARTDMA<1024, 1024> dma_buffer;
+    DMABuffer_UART<1024, 1024> dma_buffer;
 
 public:
     STM32Hardware() :

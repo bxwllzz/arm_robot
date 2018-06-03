@@ -7,9 +7,11 @@
 
 #include "accel_limited_controller.hpp"
 
-class HUST_Servo {
+namespace hustac {
+
+class Servo {
 public:
-    HUST_Servo(TIM_HandleTypeDef* _htim, uint32_t _channel, float _range,
+    Servo(TIM_HandleTypeDef* _htim, uint32_t _channel, float _range,
             float init_angle = 0, int _update_interval_ms = 100) :
             htim(_htim), channel(_channel), range(_range), controller(
                     init_angle, 0, _update_interval_ms) {
@@ -65,5 +67,7 @@ public:
 
 };
 
-extern HUST_Servo servo_yaw;
-extern HUST_Servo servo_pitch;
+extern Servo servo_yaw;
+extern Servo servo_pitch;
+
+}

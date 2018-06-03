@@ -1,4 +1,5 @@
 
+#include <dmabuffer_uart.hpp>
 #include <cstdio>
 
 #include "main.h"
@@ -12,15 +13,18 @@
 #include "usart.h"
 #include "gpio.h"
 
+#include "SEGGER_RTT.h"
+
 #include <ros.h>
 #include <std_msgs/String.h>
 
-#include "HUST_Servo.hpp"
-#include "SEGGER_RTT.h"
+#include "servo.hpp"
+#include "button.hpp"
 #include "bmx055.h"
-#include "BufferUARTDMA.hpp"
 
-BufferUARTDMA<512, 128> terminal(&huart3);
+using namespace hustac;
+
+DMABuffer_UART<512, 128> terminal(&huart3);
 
 ros::NodeHandle nh;
 
@@ -86,7 +90,15 @@ extern "C" void loop_forever(void) {
         uint8_t buf[128];
         int n = terminal.readsome(buf, 128);
         terminal.write(buf, n);
+
         nh.spinOnce();
+
+        button_up.update();
+        button_down.update();
+        button_start.update();
+        button_stop.update();
+        button_emergency_stop_left.update();
+        button_emergency_stop_right.update();
     }
 
 }

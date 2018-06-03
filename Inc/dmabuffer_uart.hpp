@@ -7,14 +7,17 @@
 
 #pragma once
 
+#include <cstring>
 #include <cstdlib>
 #include <cstdarg>
 
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_uart.h"
 
+namespace hustac {
+
 template <int tx_buf_len, int rx_buf_len>
-class BufferUARTDMA {
+class DMABuffer_UART {
 private:
     UART_HandleTypeDef *huart;
 
@@ -26,7 +29,7 @@ private:
     uint8_t rx_buf[rx_buf_len];
     size_t rx_read_index = 0;
 public:
-    BufferUARTDMA(UART_HandleTypeDef* _huart) :
+    DMABuffer_UART(UART_HandleTypeDef* _huart) :
             huart(_huart) {
     }
 
@@ -45,7 +48,7 @@ public:
         return 0;
     }
 
-    ~BufferUARTDMA() {
+    ~DMABuffer_UART() {
         if (HAL_UART_DMAStop(huart)) {
             _Error_Handler((char*)__FILE__, __LINE__);
         }
@@ -121,11 +124,11 @@ public:
             return 0;
         }
         if (rx_read_index + count < rx_buf_len) {
-            memcpy(data, &rx_buf[rx_read_index], count);
+            std::memcpy(data, &rx_buf[rx_read_index], count);
         } else {
-            memcpy(data, &rx_buf[rx_read_index],
+            std::memcpy(data, &rx_buf[rx_read_index],
                     rx_buf_len - rx_read_index);
-            memcpy(data + rx_buf_len - rx_read_index, &rx_buf[0],
+            std::memcpy(data + rx_buf_len - rx_read_index, &rx_buf[0],
                     rx_read_index + count - rx_buf_len);
         }
         rx_read_index += count;
@@ -191,11 +194,11 @@ public:
             bool writing_status = tx_is_writing;
             tx_is_writing = true;
             if (begin_index + count < tx_buf_len) {
-                memcpy(&tx_buf[begin_index], data, count);
+                std::memcpy(&tx_buf[begin_index], data, count);
             } else {
-                memcpy(&tx_buf[begin_index], data,
+                std::memcpy(&tx_buf[begin_index], data,
                         tx_buf_len - begin_index);
-                memcpy(&tx_buf[0], data + tx_buf_len - begin_index,
+                std::memcpy(&tx_buf[0], data + tx_buf_len - begin_index,
                         begin_index + count - tx_buf_len);
             }
 
@@ -212,11 +215,11 @@ public:
     }
 
     int write_string(const char* str) {
-        return write((const uint8_t*)str, strlen(str));
+        return write((const uint8_t*)str, std::strlen(str));
     }
 
     // 返回实际输出的字符数, 失败则返回0
-    template <int max_len=20> 
+    template <int max_len=20>
     int nprintf(const char* fmt...) {
         uint8_t buf[max_len];
         std::va_list args;
@@ -231,3 +234,5 @@ public:
 #undef REENTER_CRITICAL
 #undef EXIT_CRITICAL
 };
+
+}
