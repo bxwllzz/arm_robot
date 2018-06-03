@@ -99,6 +99,26 @@ extern "C" void loop_forever(void) {
         button_stop.update();
         button_emergency_stop_left.update();
         button_emergency_stop_right.update();
+
+        while (button_up.count_key_press) {
+        	terminal.write_string("key up pressed");
+        	button_up.count_key_press--;
+        }
+
+        while (button_down.count_key_press) {
+        	terminal.write_string("key down pressed");
+        	button_down.count_key_press--;
+        }
+
+        while (button_start.count_key_press) {
+        	terminal.write_string("key start pressed");
+        	button_start.count_key_press--;
+        }
+
+        while (button_stop.count_key_press) {
+        	terminal.write_string("key stop pressed");
+        	button_stop.count_key_press--;
+        }
     }
 
 }
