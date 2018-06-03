@@ -178,7 +178,7 @@ public:
     topic_ = 0;
   };
 
-  ~NodeHandle_() {
+  virtual ~NodeHandle_() {
 
   }
 

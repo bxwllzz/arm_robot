@@ -311,8 +311,8 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
-            <oTime>1</oTime>
+            <Optim>1</Optim>
+            <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
             <Strict>0</Strict>
@@ -482,24 +482,14 @@
           <GroupName>Drivers/BSP</GroupName>
           <Files>
             <File>
-              <FileName>HUST_Servo.cpp</FileName>
+              <FileName>button.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\Drivers\BSP\HUST_Servo.cpp</FilePath>
+              <FilePath>..\Drivers\BSP\button.cpp</FilePath>
             </File>
             <File>
-              <FileName>bsp_key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP\bsp_key.c</FilePath>
-            </File>
-            <File>
-              <FileName>key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP\key.c</FilePath>
-            </File>
-            <File>
-              <FileName>keyboard.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Drivers\BSP\keyboard.c</FilePath>
+              <FileName>servo.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\Drivers\BSP\servo.cpp</FilePath>
             </File>
           </Files>
         </Group>

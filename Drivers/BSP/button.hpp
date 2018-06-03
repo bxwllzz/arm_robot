@@ -10,6 +10,8 @@
 #include "stm32f1xx_hal.h"
 #include "stm32f1xx_hal_gpio.h"
 
+#include "main_cpp.hpp"
+
 namespace hustac {
 
 class Button {
@@ -71,14 +73,22 @@ public:
         return HAL_GPIO_ReadPin(gpiox, gpio_pin) == active_state;
     }
 
+#undef _FSM_DEBUG
+    
     void _FSM_press() {
+        
+#define CHANGE_MODE(new_mode)   do {\
+    state_press = PressState::new_mode;\
+    last_state_press_change = HAL_GetTick();\
+    /*terminal.write_string("[BUTTOM FSM PRESS]->" #new_mode "\n");*/\
+} while (0);
+        
         bool stop_loop = false;
         while (!stop_loop) {
             switch (state_press) {
             case PressState::RELEASED:
                 if (is_pin_actived()) {
-                    state_press = PressState::PENDING_PRESSED;
-                    last_state_press_change = HAL_GetTick();
+                    CHANGE_MODE(PENDING_PRESSED);
                 } else {
                     stop_loop = true;
                 }
@@ -86,21 +96,18 @@ public:
             case PressState::PENDING_PRESSED:
                 if (is_pin_actived()) {
                     if (HAL_GetTick() - last_state_press_change >= (uint32_t)delay_keystroke) {
-                        state_press = PressState::PRESSED;
-                        last_state_press_change = HAL_GetTick();
+                        CHANGE_MODE(PRESSED);
                         count_key_down++;
                     } else {
                         stop_loop = true;
                     }
                 } else {
-                    state_press = PressState::RELEASED;
-                    last_state_press_change = HAL_GetTick();
+                    CHANGE_MODE(RELEASED);
                 }
                 break;
             case PressState::PRESSED:
                 if (!is_pin_actived()) {
-                    state_press = PressState::PENDING_RELEASED;
-                    last_state_press_change = HAL_GetTick();
+                    CHANGE_MODE(PENDING_RELEASED);
                 } else {
                     stop_loop = true;
                 }
@@ -108,19 +115,20 @@ public:
             case PressState::PENDING_RELEASED:
                 if (!is_pin_actived()) {
                     if (HAL_GetTick() - last_state_press_change >= (uint32_t)delay_keystroke) {
-                        state_press = PressState::RELEASED;
-                        last_state_press_change = HAL_GetTick();
+                        CHANGE_MODE(RELEASED);
                         count_key_up++;
                     } else {
                         stop_loop = true;
                     }
                 } else {
-                    state_press = PressState::PRESSED;
-                    last_state_press_change = HAL_GetTick();
+                    CHANGE_MODE(PRESSED);
                 }
                 break;
             }
         }
+        
+#undef CHANGE_MODE
+        
     }
 
     bool is_pressed() {
@@ -128,13 +136,19 @@ public:
     }
 
     void _FSM_simple() {
+        
+#define CHANGE_MODE(new_mode)   do {\
+    state_hold = HoldState::new_mode;\
+    last_state_hold_change = HAL_GetTick();\
+    /*terminal.write_string("[BUTTOM FSM SIMPLE]->" #new_mode "\n");*/\
+} while (0);
+
         bool stop_loop = false;
         while (!stop_loop) {
             switch (state_hold) {
             case HoldState::NO_PRESSED:
                 if (is_pressed()) {
-                    state_hold = HoldState::PRESSED;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(PRESSED);
                     count_key_press++;
                 } else {
                     stop_loop = true;
@@ -142,8 +156,7 @@ public:
                 break;
             case HoldState::PRESSED:
                 if (!is_pressed()) {
-                    state_hold = HoldState::NO_PRESSED;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(NO_PRESSED);
                 } else {
                     stop_loop = true;
                 }
@@ -152,16 +165,24 @@ public:
                 stop_loop = true;
             }
         }
+        
+#undef CHANGE_MODE
     }
 
     void _FSM_hold() {
+        
+#define CHANGE_MODE(new_mode)   do {\
+    state_hold = HoldState::new_mode;\
+    last_state_hold_change = HAL_GetTick();\
+    /*terminal.write_string("[BUTTOM FSM HOLD]->" #new_mode "\n");*/\
+} while (0);
+
         bool stop_loop = false;
         while (!stop_loop) {
             switch (state_hold) {
             case HoldState::NO_PRESSED:
                 if (is_pressed()) {
-                    state_hold = HoldState::PENDING_HOLD;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(PENDING_HOLD);
                 } else {
                     stop_loop = true;
                 }
@@ -169,22 +190,19 @@ public:
             case HoldState::PENDING_HOLD:
                 if (is_pressed()) {
                     if (HAL_GetTick() - last_state_hold_change >= (uint32_t)delay_hold) {
-                        state_hold = HoldState::HOLDING;
-                        last_state_hold_change = HAL_GetTick();
+                        CHANGE_MODE(HOLDING);
                         count_key_hold++;
                     } else {
                         stop_loop = true;
                     }
                 } else {
-                    state_hold = HoldState::NO_PRESSED;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(NO_PRESSED);
                     count_key_press++;
                 }
                 break;
             case HoldState::HOLDING:
                 if (!is_pressed()) {
-                    state_hold = HoldState::NO_PRESSED;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(NO_PRESSED);
                 } else {
                     stop_loop = true;
                 }
@@ -193,16 +211,24 @@ public:
                 stop_loop = true;
             }
         }
+        
+#undef CHANGE_MODE
     }
 
     void _FSM_repeat() {
+        
+#define CHANGE_MODE(new_mode)   do {\
+    state_hold = HoldState::new_mode;\
+    last_state_hold_change = HAL_GetTick();\
+    /*terminal.write_string("[BUTTOM FSM REPEAT]->" #new_mode "\n");*/\
+} while (0);
+
         bool stop_loop = false;
         while (!stop_loop) {
             switch (state_hold) {
             case HoldState::NO_PRESSED:
                 if (is_pressed()) {
-                    state_hold = HoldState::PENDING_REPEAT;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(PENDING_REPEAT);
                     count_key_press++;
                 } else {
                     stop_loop = true;
@@ -211,8 +237,7 @@ public:
             case HoldState::PENDING_REPEAT:
                 if (is_pressed()) {
                     if (HAL_GetTick() - last_state_hold_change >= (uint32_t)delay_hold) {
-                        state_hold = HoldState::REPEATING;
-                        last_state_hold_change = HAL_GetTick();
+                        CHANGE_MODE(REPEATING);
                         if (delay_hold >= delay_hold_repeat) {
                             count_key_press++;
                         }
@@ -220,14 +245,12 @@ public:
                         stop_loop = true;
                     }
                 } else {
-                    state_hold = HoldState::NO_PRESSED;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(NO_PRESSED);
                 }
                 break;
             case HoldState::REPEATING:
                 if (!is_pressed()) {
-                    state_hold = HoldState::NO_PRESSED;
-                    last_state_hold_change = HAL_GetTick();
+                    CHANGE_MODE(NO_PRESSED);
                 } else {
                     if (HAL_GetTick() - last_state_hold_change >= (uint32_t)delay_hold_repeat) {
                         last_state_hold_change += delay_hold_repeat;
@@ -241,6 +264,8 @@ public:
                 stop_loop = true;
             }
         }
+        
+#undef CHANGE_MODE
     }
 
     void update() {

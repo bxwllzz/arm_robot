@@ -116,18 +116,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
     while (1) {
-        HUST_BUTTOM_START_STATUS();
-        HUST_BUTTOM_STOP_STATUS();
-        HUST_BUTTOM_STOP1_STATUS();
-        HUST_BUTTOM_STOP2_STATUS();
-        if (HUST_BUTTOM_STOP1_STATUS_FLAG == 0) {
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_SET);
-            HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_RESET);
-        }
-        if (HUST_BUTTOM_STOP1_STATUS_FLAG == 1) {
-            HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, GPIO_PIN_RESET);
-            HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, GPIO_PIN_SET);
-        }
 //		__HAL_TIM_SET_COMPARE( &htim2 , TIM_CHANNEL_3 , 2000);
     }
   /* USER CODE END WHILE */

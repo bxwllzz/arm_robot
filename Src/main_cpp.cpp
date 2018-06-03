@@ -22,11 +22,17 @@
 #include "button.hpp"
 #include "bmx055.h"
 
+#include "main_cpp.hpp"
+
 using namespace hustac;
+
+namespace hustac {
 
 DMABuffer_UART<512, 128> terminal(&huart3);
 
 ros::NodeHandle nh;
+    
+}
 
 std_msgs::String str_msg;
 ros::Publisher chatter("chatter", &str_msg);
@@ -101,23 +107,41 @@ extern "C" void loop_forever(void) {
         button_emergency_stop_right.update();
 
         while (button_up.count_key_press) {
-        	terminal.write_string("key up pressed");
-        	button_up.count_key_press--;
+            terminal.write_string("button_up pressed\n");
+            button_up.count_key_press--;
         }
 
         while (button_down.count_key_press) {
-        	terminal.write_string("key down pressed");
-        	button_down.count_key_press--;
+            terminal.write_string("button_down pressed\n");
+            button_down.count_key_press--;
         }
 
         while (button_start.count_key_press) {
-        	terminal.write_string("key start pressed");
-        	button_start.count_key_press--;
+            terminal.write_string("button_start pressed\n");
+            button_start.count_key_press--;
+        }
+
+        while (button_start.count_key_hold) {
+            terminal.write_string("button_start long pressed\n");
+            button_start.count_key_hold--;
         }
 
         while (button_stop.count_key_press) {
-        	terminal.write_string("key stop pressed");
-        	button_stop.count_key_press--;
+            terminal.write_string("button_stop pressed\n");
+            button_stop.count_key_press--;
+        }
+
+        while (button_stop.count_key_hold) {
+            terminal.write_string("button_stop long pressed\n");
+            button_stop.count_key_hold--;
+        }
+        
+        if (button_emergency_stop_left.is_pressed()) {
+            terminal.write_string("button_emergency_stop_left hold\n");
+        }
+        
+        if (button_emergency_stop_right.is_pressed()) {
+            terminal.write_string("button_emergency_stop_right hold\n");
         }
     }
 
