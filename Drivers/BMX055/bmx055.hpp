@@ -7,13 +7,21 @@
 
 #pragma once
 
+#include <inttypes.h>
+#include <limits>
+
+#include "stm32f1xx_hal_i2c.h"
+
+#include "main_cpp.hpp"
+#include "high_resolution_clock.h"
+
 extern "C" {
 #include "bma2x2.h"
 #include "bmg160.h"
 #include "bmm050.h"
 
 // dev_addr: 7bit
-s8 BMX055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt) {
+static s8 BMX055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt) {
     s32 iError;
     if (HAL_I2C_Mem_Write(&hi2c1, (dev_addr << 1), reg_addr, 1, reg_data, cnt,
             0xFFFF) == HAL_OK) {
@@ -24,7 +32,7 @@ s8 BMX055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt) {
     return (s8) iError;
 }
 
-s8 BMX055_I2C_bus_burst_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u32 cnt) {
+static s8 BMX055_I2C_bus_burst_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u32 cnt) {
     s32 iError;
     if (HAL_I2C_Mem_Read(&hi2c1, (dev_addr << 1), reg_addr, 1, reg_data, cnt,
             0xFFFF) == HAL_OK) {
@@ -35,28 +43,77 @@ s8 BMX055_I2C_bus_burst_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u32 cnt) {
     return (s8) iError;
 }
 
-s8 BMX055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt) {
+static s8 BMX055_I2C_bus_read(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt) {
     return BMX055_I2C_bus_burst_read(dev_addr, reg_addr, reg_data, cnt);
 }
 
-s8 BMX055_I2C_bus_burst_read2(u8 dev_addr, u8 reg_addr, u8 *reg_data, s32 cnt) {
+static s8 BMX055_I2C_bus_burst_read2(u8 dev_addr, u8 reg_addr, u8 *reg_data, s32 cnt) {
     return BMX055_I2C_bus_burst_read(dev_addr, reg_addr, reg_data, cnt);
 }
 
-void BMX055_delay_msec(u32 msec) {
+static void BMX055_delay_msec(u32 msec) {
     HAL_Delay(msec);
 }
 
 }
 
+namespace hustac {
+
+struct IMUMeasure {
+    uint64_t nsec;
+    float accel[3] = { std::numeric_limits<float>::signaling_NaN() };
+    float gyro[3] = { std::numeric_limits<float>::signaling_NaN() };
+    float temperature = std::numeric_limits<float>::signaling_NaN();
+};
+
+struct MagMeasure {
+    uint64_t nsec;
+    float mag[3] = { std::numeric_limits<float>::signaling_NaN() };
+};
+
 class BMX055 {
 public:
+    I2C_HandleTypeDef* hi2c;
+
     struct bma2x2_t bma2x2;
     struct bmg160_t bmg160;
     struct bmm050_t bmm050;
 
-    BMX055(I2C_TypeDef* hi2c, bool PIN_SDO_0 = false, bool PIN_SDO_1 = false,
-            bool PIN_CSB_3 = false) {
+    enum class State {
+        IDLE, READ_ACCEL, READ_GYRO, READ_MAG,
+    };
+    volatile State state = State::IDLE;
+    volatile bool _FSM_lock = false;
+
+    volatile uint32_t next_read_imu = 0;    // ms
+    const uint32_t imu_update_interval = 1; // ms
+
+    volatile uint32_t next_read_mag = 0;    // ms
+    const uint32_t mag_update_interval = 50;    // ms
+
+    volatile uint32_t count_imu_measure = 0;
+    volatile uint32_t count_mag_measure = 0;
+
+private:
+    volatile uint64_t last_read_accel = 0;   // ns
+    volatile uint64_t last_read_gyro = 0;    // ns
+    volatile uint64_t last_read_mag = 0;     // ns
+
+    // raw data
+    struct bma2x2_accel_data_temp raw_acc;
+    struct bmg160_data_t raw_gyro;
+    struct bmm050_mag_data_s16_t raw_mag;
+
+    // output data
+    IMUMeasure imu_measure;
+    bool is_new_imu_measure = false;
+    MagMeasure mag_measure;
+    bool is_new_mag_measure = false;
+
+public:
+    BMX055(I2C_HandleTypeDef* _hi2c, bool PIN_SDO_0 = false, bool PIN_SDO_1 =
+            false, bool PIN_CSB_3 = false) :
+            hi2c(_hi2c) {
         bma2x2.bus_read = BMX055_I2C_bus_read;
         bma2x2.burst_read = BMX055_I2C_bus_burst_read;
         bma2x2.bus_write = BMX055_I2C_bus_write;
@@ -97,18 +154,15 @@ public:
 #define RETURN_IF_FAILED    if (com_rslt < 0) return com_rslt;
         // 检查chip id
         int com_rslt = 0;
-        if (bma2x2_init(&bma2x2) != 0
-                || bma2x2.chip_id != 0xFA) {
+        if (bma2x2_init(&bma2x2) != 0 || bma2x2.chip_id != 0xFA) {
             com_rslt -= 1;
         }
         RETURN_IF_FAILED;
-        if (bmg160_init(&bmg160) != 0
-                || bmg160.chip_id != 0x0F) {
+        if (bmg160_init(&bmg160) != 0 || bmg160.chip_id != 0x0F) {
             com_rslt -= 1;
         }
         RETURN_IF_FAILED;
-        if (bmm050_init(&bmm050) != 0
-                || bmm050.company_id != 0x32) {
+        if (bmm050_init(&bmm050) != 0 || bmm050.company_id != 0x32) {
             com_rslt -= 1;
         }
         RETURN_IF_FAILED;
@@ -122,16 +176,18 @@ public:
         com_rslt += bmm050_set_functional_state(BMM050_NORMAL_MODE);
         RETURN_IF_FAILED;
         // 设置带宽/输出频率
-        com_rslt += bma2x2_set_bw(BMA2x2_BW_62_50HZ); // bandwidth: 62.5Hz, update time: 8ms(125Hz)
+        // 由于I2C总线带宽400kHz限制, 并保证加速度计与陀螺仪准确同步, 加速度计与陀螺仪的数据采样频率设定为 1kHz
+        // 理论带宽占用率约为 1k*(7+3+6+3)*10/400k = 47.5%
+        com_rslt += bma2x2_set_bw(BMA2x2_BW_500HZ); // 加速度计带宽 500Hz, 对应数据采样频率为 1kHz
         RETURN_IF_FAILED;
-        com_rslt += bmg160_set_bw(BMG160_BW_32_HZ); // bandwidth: 32Hz, ODR: 100Hz
+        com_rslt += bmg160_set_bw(BMG160_BW_116_HZ); // 陀螺仪带宽 116Hz, 对应数据采样频率ODR为 1kHz
         RETURN_IF_FAILED;
-        com_rslt += bmm050_set_data_rate(BMM050_DATA_RATE_20HZ);    // ODR: 20Hz
+        com_rslt += bmm050_set_data_rate(BMM050_DATA_RATE_20HZ); // 磁力计数据采样ODR: 20Hz
         RETURN_IF_FAILED;
         com_rslt += bmm050_set_presetmode(BMM050_PRESETMODE_HIGHACCURACY);
         RETURN_IF_FAILED;
         // 设置量程
-        com_rslt += bma2x2_set_range(BMA2x2_RANGE_8G);      // ±8G
+        com_rslt += bma2x2_set_range(BMA2x2_RANGE_4G);      // ±4G
         RETURN_IF_FAILED;
         com_rslt += bmg160_set_range_reg(BMG160_RANGE_500); // ±500°/s
         RETURN_IF_FAILED;
@@ -151,8 +207,217 @@ public:
         com_rslt += bmm050_write_register(BMM050_INT_CONTROL_DOR_EN__REG, &val,
                 1);
         RETURN_IF_FAILED;
+
 #undef RETURN_IF_FAILED
         return com_rslt;
     }
 
+    // 处理获得的加速度计陀螺仪数据
+    void _process_imu() {
+        imu_measure.accel[0] = raw_acc.x;
+        imu_measure.accel[1] = raw_acc.y;
+        imu_measure.accel[2] = raw_acc.z;
+        imu_measure.temperature = raw_acc.temp;
+
+        // todo: 单位转换
+//        ax = -raw_acc.y / 256.0;
+//        ay = raw_acc.x / 256.0;
+//        az = raw_acc.z / 256.0;
+//        // 误差校准
+//        ax += AX_OFFSET;
+//        ay += AY_OFFSET;
+//        az += AZ_OFFSET;
+//        ax *= AX_SCALAR;
+//        ay *= AY_SCALAR;
+//        az *= AZ_SCALAR;
+
+        imu_measure.gyro[0] = raw_gyro.datax;
+        imu_measure.gyro[1] = raw_gyro.datay;
+        imu_measure.gyro[2] = raw_gyro.dataz;
+
+        // todo: 单位转换
+//        gx = -raw_gyro.datay / 65.6;
+//        gy = raw_gyro.datax / 65.6;
+//        gz = raw_gyro.dataz / 65.6;
+//        // 误差校准
+//        gx += GX_OFFSET;
+//        gy += GY_OFFSET;
+//        gz += GZ_OFFSET;
+    }
+
+    // 处理获取的磁力计数据
+    void _process_mag() {
+        mag_measure.mag[0] = raw_mag.datax;
+        mag_measure.mag[1] = raw_mag.datay;
+        mag_measure.mag[2] = raw_mag.dataz;
+
+        // todo: 单位转换
+//        mx = -raw_mag.datay * 0.3;
+//        my = raw_mag.datax * 0.3;
+//        mz = raw_mag.dataz * 0.3;
+
+    }
+
+    int _FSM_update() {
+        int com_rslt = 0;
+        bool stop_loop = false;
+        while (!stop_loop) {
+            switch (state) {
+            case State::IDLE:
+                if (HAL_GetTick() >= next_read_imu) {
+                    next_read_imu += imu_update_interval;
+
+                    state = State::READ_ACCEL;
+                    if (HAL_I2C_Mem_Read_DMA(hi2c, (bma2x2.dev_addr << 1),
+                    BMA2x2_ACCEL_X12_LSB_REG, 1, (uint8_t*) &raw_acc,
+                    BMA2x2_ACCEL_XYZ_TEMP_DATA_SIZE) == HAL_OK) {
+                        uint64_t now = MY_GetNanoSecFromCycle(
+                                MY_GetCycleCount());
+                        if (now - last_read_accel >= imu_update_interval * 1000 * 1.5) {
+                            terminal.nprintf<30>("bmx055: read accel, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_accel) / 1000);
+                        }
+                        last_read_accel = now;
+                    } else {
+                        // cannot start dma read
+                        stop_loop = true;
+                        com_rslt = -1;
+                        terminal.write_string("bmx055: read accel, cannot start i2c dma read\n");
+                    }
+                } else {
+                    // wait until next imu read
+                    stop_loop = true;
+                }
+                break;
+            case State::READ_ACCEL:
+                if (hi2c->State == HAL_I2C_STATE_READY) {
+
+                    state = State::READ_GYRO;
+                    if (HAL_I2C_Mem_Read_DMA(hi2c, (bmg160.dev_addr << 1),
+                    BMG160_RATE_X_LSB_BIT__REG, 1, (uint8_t*) &raw_gyro,
+                    BMG160_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
+                        uint64_t now = MY_GetNanoSecFromCycle(
+                                MY_GetCycleCount());
+                        if (now - last_read_gyro >= imu_update_interval * 1500000) {
+                            terminal.nprintf<30>("bmx055: read gyro, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_gyro) / 1000);
+                        }
+                        last_read_gyro = now;
+                    } else {
+                        // cannot start dma read
+                        stop_loop = true;
+                        com_rslt = -1;
+                        terminal.write_string("bmx055: read gyro, cannot start i2c dma read\n");
+                    }
+                } else {
+                    // wait until dma read finished
+                    stop_loop = true;
+                }
+                break;
+            case State::READ_GYRO:
+                if (hi2c->State == HAL_I2C_STATE_READY) {
+                    if (is_new_imu_measure) {
+                        terminal.write_string("bmx055: imu_meaure overwrite, please get it in time!\n");
+                    }
+                    _process_imu();
+                    imu_measure.nsec = (last_read_accel + last_read_gyro) / 2;
+                    is_new_imu_measure = true;
+                    count_imu_measure++;
+
+                    if (HAL_GetTick() >= next_read_mag) {
+                        next_read_mag += mag_update_interval;
+
+                        state = State::READ_MAG;
+                        if (HAL_I2C_Mem_Read_DMA(hi2c, (bmm050.dev_addr << 1),
+                        BMM050_DATA_X_LSB, 1, (uint8_t*) &raw_mag,
+                        BMM050_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
+                            uint64_t now = MY_GetNanoSecFromCycle(
+                                    MY_GetCycleCount());
+                            if (now - last_read_mag >= imu_update_interval * 1500) {
+                                terminal.nprintf<30>("bmx055: read mag, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_mag) / 1000);
+                            }
+                            last_read_mag = now;
+                        } else {
+                            // cannot start dma read
+                            stop_loop = true;
+                            com_rslt = -1;
+                            terminal.write_string("bmx055: read mag, cannot start i2c dma read\n");
+                        }
+                    } else {
+                        state = State::IDLE;
+                    }
+                } else {
+                    // wait until dma read finished
+                    stop_loop = true;
+                }
+                break;
+            case State::READ_MAG:
+                if (hi2c->State == HAL_I2C_STATE_READY) {
+                    if (is_new_mag_measure) {
+                        terminal.write_string("bmx055: mag_measure overwrite, please get it in time!\n");
+                    }
+                    _process_mag();
+                    mag_measure.nsec = last_read_mag;
+                    is_new_mag_measure = true;
+                    count_mag_measure++;
+
+                    state = State::IDLE;
+                } else {
+                    // wait until dma read finished
+                    stop_loop = true;
+                }
+                break;
+            }
+        }
+        return com_rslt;
+    }
+
+    // should be called when i2c dma mem read complete
+    void on_i2c_dma_complete() {
+        if (!_FSM_lock) {
+            _FSM_lock = true;
+            _FSM_update();
+            _FSM_lock = false;
+        }
+    }
+
+    // should only be called in main loop
+    int update() {
+        _FSM_lock = true;
+        int ret = _FSM_update();
+        _FSM_lock = false;
+        return ret;
+    }
+
+    // should only be called in main loop
+    int get_imu_measure(IMUMeasure& measure) {
+        int ret;
+        _FSM_lock = true;
+        if (is_new_imu_measure) {
+            is_new_imu_measure = false;
+            measure = imu_measure;
+            ret = 1;
+        } else {
+            ret = 0;
+        }
+        _FSM_lock = false;
+        return ret;
+    }
+
+    // should only be called in main loop
+    int get_mag_measure(MagMeasure& measure) {
+        int ret;
+        _FSM_lock = true;
+        if (is_new_mag_measure) {
+            is_new_mag_measure = false;
+            measure = mag_measure;
+            ret = 1;
+        } else {
+            ret = 0;
+        }
+        _FSM_lock = false;
+        return ret;
+    }
 };
+
+extern BMX055 bmx055_camera;
+
+}

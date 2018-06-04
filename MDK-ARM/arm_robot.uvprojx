@@ -337,7 +337,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc; ../Drivers/STM32F1xx_HAL_Driver/Inc; ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy; ../Drivers/CMSIS/Device/ST/STM32F1xx/Include; ../Drivers/CMSIS/Include; ../Drivers/BSP; ../Drivers/BMX055; ../SEGGER_RTT; ../rosserial</IncludePath>
+              <IncludePath>../Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Drivers/CMSIS/Include;  ../Drivers/BSP;  ../Drivers/BMX055;  ../SEGGER_RTT;  ../rosserial</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -490,6 +490,11 @@
               <FileName>servo.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\Drivers\BSP\servo.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>high_resolution_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\BSP\high_resolution_clock.c</FilePath>
             </File>
           </Files>
         </Group>

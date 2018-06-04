@@ -48,7 +48,6 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-#include "key.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/

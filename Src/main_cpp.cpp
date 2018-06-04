@@ -1,6 +1,5 @@
-
-#include <dmabuffer_uart.hpp>
 #include <cstdio>
+#include <inttypes.h>
 
 #include "main.h"
 #include "stm32f1xx_hal.h"
@@ -18,9 +17,11 @@
 #include <ros.h>
 #include <std_msgs/String.h>
 
+#include "dmabuffer_uart.hpp"
+#include "high_resolution_clock.h"
 #include "servo.hpp"
 #include "button.hpp"
-#include "bmx055.h"
+#include "bmx055.hpp"
 
 #include "main_cpp.hpp"
 
@@ -31,7 +32,7 @@ namespace hustac {
 DMABuffer_UART<512, 128> terminal(&huart3);
 
 ros::NodeHandle nh;
-    
+
 }
 
 std_msgs::String str_msg;
@@ -43,20 +44,41 @@ void ros_receiver_callback(const std_msgs::String& msg) {
 }
 ros::Subscriber<std_msgs::String> receiver("receiver", ros_receiver_callback);
 
-extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
+extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
     nh.getHardware()->dma_buffer.on_tx_dma_complete(huart);
     terminal.on_tx_dma_complete(huart);
 }
 
+extern "C" void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
+    if (hi2c == bmx055_camera.hi2c) {
+        bmx055_camera.on_i2c_dma_complete();
+    }
+}
+
 void soft_timer_1s_callback(uint32_t count) {
+    static uint32_t last_count_imu = 0;
+    static uint32_t last_count_mag = 0;
+
     str_msg.data = "STM32: Hello world!";
     chatter.publish(&str_msg);
-    terminal.nprintf("count %d\n", count);
+
+    terminal.nprintf<100>("count %d: imu %d Hz, mag %d Hz\n", count,
+            bmx055_camera.count_imu_measure - last_count_imu,
+            bmx055_camera.count_mag_measure - last_count_mag);
+
+    last_count_imu = bmx055_camera.count_imu_measure;
+    last_count_mag = bmx055_camera.count_mag_measure;
+
+    terminal.nprintf<30>("SysTick: %" PRIu64 "\n", MY_GetCycleCount());
+    terminal.nprintf<30>("DWT: %" PRIu64 "\n", MY_DWTGetCycleCount());
+
     HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
     HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
 }
 
 extern "C" void loop_forever(void) {
+
+    MY_DWTTimerInit();
 
     terminal.init();
 
@@ -142,6 +164,14 @@ extern "C" void loop_forever(void) {
         
         if (button_emergency_stop_right.is_pressed()) {
             terminal.write_string("button_emergency_stop_right hold\n");
+        }
+
+        bmx055_camera.update();
+        IMUMeasure imu_measure;
+        if (bmx055_camera.get_imu_measure(imu_measure) > 0) {
+        }
+        MagMeasure mag_measure;
+        if (bmx055_camera.get_mag_measure(mag_measure) > 0) {
         }
     }
 
