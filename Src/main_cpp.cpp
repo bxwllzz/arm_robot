@@ -55,6 +55,16 @@ extern "C" void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c) {
     }
 }
 
+extern "C" void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
+    if (hi2c == bmx055_camera.hi2c) {
+        bmx055_camera.on_i2c_dma_complete();
+    }
+}
+
+static uint32_t count_main_loop = 0;
+static IMUMeasure imu_measure;
+static MagMeasure mag_measure;
+
 void soft_timer_1s_callback(uint32_t count) {
     static uint32_t last_count_imu = 0;
     static uint32_t last_count_mag = 0;
@@ -62,15 +72,26 @@ void soft_timer_1s_callback(uint32_t count) {
     str_msg.data = "STM32: Hello world!";
     chatter.publish(&str_msg);
 
-    terminal.nprintf<100>("count %d: imu %d Hz, mag %d Hz\n", count,
+    terminal.nprintf<100>("count %d: main %d Hz, imu %d Hz, mag %d Hz\n", count,
+            count_main_loop, 
             bmx055_camera.count_imu_measure - last_count_imu,
             bmx055_camera.count_mag_measure - last_count_mag);
 
+    count_main_loop = 0;
     last_count_imu = bmx055_camera.count_imu_measure;
     last_count_mag = bmx055_camera.count_mag_measure;
+    
+//    terminal.nprintf<200>("imu: %" PRIu64 " nsec, accel=(%f, %f, %f), temp=%f, gyro=(%f, %f, %f)\n", 
+//        imu_measure.nsec, 
+//        imu_measure.accel[0], imu_measure.accel[1], imu_measure.accel[2], 
+//        imu_measure.temperature, 
+//        imu_measure.gyro[0], imu_measure.gyro[1], imu_measure.gyro[2]
+//    );
+        
+    terminal.nprintf<100>("mag: %" PRIu64 " nsec, (%f, %f, %f)\n", mag_measure.nsec, mag_measure.mag[0], mag_measure.mag[1], mag_measure.mag[2]);
 
-    terminal.nprintf<30>("SysTick: %" PRIu64 "\n", MY_GetCycleCount());
-    terminal.nprintf<30>("DWT: %" PRIu64 "\n", MY_DWTGetCycleCount());
+    // terminal.nprintf<50>("SysTick: %" PRIu64 " %" PRIu64 "\n", MY_GetCycleCount(), MY_GetNanoSecFromCycle(MY_GetCycleCount()));
+    // terminal.nprintf<50>("DWT: %" PRIu64 " %" PRIu64 "\n", MY_DWTGetCycleCount(), MY_GetNanoSecFromCycle(MY_DWTGetCycleCount()));
 
     HAL_GPIO_TogglePin(LED_1_GPIO_Port, LED_1_Pin);
     HAL_GPIO_TogglePin(LED_2_GPIO_Port, LED_2_Pin);
@@ -167,12 +188,12 @@ extern "C" void loop_forever(void) {
         }
 
         bmx055_camera.update();
-        IMUMeasure imu_measure;
         if (bmx055_camera.get_imu_measure(imu_measure) > 0) {
         }
-        MagMeasure mag_measure;
         if (bmx055_camera.get_mag_measure(mag_measure) > 0) {
         }
+        
+        count_main_loop++;
     }
 
 }

@@ -26,12 +26,15 @@ static uint64_t MY_GetCycleCount(void) {
         tick_1 = HAL_GetTick();
     } while (tick_0 != tick_1);
     // SysTick 的周期为 SysTick->LOAD + 1, SysTick 为倒计时
-    return tick_0 * (SysTick->LOAD + 1) + (SysTick->LOAD - count);
+    return (uint64_t)tick_0 * (SysTick->LOAD + 1) + (SysTick->LOAD - count);
 }
 
 /* 通过 DWT 获取时间戳 */
 // 使能 DWT 定时器
 static void MY_DWTTimerInit(void) {
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    // volatile uint32_t *DWT_LAR  = (uint32_t *) 0xE0001FB0;
+    // *DWT_LAR = 0xC5ACCE55;
     DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 }
 
@@ -40,6 +43,8 @@ extern volatile uint64_t MY_DWT_LAST_CYCLE_COUNT;
 // 通过 DWT 获取开机到现在的CPU时钟数
 // 注意: 每2^32个时钟周期(72M 频率下约 59.65秒), 至少应调用该函数一次
 static uint64_t MY_DWTGetCycleCount(void) {
+    // 使用 J-Link 下载程序后, 可能会自动禁用 trace, 需要保证为使能状态
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
     // 记录中断使能状态, 并暂停中断
     uint32_t primask = __get_PRIMASK();
     __disable_irq();

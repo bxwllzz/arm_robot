@@ -60,15 +60,15 @@ static void BMX055_delay_msec(u32 msec) {
 namespace hustac {
 
 struct IMUMeasure {
-    uint64_t nsec;
-    float accel[3] = { std::numeric_limits<float>::signaling_NaN() };
-    float gyro[3] = { std::numeric_limits<float>::signaling_NaN() };
+    uint64_t nsec = 0;
+    float accel[3] = { std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN() };
+    float gyro[3] = { std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN() };
     float temperature = std::numeric_limits<float>::signaling_NaN();
 };
 
 struct MagMeasure {
-    uint64_t nsec;
-    float mag[3] = { std::numeric_limits<float>::signaling_NaN() };
+    uint64_t nsec = 0;
+    float mag[3] = { std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN() };
 };
 
 class BMX055 {
@@ -80,10 +80,14 @@ public:
     struct bmm050_t bmm050;
 
     enum class State {
-        IDLE, READ_ACCEL, READ_GYRO, READ_MAG,
+        IDLE, READ_ACCEL, WAIT_ACCEL, READ_GYRO, WAIT_GYRO, READ_MAG, WAIT_MAG,
     };
     volatile State state = State::IDLE;
     volatile bool _FSM_lock = false;
+    volatile bool _FSM_need_update = false;
+    
+    volatile bool i2c_dma_read_complete = true;
+    volatile bool i2c_dma_read_failed = false;
 
     volatile uint32_t next_read_imu = 0;    // ms
     const uint32_t imu_update_interval = 1; // ms
@@ -265,55 +269,76 @@ public:
             switch (state) {
             case State::IDLE:
                 if (HAL_GetTick() >= next_read_imu) {
-                    next_read_imu += imu_update_interval;
-
                     state = State::READ_ACCEL;
-                    if (HAL_I2C_Mem_Read_DMA(hi2c, (bma2x2.dev_addr << 1),
-                    BMA2x2_ACCEL_X12_LSB_REG, 1, (uint8_t*) &raw_acc,
-                    BMA2x2_ACCEL_XYZ_TEMP_DATA_SIZE) == HAL_OK) {
-                        uint64_t now = MY_GetNanoSecFromCycle(
-                                MY_GetCycleCount());
-                        if (now - last_read_accel >= imu_update_interval * 1000 * 1.5) {
-                            terminal.nprintf<30>("bmx055: read accel, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_accel) / 1000);
-                        }
-                        last_read_accel = now;
-                    } else {
-                        // cannot start dma read
-                        stop_loop = true;
-                        com_rslt = -1;
-                        terminal.write_string("bmx055: read accel, cannot start i2c dma read\n");
-                    }
+                } else if (HAL_GetTick() >= next_read_mag) {
+                    state = State::READ_MAG;
                 } else {
                     // wait until next imu read
                     stop_loop = true;
                 }
                 break;
             case State::READ_ACCEL:
-                if (hi2c->State == HAL_I2C_STATE_READY) {
-
-                    state = State::READ_GYRO;
-                    if (HAL_I2C_Mem_Read_DMA(hi2c, (bmg160.dev_addr << 1),
-                    BMG160_RATE_X_LSB_BIT__REG, 1, (uint8_t*) &raw_gyro,
-                    BMG160_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
-                        uint64_t now = MY_GetNanoSecFromCycle(
-                                MY_GetCycleCount());
-                        if (now - last_read_gyro >= imu_update_interval * 1500000) {
-                            terminal.nprintf<30>("bmx055: read gyro, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_gyro) / 1000);
-                        }
-                        last_read_gyro = now;
-                    } else {
-                        // cannot start dma read
-                        stop_loop = true;
-                        com_rslt = -1;
-                        terminal.write_string("bmx055: read gyro, cannot start i2c dma read\n");
+                if (HAL_I2C_Mem_Read_DMA(hi2c, (bma2x2.dev_addr << 1),
+                BMA2x2_ACCEL_X12_LSB_REG, 1, (uint8_t*) &raw_acc,
+                BMA2x2_ACCEL_XYZ_TEMP_DATA_SIZE) == HAL_OK) {
+                    uint64_t now = MY_GetNanoSecFromCycle(
+                            MY_GetCycleCount());
+                    if ((now - last_read_accel) / 1000 >= imu_update_interval * 1300) {
+                        terminal.nprintf<50>("bmx055: read accel, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_accel) / 1000);
                     }
+                    next_read_imu += imu_update_interval;
+                    
+                    state = State::WAIT_ACCEL;
+                    i2c_dma_read_complete = false;
+                    i2c_dma_read_failed = false;
+                    last_read_accel = now;
+                } else {
+                    // cannot start dma read
+                    stop_loop = true;
+                    com_rslt = -1;
+                    terminal.write_string("bmx055: read accel, cannot start i2c dma read\n");
+                }
+                break;
+            case State::WAIT_ACCEL:
+                if (i2c_dma_read_failed) {
+                    terminal.write_string("bmx055: read accel error, retry\n");
+                    state = State::READ_ACCEL;
+                } else if (i2c_dma_read_complete) {
+//                    terminal.write_string("bmx055: read accel complete\n");
+                    
+                    state = State::READ_GYRO;
                 } else {
                     // wait until dma read finished
                     stop_loop = true;
                 }
                 break;
             case State::READ_GYRO:
-                if (hi2c->State == HAL_I2C_STATE_READY) {
+                if (HAL_I2C_Mem_Read_DMA(hi2c, (bmg160.dev_addr << 1),
+                BMG160_RATE_X_LSB_BIT__REG, 1, (uint8_t*) &raw_gyro,
+                BMG160_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
+                    uint64_t now = MY_GetNanoSecFromCycle(
+                            MY_GetCycleCount());
+                    if ((now - last_read_gyro) / 1000 >= imu_update_interval * 1300) {
+                        terminal.nprintf<50>("bmx055: read gyro, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_gyro) / 1000);
+                    }
+                    state = State::WAIT_GYRO;
+                    i2c_dma_read_complete = false;
+                    i2c_dma_read_failed = false;
+                    last_read_gyro = now;
+                } else {
+                    // cannot start dma read
+                    stop_loop = true;
+                    com_rslt = -1;
+                    terminal.write_string("bmx055: read gyro, cannot start i2c dma read\n");
+                }
+                break;
+            case State::WAIT_GYRO:
+                if (i2c_dma_read_failed) {
+                    terminal.write_string("bmx055: read gyro error, retry\n");
+                    state = State::READ_GYRO;
+                } else  if (i2c_dma_read_complete) {
+//                    terminal.write_string("bmx055: read gyro complete\n");
+                    
                     if (is_new_imu_measure) {
                         terminal.write_string("bmx055: imu_meaure overwrite, please get it in time!\n");
                     }
@@ -321,36 +346,45 @@ public:
                     imu_measure.nsec = (last_read_accel + last_read_gyro) / 2;
                     is_new_imu_measure = true;
                     count_imu_measure++;
-
-                    if (HAL_GetTick() >= next_read_mag) {
-                        next_read_mag += mag_update_interval;
-
-                        state = State::READ_MAG;
-                        if (HAL_I2C_Mem_Read_DMA(hi2c, (bmm050.dev_addr << 1),
-                        BMM050_DATA_X_LSB, 1, (uint8_t*) &raw_mag,
-                        BMM050_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
-                            uint64_t now = MY_GetNanoSecFromCycle(
-                                    MY_GetCycleCount());
-                            if (now - last_read_mag >= imu_update_interval * 1500) {
-                                terminal.nprintf<30>("bmx055: read mag, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_mag) / 1000);
-                            }
-                            last_read_mag = now;
-                        } else {
-                            // cannot start dma read
-                            stop_loop = true;
-                            com_rslt = -1;
-                            terminal.write_string("bmx055: read mag, cannot start i2c dma read\n");
-                        }
-                    } else {
-                        state = State::IDLE;
-                    }
+                    
+                    state = State::IDLE;
                 } else {
                     // wait until dma read finished
                     stop_loop = true;
                 }
                 break;
             case State::READ_MAG:
-                if (hi2c->State == HAL_I2C_STATE_READY) {
+                if (HAL_I2C_Mem_Read_DMA(hi2c, (bmm050.dev_addr << 1),
+                BMM050_DATA_X_LSB, 1, (uint8_t*) &raw_mag,
+                BMM050_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
+                    uint64_t now = MY_GetNanoSecFromCycle(
+                            MY_GetCycleCount());
+                    if ((now - last_read_mag) / 1000 >= mag_update_interval * 1300) {
+                        terminal.nprintf<50>("bmx055: read mag, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_mag) / 1000);
+                    }
+                    next_read_mag += mag_update_interval;
+                    
+                    state = State::WAIT_MAG;
+                    i2c_dma_read_complete = false;
+                    i2c_dma_read_failed = false;
+                    last_read_mag = now;
+                } else {
+                    // cannot start dma read
+                    com_rslt = -1;
+                    terminal.write_string("bmx055: read mag, cannot start i2c dma read\n");
+                    
+                    state = State::IDLE;
+                }
+                break;
+            case State::WAIT_MAG:
+                if (i2c_dma_read_failed) {
+                    terminal.write_string("bmx055: read mag error, retry\n");
+                    com_rslt = -1;
+                    
+                    state = State::IDLE;
+                } else if (i2c_dma_read_complete) {
+//                    terminal.write_string("bmx055: read mag complete\n");
+                    
                     if (is_new_mag_measure) {
                         terminal.write_string("bmx055: mag_measure overwrite, please get it in time!\n");
                     }
@@ -372,18 +406,43 @@ public:
 
     // should be called when i2c dma mem read complete
     void on_i2c_dma_complete() {
+        i2c_dma_read_complete = true;
         if (!_FSM_lock) {
             _FSM_lock = true;
             _FSM_update();
             _FSM_lock = false;
+        } else {
+            if (_FSM_need_update) {
+                terminal.write_string("bmx055: failed to lock _FSM_lock in interrupt\n");
+            }
+            _FSM_need_update = true;
+        }
+    }
+    
+    // should be called when i2c dma mem read failed
+    void on_i2c_dma_failed() {
+        i2c_dma_read_failed = true;
+        if (!_FSM_lock) {
+            _FSM_lock = true;
+            _FSM_update();
+            _FSM_lock = false;
+        } else {
+            if (_FSM_need_update) {
+                terminal.write_string("bmx055: failed to lock _FSM_lock in interrupt\n");
+            }
+            _FSM_need_update = true;
         }
     }
 
     // should only be called in main loop
     int update() {
-        _FSM_lock = true;
-        int ret = _FSM_update();
-        _FSM_lock = false;
+        int ret;
+        do {
+            _FSM_need_update = false;
+            _FSM_lock = true;
+            ret = _FSM_update();
+            _FSM_lock = false;
+        } while (_FSM_need_update);
         return ret;
     }
 
