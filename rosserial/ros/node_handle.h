@@ -36,6 +36,9 @@
 #define ROS_NODE_HANDLE_H_
 
 #include <stdint.h>
+#include <inttypes.h>
+#include <limits>
+#include <algorithm>
 
 #include "std_msgs/Time.h"
 #include "rosserial_msgs/TopicInfo.h"
@@ -71,7 +74,7 @@ const int SPIN_OK = 0;
 const int SPIN_ERR = -1;
 const int SPIN_TIMEOUT = -2;
 
-const uint8_t SYNC_SECONDS  = 5;
+const uint8_t SYNC_SECONDS  = 1;
 const uint8_t MODE_FIRST_FF = 0;
 /*
  * The second sync byte is a protocol version. It's value is 0xff for the first
@@ -110,7 +113,7 @@ protected:
   Hardware hardware_;
 
   /* time used for syncing */
-  uint32_t rt_time;
+  uint64_t rt_time;
 
   /* used for computing current time */
   uint32_t sec_offset, nsec_offset;
@@ -357,7 +360,7 @@ public:
     }
 
     /* occasionally sync time */
-    if (configured_ && ((c_time - last_sync_time) > (SYNC_SECONDS * 500)))
+    if (configured_ && ((c_time - last_sync_time) > (SYNC_SECONDS * (uint32_t)500)))
     {
       requestSyncTime();
       last_sync_time = c_time;
@@ -381,17 +384,31 @@ public:
   {
     std_msgs::Time t;
     publish(TopicInfo::ID_TIME, &t);
-    rt_time = hardware_.time();
+    rt_time = hardware_.time_nsec();
   }
 
   void syncTime(uint8_t * data)
   {
     std_msgs::Time t;
-    uint32_t offset = hardware_.time() - rt_time;
+    uint32_t offset = hardware_.time_nsec() - rt_time;
+    char buf[40];
+    snprintf(buf, 40, "time sync: RTT = %" PRIu32 " us", offset / 1000);
+    loginfo(buf);
 
     t.deserialize(data);
-    t.data.sec += offset / 1000;
-    t.data.nsec += (offset % 1000) * 1000000UL;
+    t.data.sec += offset / 1000000000;
+    t.data.nsec += offset % 1000000000;
+
+    Time old_now = this->now();
+    this->setNow(t.data);
+
+    uint64_t old_nsec = (uint64_t)old_now.sec * 1000000000 + old_now.nsec;
+    uint64_t new_nsec = (uint64_t)t.data.sec * 1000000000 + t.data.nsec;
+    int64_t time_offset_us = (int64_t)(new_nsec - old_nsec) / 1000;
+    time_offset_us = std::min(time_offset_us, (int64_t)std::numeric_limits<int32_t>::max());
+    time_offset_us = std::max(time_offset_us, (int64_t)std::numeric_limits<int32_t>::min());
+    snprintf(buf, 40, "time sync: adjustment = %" PRId32 " us", (int32_t)time_offset_us);
+    loginfo(buf);
 
     this->setNow(t.data);
     last_sync_receive_time = hardware_.time();

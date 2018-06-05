@@ -43,6 +43,7 @@
 #include "usart.h"
 
 #include "dmabuffer_uart.hpp"
+#include "high_resolution_clock.h"
 
 using namespace hustac;
 
@@ -72,6 +73,10 @@ public:
 
     unsigned long time() {
         return HAL_GetTick();
+    }
+
+    uint64_t time_nsec() {
+    	return MY_GetNanoSecFromCycle(MY_GetCycleCount());
     }
 
 protected:
