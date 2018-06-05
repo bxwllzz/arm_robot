@@ -1,3 +1,5 @@
+
+#include <time.h>
 #include <cstdio>
 #include <inttypes.h>
 
@@ -80,6 +82,10 @@ void soft_timer_1s_callback(uint32_t count) {
     count_main_loop = 0;
     last_count_imu = bmx055_camera.count_imu_measure;
     last_count_mag = bmx055_camera.count_mag_measure;
+    
+    ros::Time ros_time = nh.now();
+    time_t sec = ros_time.sec;
+    terminal.write_string(ctime(&sec));
     
 //    terminal.nprintf<200>("imu: %" PRIu64 " nsec, accel=(%f, %f, %f), temp=%f, gyro=(%f, %f, %f)\n", 
 //        imu_measure.nsec, 
