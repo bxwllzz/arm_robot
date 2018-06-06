@@ -64,11 +64,9 @@ public:
         return dma_buffer.get();
     }
 
-    void write(uint8_t* data, int length) {
+    int write(uint8_t* data, int length) {
         int ret = dma_buffer.write(data, length);
-        if (ret != length) {
-            _Error_Handler((char*)__FILE__, __LINE__);
-        }
+        return ret;
     }
 
     unsigned long time() {
@@ -76,7 +74,7 @@ public:
     }
 
     uint64_t time_nsec() {
-    	return MY_GetNanoSecFromCycle(MY_GetCycleCount());
+        return MY_GetNanoSecFromCycle(MY_GetCycleCount());
     }
 
 protected:

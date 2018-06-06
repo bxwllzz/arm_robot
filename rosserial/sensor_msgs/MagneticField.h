@@ -49,8 +49,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/MagneticField"; };
-    const char * getMD5(){ return "2f3b0b43eed0c9501de0fa3ff89a45aa"; };
+    virtual const char * getType(){ return "sensor_msgs/MagneticField"; };
+    virtual const char * getMD5(){ return "2f3b0b43eed0c9501de0fa3ff89a45aa"; };
 
   };
 

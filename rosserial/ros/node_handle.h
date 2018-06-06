@@ -386,7 +386,7 @@ public:
             this->setNow(t.data);
 
             snprintf(buf, 100,
-                    "time sync: RTT = % 8" PRIu32 " us, offset = % 6" PRId32 " us, adjust = % 6" PRId32 " us, std = % 6" PRId32 " us",
+                    "time sync: RTT = %8" PRIu32 " us, offset = %6" PRId32 " us, adjust = %6" PRId32 " us, std = %6" PRId32 " us",
             RTT_nsec / 1000, time_offset_ns / 1000, time_adjust_ns / 1000, (int32_t)(std::sqrt(time_variance) * 1000000));
             loginfo(buf);
         }
@@ -396,6 +396,10 @@ public:
 
     Time now() {
         uint64_t ns = hardware_.time_nsec();
+        return fromNSec(ns);
+    }
+
+    Time fromNSec(uint64_t ns) {
         Time current_time;
         current_time.sec = (uint32_t)(ns / 1000000000) + sec_offset;
         current_time.nsec = (uint32_t)(ns % 1000000000) + nsec_offset;
@@ -523,13 +527,14 @@ public:
         l += 7;
         message_out[l++] = 255 - (chk % 256);
 
-        if (l <= OUTPUT_SIZE) {
-            hardware_.write(message_out, l);
-            return l;
-        } else {
+        if (l > OUTPUT_SIZE) {
             logerror(
                     "Message from device dropped: message larger than buffer.");
             return -1;
+        } else if (hardware_.write(message_out, l) != l) {
+            return -2;
+        } else {
+            return 0;
         }
     }
 

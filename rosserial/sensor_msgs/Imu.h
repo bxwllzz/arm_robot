@@ -76,8 +76,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/Imu"; };
-    const char * getMD5(){ return "6a62c6daae103f4ff57a132d6f95cec2"; };
+    virtual const char * getType(){ return "sensor_msgs/Imu"; };
+    virtual const char * getMD5(){ return "6a62c6daae103f4ff57a132d6f95cec2"; };
 
   };
 

@@ -45,8 +45,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/Temperature"; };
-    const char * getMD5(){ return "ff71b307acdbe7c871a5a6d7ed359100"; };
+    virtual const char * getType(){ return "sensor_msgs/Temperature"; };
+    virtual const char * getMD5(){ return "ff71b307acdbe7c871a5a6d7ed359100"; };
 
   };
 

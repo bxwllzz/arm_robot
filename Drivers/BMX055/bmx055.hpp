@@ -15,11 +15,20 @@
 #include "main_cpp.hpp"
 #include "high_resolution_clock.h"
 
+
+#ifdef __GNUC__
 extern "C" {
+#endif // __GNUC__
+
 #include "bma2x2.h"
 #include "bmg160.h"
 #include "bmm050.h"
 
+#ifdef __GNUC__
+}
+#endif // __GNUC__
+
+extern "C" {
 // dev_addr: 7bit
 static s8 BMX055_I2C_bus_write(u8 dev_addr, u8 reg_addr, u8 *reg_data, u8 cnt) {
     s32 iError;
@@ -60,6 +69,7 @@ static void BMX055_delay_msec(u32 msec) {
 namespace hustac {
 
 struct IMUMeasure {
+    uint32_t seq = 0;
     uint64_t nsec = 0;
     float accel[3] = { std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN() };
     float gyro[3] = { std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN() };
@@ -67,6 +77,7 @@ struct IMUMeasure {
 };
 
 struct MagMeasure {
+    uint32_t seq = 0;
     uint64_t nsec = 0;
     float mag[3] = { std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN(), std::numeric_limits<float>::signaling_NaN() };
 };
@@ -343,6 +354,7 @@ public:
                         terminal.write_string("bmx055: imu_meaure overwrite, please get it in time!\n");
                     }
                     _process_imu();
+                    imu_measure.seq = count_imu_measure;
                     imu_measure.nsec = (last_read_accel + last_read_gyro) / 2;
                     is_new_imu_measure = true;
                     count_imu_measure++;
@@ -389,6 +401,7 @@ public:
                         terminal.write_string("bmx055: mag_measure overwrite, please get it in time!\n");
                     }
                     _process_mag();
+                    mag_measure.seq = count_mag_measure;
                     mag_measure.nsec = last_read_mag;
                     is_new_mag_measure = true;
                     count_mag_measure++;
