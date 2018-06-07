@@ -64,8 +64,8 @@ namespace dynamic_reconfigure
      return offset;
     }
 
-    const char * getType(){ return "dynamic_reconfigure/BoolParameter"; };
-    const char * getMD5(){ return "23f05028c1a699fb83e22401228c3a9e"; };
+    virtual const char * getType(){ return "dynamic_reconfigure/BoolParameter"; };
+    virtual const char * getMD5(){ return "23f05028c1a699fb83e22401228c3a9e"; };
 
   };
 

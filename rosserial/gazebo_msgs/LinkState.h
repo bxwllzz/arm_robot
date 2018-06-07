@@ -75,8 +75,8 @@ namespace gazebo_msgs
      return offset;
     }
 
-    const char * getType(){ return "gazebo_msgs/LinkState"; };
-    const char * getMD5(){ return "0818ebbf28ce3a08d48ab1eaa7309ebe"; };
+    virtual const char * getType(){ return "gazebo_msgs/LinkState"; };
+    virtual const char * getMD5(){ return "0818ebbf28ce3a08d48ab1eaa7309ebe"; };
 
   };
 

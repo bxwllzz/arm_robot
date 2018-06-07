@@ -52,8 +52,8 @@ namespace rospy_tutorials
      return offset;
     }
 
-    const char * getType(){ return "rospy_tutorials/HeaderString"; };
-    const char * getMD5(){ return "c99a9440709e4d4a9716d55b8270d5e7"; };
+    virtual const char * getType(){ return "rospy_tutorials/HeaderString"; };
+    virtual const char * getMD5(){ return "c99a9440709e4d4a9716d55b8270d5e7"; };
 
   };
 

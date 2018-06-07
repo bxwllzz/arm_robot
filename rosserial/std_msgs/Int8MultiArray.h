@@ -73,8 +73,8 @@ namespace std_msgs
      return offset;
     }
 
-    const char * getType(){ return "std_msgs/Int8MultiArray"; };
-    const char * getMD5(){ return "d7c1af35a1b4781bbe79e03dd94b7c13"; };
+    virtual const char * getType(){ return "std_msgs/Int8MultiArray"; };
+    virtual const char * getMD5(){ return "d7c1af35a1b4781bbe79e03dd94b7c13"; };
 
   };
 

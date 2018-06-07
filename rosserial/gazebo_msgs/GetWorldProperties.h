@@ -30,8 +30,8 @@ static const char GETWORLDPROPERTIES[] = "gazebo_msgs/GetWorldProperties";
      return offset;
     }
 
-    const char * getType(){ return GETWORLDPROPERTIES; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return GETWORLDPROPERTIES; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -150,8 +150,8 @@ static const char GETWORLDPROPERTIES[] = "gazebo_msgs/GetWorldProperties";
      return offset;
     }
 
-    const char * getType(){ return GETWORLDPROPERTIES; };
-    const char * getMD5(){ return "36bb0f2eccf4d8be971410c22818ba3f"; };
+    virtual const char * getType(){ return GETWORLDPROPERTIES; };
+    virtual const char * getMD5(){ return "36bb0f2eccf4d8be971410c22818ba3f"; };
 
   };
 

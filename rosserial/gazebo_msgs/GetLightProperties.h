@@ -48,8 +48,8 @@ static const char GETLIGHTPROPERTIES[] = "gazebo_msgs/GetLightProperties";
      return offset;
     }
 
-    const char * getType(){ return GETLIGHTPROPERTIES; };
-    const char * getMD5(){ return "4fb676dfb4741fc866365702a859441c"; };
+    virtual const char * getType(){ return GETLIGHTPROPERTIES; };
+    virtual const char * getMD5(){ return "4fb676dfb4741fc866365702a859441c"; };
 
   };
 
@@ -128,8 +128,8 @@ static const char GETLIGHTPROPERTIES[] = "gazebo_msgs/GetLightProperties";
      return offset;
     }
 
-    const char * getType(){ return GETLIGHTPROPERTIES; };
-    const char * getMD5(){ return "9a19ddd5aab4c13b7643d1722c709f1f"; };
+    virtual const char * getType(){ return GETLIGHTPROPERTIES; };
+    virtual const char * getMD5(){ return "9a19ddd5aab4c13b7643d1722c709f1f"; };
 
   };
 

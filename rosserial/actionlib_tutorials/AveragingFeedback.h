@@ -125,8 +125,8 @@ namespace actionlib_tutorials
      return offset;
     }
 
-    const char * getType(){ return "actionlib_tutorials/AveragingFeedback"; };
-    const char * getMD5(){ return "9e8dfc53c2f2a032ca33fa80ec46fd4f"; };
+    virtual const char * getType(){ return "actionlib_tutorials/AveragingFeedback"; };
+    virtual const char * getMD5(){ return "9e8dfc53c2f2a032ca33fa80ec46fd4f"; };
 
   };
 

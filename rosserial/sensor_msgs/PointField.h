@@ -87,8 +87,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/PointField"; };
-    const char * getMD5(){ return "268eacb2962780ceac86cbd17e328150"; };
+    virtual const char * getType(){ return "sensor_msgs/PointField"; };
+    virtual const char * getMD5(){ return "268eacb2962780ceac86cbd17e328150"; };
 
   };
 

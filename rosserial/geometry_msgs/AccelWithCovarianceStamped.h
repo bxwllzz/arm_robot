@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/AccelWithCovarianceStamped"; };
-    const char * getMD5(){ return "96adb295225031ec8d57fb4251b0a886"; };
+    virtual const char * getType(){ return "geometry_msgs/AccelWithCovarianceStamped"; };
+    virtual const char * getMD5(){ return "96adb295225031ec8d57fb4251b0a886"; };
 
   };
 

@@ -30,8 +30,8 @@ static const char LISTCONTROLLERTYPES[] = "controller_manager_msgs/ListControlle
      return offset;
     }
 
-    const char * getType(){ return LISTCONTROLLERTYPES; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return LISTCONTROLLERTYPES; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -129,8 +129,8 @@ static const char LISTCONTROLLERTYPES[] = "controller_manager_msgs/ListControlle
      return offset;
     }
 
-    const char * getType(){ return LISTCONTROLLERTYPES; };
-    const char * getMD5(){ return "c1d4cd11aefa9f97ba4aeb5b33987f4e"; };
+    virtual const char * getType(){ return LISTCONTROLLERTYPES; };
+    virtual const char * getMD5(){ return "c1d4cd11aefa9f97ba4aeb5b33987f4e"; };
 
   };
 

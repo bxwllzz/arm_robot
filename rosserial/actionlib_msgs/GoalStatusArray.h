@@ -61,8 +61,8 @@ namespace actionlib_msgs
      return offset;
     }
 
-    const char * getType(){ return "actionlib_msgs/GoalStatusArray"; };
-    const char * getMD5(){ return "8b2b82f13216d0a8ea88bd3af735e619"; };
+    virtual const char * getType(){ return "actionlib_msgs/GoalStatusArray"; };
+    virtual const char * getMD5(){ return "8b2b82f13216d0a8ea88bd3af735e619"; };
 
   };
 

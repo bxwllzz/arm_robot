@@ -62,8 +62,8 @@ namespace pcl_msgs
      return offset;
     }
 
-    const char * getType(){ return "pcl_msgs/Vertices"; };
-    const char * getMD5(){ return "39bd7b1c23763ddd1b882b97cb7cfe11"; };
+    virtual const char * getType(){ return "pcl_msgs/Vertices"; };
+    virtual const char * getMD5(){ return "39bd7b1c23763ddd1b882b97cb7cfe11"; };
 
   };
 

@@ -174,8 +174,8 @@ namespace theora_image_transport
      return offset;
     }
 
-    const char * getType(){ return "theora_image_transport/Packet"; };
-    const char * getMD5(){ return "33ac4e14a7cff32e7e0d65f18bb410f3"; };
+    virtual const char * getType(){ return "theora_image_transport/Packet"; };
+    virtual const char * getMD5(){ return "33ac4e14a7cff32e7e0d65f18bb410f3"; };
 
   };
 

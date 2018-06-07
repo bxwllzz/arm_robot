@@ -47,8 +47,8 @@ static const char DELETEMODEL[] = "gazebo_msgs/DeleteModel";
      return offset;
     }
 
-    const char * getType(){ return DELETEMODEL; };
-    const char * getMD5(){ return "ea31c8eab6fc401383cf528a7c0984ba"; };
+    virtual const char * getType(){ return DELETEMODEL; };
+    virtual const char * getMD5(){ return "ea31c8eab6fc401383cf528a7c0984ba"; };
 
   };
 
@@ -107,8 +107,8 @@ static const char DELETEMODEL[] = "gazebo_msgs/DeleteModel";
      return offset;
     }
 
-    const char * getType(){ return DELETEMODEL; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return DELETEMODEL; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

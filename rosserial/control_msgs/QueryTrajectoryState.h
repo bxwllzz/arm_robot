@@ -54,8 +54,8 @@ static const char QUERYTRAJECTORYSTATE[] = "control_msgs/QueryTrajectoryState";
      return offset;
     }
 
-    const char * getType(){ return QUERYTRAJECTORYSTATE; };
-    const char * getMD5(){ return "556a4fb76023a469987922359d08a844"; };
+    virtual const char * getType(){ return QUERYTRAJECTORYSTATE; };
+    virtual const char * getMD5(){ return "556a4fb76023a469987922359d08a844"; };
 
   };
 
@@ -191,8 +191,8 @@ static const char QUERYTRAJECTORYSTATE[] = "control_msgs/QueryTrajectoryState";
      return offset;
     }
 
-    const char * getType(){ return QUERYTRAJECTORYSTATE; };
-    const char * getMD5(){ return "1f1a6554ad060f44d013e71868403c1a"; };
+    virtual const char * getType(){ return QUERYTRAJECTORYSTATE; };
+    virtual const char * getMD5(){ return "1f1a6554ad060f44d013e71868403c1a"; };
 
   };
 

@@ -123,8 +123,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/Joy"; };
-    const char * getMD5(){ return "5a9ea5f83505693b71e785041e67a8bb"; };
+    virtual const char * getType(){ return "sensor_msgs/Joy"; };
+    virtual const char * getMD5(){ return "5a9ea5f83505693b71e785041e67a8bb"; };
 
   };
 

@@ -66,8 +66,8 @@ static const char GETPOINTMAPROI[] = "map_msgs/GetPointMapROI";
      return offset;
     }
 
-    const char * getType(){ return GETPOINTMAPROI; };
-    const char * getMD5(){ return "895f7e437a9a6dd225316872b187a303"; };
+    virtual const char * getType(){ return GETPOINTMAPROI; };
+    virtual const char * getMD5(){ return "895f7e437a9a6dd225316872b187a303"; };
 
   };
 
@@ -96,8 +96,8 @@ static const char GETPOINTMAPROI[] = "map_msgs/GetPointMapROI";
      return offset;
     }
 
-    const char * getType(){ return GETPOINTMAPROI; };
-    const char * getMD5(){ return "313769f8b0e724525c6463336cbccd63"; };
+    virtual const char * getType(){ return GETPOINTMAPROI; };
+    virtual const char * getMD5(){ return "313769f8b0e724525c6463336cbccd63"; };
 
   };
 

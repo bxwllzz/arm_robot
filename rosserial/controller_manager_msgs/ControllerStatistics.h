@@ -222,8 +222,8 @@ namespace controller_manager_msgs
      return offset;
     }
 
-    const char * getType(){ return "controller_manager_msgs/ControllerStatistics"; };
-    const char * getMD5(){ return "697780c372c8d8597a1436d0e2ad3ba8"; };
+    virtual const char * getType(){ return "controller_manager_msgs/ControllerStatistics"; };
+    virtual const char * getMD5(){ return "697780c372c8d8597a1436d0e2ad3ba8"; };
 
   };
 

@@ -73,8 +73,8 @@ namespace shape_msgs
      return offset;
     }
 
-    const char * getType(){ return "shape_msgs/SolidPrimitive"; };
-    const char * getMD5(){ return "d8f8cbc74c5ff283fca29569ccefb45d"; };
+    virtual const char * getType(){ return "shape_msgs/SolidPrimitive"; };
+    virtual const char * getMD5(){ return "d8f8cbc74c5ff283fca29569ccefb45d"; };
 
   };
 

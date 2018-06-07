@@ -47,8 +47,8 @@ static const char KILL[] = "turtlesim/Kill";
      return offset;
     }
 
-    const char * getType(){ return KILL; };
-    const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
+    virtual const char * getType(){ return KILL; };
+    virtual const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
 
   };
 
@@ -72,8 +72,8 @@ static const char KILL[] = "turtlesim/Kill";
      return offset;
     }
 
-    const char * getType(){ return KILL; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return KILL; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

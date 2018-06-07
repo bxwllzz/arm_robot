@@ -55,8 +55,8 @@ namespace visualization_msgs
      return offset;
     }
 
-    const char * getType(){ return "visualization_msgs/MarkerArray"; };
-    const char * getMD5(){ return "d155b9ce5188fbaf89745847fd5882d7"; };
+    virtual const char * getType(){ return "visualization_msgs/MarkerArray"; };
+    virtual const char * getMD5(){ return "d155b9ce5188fbaf89745847fd5882d7"; };
 
   };
 

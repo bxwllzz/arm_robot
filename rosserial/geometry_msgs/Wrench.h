@@ -40,8 +40,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Wrench"; };
-    const char * getMD5(){ return "4f539cf138b23283b520fd271b567936"; };
+    virtual const char * getType(){ return "geometry_msgs/Wrench"; };
+    virtual const char * getMD5(){ return "4f539cf138b23283b520fd271b567936"; };
 
   };
 

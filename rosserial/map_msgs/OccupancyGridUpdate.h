@@ -147,8 +147,8 @@ namespace map_msgs
      return offset;
     }
 
-    const char * getType(){ return "map_msgs/OccupancyGridUpdate"; };
-    const char * getMD5(){ return "b295be292b335c34718bd939deebe1c9"; };
+    virtual const char * getType(){ return "map_msgs/OccupancyGridUpdate"; };
+    virtual const char * getMD5(){ return "b295be292b335c34718bd939deebe1c9"; };
 
   };
 

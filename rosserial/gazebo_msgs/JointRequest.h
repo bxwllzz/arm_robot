@@ -47,8 +47,8 @@ static const char JOINTREQUEST[] = "gazebo_msgs/JointRequest";
      return offset;
     }
 
-    const char * getType(){ return JOINTREQUEST; };
-    const char * getMD5(){ return "0be1351618e1dc030eb7959d9a4902de"; };
+    virtual const char * getType(){ return JOINTREQUEST; };
+    virtual const char * getMD5(){ return "0be1351618e1dc030eb7959d9a4902de"; };
 
   };
 
@@ -72,8 +72,8 @@ static const char JOINTREQUEST[] = "gazebo_msgs/JointRequest";
      return offset;
     }
 
-    const char * getType(){ return JOINTREQUEST; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return JOINTREQUEST; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

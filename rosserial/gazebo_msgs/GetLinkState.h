@@ -65,8 +65,8 @@ static const char GETLINKSTATE[] = "gazebo_msgs/GetLinkState";
      return offset;
     }
 
-    const char * getType(){ return GETLINKSTATE; };
-    const char * getMD5(){ return "7551675c30aaa71f7c288d4864552001"; };
+    virtual const char * getType(){ return GETLINKSTATE; };
+    virtual const char * getMD5(){ return "7551675c30aaa71f7c288d4864552001"; };
 
   };
 
@@ -130,8 +130,8 @@ static const char GETLINKSTATE[] = "gazebo_msgs/GetLinkState";
      return offset;
     }
 
-    const char * getType(){ return GETLINKSTATE; };
-    const char * getMD5(){ return "8ba55ad34f9c072e75c0de57b089753b"; };
+    virtual const char * getType(){ return GETLINKSTATE; };
+    virtual const char * getMD5(){ return "8ba55ad34f9c072e75c0de57b089753b"; };
 
   };
 

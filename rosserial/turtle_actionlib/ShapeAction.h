@@ -47,8 +47,8 @@ namespace turtle_actionlib
      return offset;
     }
 
-    const char * getType(){ return "turtle_actionlib/ShapeAction"; };
-    const char * getMD5(){ return "d73b17d6237a925511f5d7727a1dc903"; };
+    virtual const char * getType(){ return "turtle_actionlib/ShapeAction"; };
+    virtual const char * getMD5(){ return "d73b17d6237a925511f5d7727a1dc903"; };
 
   };
 

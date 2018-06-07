@@ -90,8 +90,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/ChannelFloat32"; };
-    const char * getMD5(){ return "3d40139cdd33dfedcb71ffeeeb42ae7f"; };
+    virtual const char * getType(){ return "sensor_msgs/ChannelFloat32"; };
+    virtual const char * getMD5(){ return "3d40139cdd33dfedcb71ffeeeb42ae7f"; };
 
   };
 

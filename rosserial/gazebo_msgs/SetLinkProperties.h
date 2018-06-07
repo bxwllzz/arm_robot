@@ -106,8 +106,8 @@ static const char SETLINKPROPERTIES[] = "gazebo_msgs/SetLinkProperties";
      return offset;
     }
 
-    const char * getType(){ return SETLINKPROPERTIES; };
-    const char * getMD5(){ return "68ac74a4be01b165bc305b5ccdc45e91"; };
+    virtual const char * getType(){ return SETLINKPROPERTIES; };
+    virtual const char * getMD5(){ return "68ac74a4be01b165bc305b5ccdc45e91"; };
 
   };
 
@@ -166,8 +166,8 @@ static const char SETLINKPROPERTIES[] = "gazebo_msgs/SetLinkProperties";
      return offset;
     }
 
-    const char * getType(){ return SETLINKPROPERTIES; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return SETLINKPROPERTIES; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

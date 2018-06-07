@@ -130,8 +130,8 @@ static const char SWITCHCONTROLLER[] = "controller_manager_msgs/SwitchController
      return offset;
     }
 
-    const char * getType(){ return SWITCHCONTROLLER; };
-    const char * getMD5(){ return "434da54adc434a5af5743ed711fd6ba1"; };
+    virtual const char * getType(){ return SWITCHCONTROLLER; };
+    virtual const char * getMD5(){ return "434da54adc434a5af5743ed711fd6ba1"; };
 
   };
 
@@ -173,8 +173,8 @@ static const char SWITCHCONTROLLER[] = "controller_manager_msgs/SwitchController
      return offset;
     }
 
-    const char * getType(){ return SWITCHCONTROLLER; };
-    const char * getMD5(){ return "6f6da3883749771fac40d6deb24a8c02"; };
+    virtual const char * getType(){ return SWITCHCONTROLLER; };
+    virtual const char * getMD5(){ return "6f6da3883749771fac40d6deb24a8c02"; };
 
   };
 

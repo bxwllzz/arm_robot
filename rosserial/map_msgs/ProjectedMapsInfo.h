@@ -56,8 +56,8 @@ static const char PROJECTEDMAPSINFO[] = "map_msgs/ProjectedMapsInfo";
      return offset;
     }
 
-    const char * getType(){ return PROJECTEDMAPSINFO; };
-    const char * getMD5(){ return "d7980a33202421c8cd74565e57a4d229"; };
+    virtual const char * getType(){ return PROJECTEDMAPSINFO; };
+    virtual const char * getMD5(){ return "d7980a33202421c8cd74565e57a4d229"; };
 
   };
 
@@ -81,8 +81,8 @@ static const char PROJECTEDMAPSINFO[] = "map_msgs/ProjectedMapsInfo";
      return offset;
     }
 
-    const char * getType(){ return PROJECTEDMAPSINFO; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return PROJECTEDMAPSINFO; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

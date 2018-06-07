@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/TwistStamped"; };
-    const char * getMD5(){ return "98d34b0043a2093cf9d9345ab6eef12e"; };
+    virtual const char * getType(){ return "geometry_msgs/TwistStamped"; };
+    virtual const char * getMD5(){ return "98d34b0043a2093cf9d9345ab6eef12e"; };
 
   };
 

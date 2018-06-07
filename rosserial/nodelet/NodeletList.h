@@ -30,8 +30,8 @@ static const char NODELETLIST[] = "nodelet/NodeletList";
      return offset;
     }
 
-    const char * getType(){ return NODELETLIST; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return NODELETLIST; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -92,8 +92,8 @@ static const char NODELETLIST[] = "nodelet/NodeletList";
      return offset;
     }
 
-    const char * getType(){ return NODELETLIST; };
-    const char * getMD5(){ return "99c7b10e794f5600b8030e697e946ca7"; };
+    virtual const char * getType(){ return NODELETLIST; };
+    virtual const char * getMD5(){ return "99c7b10e794f5600b8030e697e946ca7"; };
 
   };
 

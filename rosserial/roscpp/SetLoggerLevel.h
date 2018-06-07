@@ -64,8 +64,8 @@ static const char SETLOGGERLEVEL[] = "roscpp/SetLoggerLevel";
      return offset;
     }
 
-    const char * getType(){ return SETLOGGERLEVEL; };
-    const char * getMD5(){ return "51da076440d78ca1684d36c868df61ea"; };
+    virtual const char * getType(){ return SETLOGGERLEVEL; };
+    virtual const char * getMD5(){ return "51da076440d78ca1684d36c868df61ea"; };
 
   };
 
@@ -89,8 +89,8 @@ static const char SETLOGGERLEVEL[] = "roscpp/SetLoggerLevel";
      return offset;
     }
 
-    const char * getType(){ return SETLOGGERLEVEL; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return SETLOGGERLEVEL; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

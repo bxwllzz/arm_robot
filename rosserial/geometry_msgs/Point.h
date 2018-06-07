@@ -44,8 +44,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Point"; };
-    const char * getMD5(){ return "4a842b65f413084dc2b10fb484ea7f17"; };
+    virtual const char * getType(){ return "geometry_msgs/Point"; };
+    virtual const char * getMD5(){ return "4a842b65f413084dc2b10fb484ea7f17"; };
 
   };
 

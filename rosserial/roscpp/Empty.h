@@ -30,8 +30,8 @@ static const char EMPTY[] = "roscpp/Empty";
      return offset;
     }
 
-    const char * getType(){ return EMPTY; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return EMPTY; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -55,8 +55,8 @@ static const char EMPTY[] = "roscpp/Empty";
      return offset;
     }
 
-    const char * getType(){ return EMPTY; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return EMPTY; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

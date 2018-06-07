@@ -45,8 +45,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/FluidPressure"; };
-    const char * getMD5(){ return "804dc5cea1c5306d6a2eb80b9833befe"; };
+    virtual const char * getType(){ return "sensor_msgs/FluidPressure"; };
+    virtual const char * getMD5(){ return "804dc5cea1c5306d6a2eb80b9833befe"; };
 
   };
 

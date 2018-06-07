@@ -150,8 +150,8 @@ namespace gazebo_msgs
      return offset;
     }
 
-    const char * getType(){ return "gazebo_msgs/WorldState"; };
-    const char * getMD5(){ return "de1a9de3ab7ba97ac0e9ec01a4eb481e"; };
+    virtual const char * getType(){ return "gazebo_msgs/WorldState"; };
+    virtual const char * getMD5(){ return "de1a9de3ab7ba97ac0e9ec01a4eb481e"; };
 
   };
 

@@ -30,8 +30,8 @@ static const char DEMUXLIST[] = "topic_tools/DemuxList";
      return offset;
     }
 
-    const char * getType(){ return DEMUXLIST; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return DEMUXLIST; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -92,8 +92,8 @@ static const char DEMUXLIST[] = "topic_tools/DemuxList";
      return offset;
     }
 
-    const char * getType(){ return DEMUXLIST; };
-    const char * getMD5(){ return "b0eef9a05d4e829092fc2f2c3c2aad3d"; };
+    virtual const char * getType(){ return DEMUXLIST; };
+    virtual const char * getMD5(){ return "b0eef9a05d4e829092fc2f2c3c2aad3d"; };
 
   };
 

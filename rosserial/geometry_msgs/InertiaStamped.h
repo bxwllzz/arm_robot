@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/InertiaStamped"; };
-    const char * getMD5(){ return "ddee48caeab5a966c5e8d166654a9ac7"; };
+    virtual const char * getType(){ return "geometry_msgs/InertiaStamped"; };
+    virtual const char * getMD5(){ return "ddee48caeab5a966c5e8d166654a9ac7"; };
 
   };
 

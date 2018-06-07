@@ -40,8 +40,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Accel"; };
-    const char * getMD5(){ return "9f195f881246fdfa2798d1d3eebca84a"; };
+    virtual const char * getType(){ return "geometry_msgs/Accel"; };
+    virtual const char * getMD5(){ return "9f195f881246fdfa2798d1d3eebca84a"; };
 
   };
 

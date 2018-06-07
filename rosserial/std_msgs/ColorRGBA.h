@@ -125,8 +125,8 @@ namespace std_msgs
      return offset;
     }
 
-    const char * getType(){ return "std_msgs/ColorRGBA"; };
-    const char * getMD5(){ return "a29a96539573343b1310c73607334b00"; };
+    virtual const char * getType(){ return "std_msgs/ColorRGBA"; };
+    virtual const char * getMD5(){ return "a29a96539573343b1310c73607334b00"; };
 
   };
 

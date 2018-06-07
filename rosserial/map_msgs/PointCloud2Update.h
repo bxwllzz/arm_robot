@@ -56,8 +56,8 @@ namespace map_msgs
      return offset;
     }
 
-    const char * getType(){ return "map_msgs/PointCloud2Update"; };
-    const char * getMD5(){ return "6c58e4f249ae9cd2b24fb1ee0f99195e"; };
+    virtual const char * getType(){ return "map_msgs/PointCloud2Update"; };
+    virtual const char * getMD5(){ return "6c58e4f249ae9cd2b24fb1ee0f99195e"; };
 
   };
 

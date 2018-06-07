@@ -160,8 +160,8 @@ namespace smach_msgs
      return offset;
     }
 
-    const char * getType(){ return "smach_msgs/SmachContainerStatus"; };
-    const char * getMD5(){ return "5ba2bb79ac19e3842d562a191f2a675b"; };
+    virtual const char * getType(){ return "smach_msgs/SmachContainerStatus"; };
+    virtual const char * getMD5(){ return "5ba2bb79ac19e3842d562a191f2a675b"; };
 
   };
 

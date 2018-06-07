@@ -87,8 +87,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/PointCloud"; };
-    const char * getMD5(){ return "d8e9c3f5afbdd8a130fd1d2763945fca"; };
+    virtual const char * getType(){ return "sensor_msgs/PointCloud"; };
+    virtual const char * getMD5(){ return "d8e9c3f5afbdd8a130fd1d2763945fca"; };
 
   };
 

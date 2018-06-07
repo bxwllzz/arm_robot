@@ -106,8 +106,8 @@ namespace controller_manager_msgs
      return offset;
     }
 
-    const char * getType(){ return "controller_manager_msgs/ControllerState"; };
-    const char * getMD5(){ return "aeb6b261d97793ab74099a3740245272"; };
+    virtual const char * getType(){ return "controller_manager_msgs/ControllerState"; };
+    virtual const char * getMD5(){ return "aeb6b261d97793ab74099a3740245272"; };
 
   };
 

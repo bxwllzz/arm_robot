@@ -45,8 +45,8 @@ namespace map_msgs
      return offset;
     }
 
-    const char * getType(){ return "map_msgs/ProjectedMap"; };
-    const char * getMD5(){ return "7bbe8f96e45089681dc1ea7d023cbfca"; };
+    virtual const char * getType(){ return "map_msgs/ProjectedMap"; };
+    virtual const char * getMD5(){ return "7bbe8f96e45089681dc1ea7d023cbfca"; };
 
   };
 

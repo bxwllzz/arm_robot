@@ -45,8 +45,8 @@ namespace shape_msgs
      return offset;
     }
 
-    const char * getType(){ return "shape_msgs/MeshTriangle"; };
-    const char * getMD5(){ return "23688b2e6d2de3d32fe8af104a903253"; };
+    virtual const char * getType(){ return "shape_msgs/MeshTriangle"; };
+    virtual const char * getMD5(){ return "23688b2e6d2de3d32fe8af104a903253"; };
 
   };
 

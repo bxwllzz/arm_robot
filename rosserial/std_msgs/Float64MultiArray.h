@@ -60,8 +60,8 @@ namespace std_msgs
      return offset;
     }
 
-    const char * getType(){ return "std_msgs/Float64MultiArray"; };
-    const char * getMD5(){ return "4b7d974086d4060e7db4613a7e6c3ba4"; };
+    virtual const char * getType(){ return "std_msgs/Float64MultiArray"; };
+    virtual const char * getMD5(){ return "4b7d974086d4060e7db4613a7e6c3ba4"; };
 
   };
 

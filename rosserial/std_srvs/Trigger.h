@@ -30,8 +30,8 @@ static const char TRIGGER[] = "std_srvs/Trigger";
      return offset;
     }
 
-    const char * getType(){ return TRIGGER; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return TRIGGER; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -90,8 +90,8 @@ static const char TRIGGER[] = "std_srvs/Trigger";
      return offset;
     }
 
-    const char * getType(){ return TRIGGER; };
-    const char * getMD5(){ return "937c9679a518e3a18d831e57125ea522"; };
+    virtual const char * getType(){ return TRIGGER; };
+    virtual const char * getMD5(){ return "937c9679a518e3a18d831e57125ea522"; };
 
   };
 

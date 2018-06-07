@@ -114,8 +114,8 @@ namespace control_msgs
      return offset;
     }
 
-    const char * getType(){ return "control_msgs/PidState"; };
-    const char * getMD5(){ return "b138ec00e886c10e73f27e8712252ea6"; };
+    virtual const char * getType(){ return "control_msgs/PidState"; };
+    virtual const char * getMD5(){ return "b138ec00e886c10e73f27e8712252ea6"; };
 
   };
 

@@ -31,8 +31,8 @@ static const char LISTCONTROLLERS[] = "controller_manager_msgs/ListControllers";
      return offset;
     }
 
-    const char * getType(){ return LISTCONTROLLERS; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return LISTCONTROLLERS; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -81,8 +81,8 @@ static const char LISTCONTROLLERS[] = "controller_manager_msgs/ListControllers";
      return offset;
     }
 
-    const char * getType(){ return LISTCONTROLLERS; };
-    const char * getMD5(){ return "1341feb2e63fa791f855565d0da950d8"; };
+    virtual const char * getType(){ return LISTCONTROLLERS; };
+    virtual const char * getMD5(){ return "1341feb2e63fa791f855565d0da950d8"; };
 
   };
 

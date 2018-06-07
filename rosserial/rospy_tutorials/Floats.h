@@ -73,8 +73,8 @@ namespace rospy_tutorials
      return offset;
     }
 
-    const char * getType(){ return "rospy_tutorials/Floats"; };
-    const char * getMD5(){ return "420cd38b6b071cd49f2970c3e2cee511"; };
+    virtual const char * getType(){ return "rospy_tutorials/Floats"; };
+    virtual const char * getMD5(){ return "420cd38b6b071cd49f2970c3e2cee511"; };
 
   };
 

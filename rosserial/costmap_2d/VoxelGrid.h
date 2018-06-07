@@ -119,8 +119,8 @@ namespace costmap_2d
      return offset;
     }
 
-    const char * getType(){ return "costmap_2d/VoxelGrid"; };
-    const char * getMD5(){ return "48a040827e1322073d78ece5a497029c"; };
+    virtual const char * getType(){ return "costmap_2d/VoxelGrid"; };
+    virtual const char * getMD5(){ return "48a040827e1322073d78ece5a497029c"; };
 
   };
 

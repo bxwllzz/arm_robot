@@ -119,8 +119,8 @@ static const char SPAWN[] = "turtlesim/Spawn";
      return offset;
     }
 
-    const char * getType(){ return SPAWN; };
-    const char * getMD5(){ return "57f001c49ab7b11d699f8606c1f4f7ff"; };
+    virtual const char * getType(){ return SPAWN; };
+    virtual const char * getMD5(){ return "57f001c49ab7b11d699f8606c1f4f7ff"; };
 
   };
 
@@ -161,8 +161,8 @@ static const char SPAWN[] = "turtlesim/Spawn";
      return offset;
     }
 
-    const char * getType(){ return SPAWN; };
-    const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
+    virtual const char * getType(){ return SPAWN; };
+    virtual const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
 
   };
 

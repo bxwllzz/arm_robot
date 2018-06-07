@@ -61,8 +61,8 @@ namespace control_msgs
      return offset;
     }
 
-    const char * getType(){ return "control_msgs/JointTolerance"; };
-    const char * getMD5(){ return "f544fe9c16cf04547e135dd6063ff5be"; };
+    virtual const char * getType(){ return "control_msgs/JointTolerance"; };
+    virtual const char * getMD5(){ return "f544fe9c16cf04547e135dd6063ff5be"; };
 
   };
 

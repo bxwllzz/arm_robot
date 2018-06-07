@@ -47,8 +47,8 @@ namespace actionlib
      return offset;
     }
 
-    const char * getType(){ return "actionlib/TestAction"; };
-    const char * getMD5(){ return "991e87a72802262dfbe5d1b3cf6efc9a"; };
+    virtual const char * getType(){ return "actionlib/TestAction"; };
+    virtual const char * getMD5(){ return "991e87a72802262dfbe5d1b3cf6efc9a"; };
 
   };
 

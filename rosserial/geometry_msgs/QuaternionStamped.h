@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/QuaternionStamped"; };
-    const char * getMD5(){ return "e57f1e547e0e1fd13504588ffc8334e2"; };
+    virtual const char * getType(){ return "geometry_msgs/QuaternionStamped"; };
+    virtual const char * getMD5(){ return "e57f1e547e0e1fd13504588ffc8334e2"; };
 
   };
 

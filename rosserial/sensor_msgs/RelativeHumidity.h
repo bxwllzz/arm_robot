@@ -45,8 +45,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/RelativeHumidity"; };
-    const char * getMD5(){ return "8730015b05955b7e992ce29a2678d90f"; };
+    virtual const char * getType(){ return "sensor_msgs/RelativeHumidity"; };
+    virtual const char * getMD5(){ return "8730015b05955b7e992ce29a2678d90f"; };
 
   };
 

@@ -67,8 +67,8 @@ namespace pcl_msgs
      return offset;
     }
 
-    const char * getType(){ return "pcl_msgs/PolygonMesh"; };
-    const char * getMD5(){ return "45a5fc6ad2cde8489600a790acc9a38a"; };
+    virtual const char * getType(){ return "pcl_msgs/PolygonMesh"; };
+    virtual const char * getMD5(){ return "45a5fc6ad2cde8489600a790acc9a38a"; };
 
   };
 

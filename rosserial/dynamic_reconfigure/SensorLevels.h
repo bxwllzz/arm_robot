@@ -32,8 +32,8 @@ namespace dynamic_reconfigure
      return offset;
     }
 
-    const char * getType(){ return "dynamic_reconfigure/SensorLevels"; };
-    const char * getMD5(){ return "6322637bee96d5489db6e2127c47602c"; };
+    virtual const char * getType(){ return "dynamic_reconfigure/SensorLevels"; };
+    virtual const char * getMD5(){ return "6322637bee96d5489db6e2127c47602c"; };
 
   };
 

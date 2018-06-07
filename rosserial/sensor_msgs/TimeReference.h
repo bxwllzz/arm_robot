@@ -76,8 +76,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/TimeReference"; };
-    const char * getMD5(){ return "fded64a0265108ba86c3d38fb11c0c16"; };
+    virtual const char * getType(){ return "sensor_msgs/TimeReference"; };
+    virtual const char * getMD5(){ return "fded64a0265108ba86c3d38fb11c0c16"; };
 
   };
 

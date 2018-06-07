@@ -237,8 +237,8 @@ namespace smach_msgs
      return offset;
     }
 
-    const char * getType(){ return "smach_msgs/SmachContainerStructure"; };
-    const char * getMD5(){ return "3d3d1e0d0f99779ee9e58101a5dcf7ea"; };
+    virtual const char * getType(){ return "smach_msgs/SmachContainerStructure"; };
+    virtual const char * getMD5(){ return "3d3d1e0d0f99779ee9e58101a5dcf7ea"; };
 
   };
 

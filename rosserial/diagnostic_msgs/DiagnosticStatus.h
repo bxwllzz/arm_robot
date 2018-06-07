@@ -128,8 +128,8 @@ namespace diagnostic_msgs
      return offset;
     }
 
-    const char * getType(){ return "diagnostic_msgs/DiagnosticStatus"; };
-    const char * getMD5(){ return "d0ce08bc6e5ba34c7754f563a9cabaf1"; };
+    virtual const char * getType(){ return "diagnostic_msgs/DiagnosticStatus"; };
+    virtual const char * getMD5(){ return "d0ce08bc6e5ba34c7754f563a9cabaf1"; };
 
   };
 

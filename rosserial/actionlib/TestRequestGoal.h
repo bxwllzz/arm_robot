@@ -206,8 +206,8 @@ namespace actionlib
      return offset;
     }
 
-    const char * getType(){ return "actionlib/TestRequestGoal"; };
-    const char * getMD5(){ return "db5d00ba98302d6c6dd3737e9a03ceea"; };
+    virtual const char * getType(){ return "actionlib/TestRequestGoal"; };
+    virtual const char * getMD5(){ return "db5d00ba98302d6c6dd3737e9a03ceea"; };
 
   };
 

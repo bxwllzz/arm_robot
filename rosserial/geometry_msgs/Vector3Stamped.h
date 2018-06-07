@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Vector3Stamped"; };
-    const char * getMD5(){ return "7b324c7325e683bf02a9b14b01090ec7"; };
+    virtual const char * getType(){ return "geometry_msgs/Vector3Stamped"; };
+    virtual const char * getMD5(){ return "7b324c7325e683bf02a9b14b01090ec7"; };
 
   };
 

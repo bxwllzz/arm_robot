@@ -110,8 +110,8 @@ namespace dynamic_reconfigure
      return offset;
     }
 
-    const char * getType(){ return "dynamic_reconfigure/ParamDescription"; };
-    const char * getMD5(){ return "7434fcb9348c13054e0c3b267c8cb34d"; };
+    virtual const char * getType(){ return "dynamic_reconfigure/ParamDescription"; };
+    virtual const char * getMD5(){ return "7434fcb9348c13054e0c3b267c8cb34d"; };
 
   };
 

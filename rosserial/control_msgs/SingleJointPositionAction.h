@@ -47,8 +47,8 @@ namespace control_msgs
      return offset;
     }
 
-    const char * getType(){ return "control_msgs/SingleJointPositionAction"; };
-    const char * getMD5(){ return "c4a786b7d53e5d0983decf967a5a779e"; };
+    virtual const char * getType(){ return "control_msgs/SingleJointPositionAction"; };
+    virtual const char * getMD5(){ return "c4a786b7d53e5d0983decf967a5a779e"; };
 
   };
 

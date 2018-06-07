@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/WrenchStamped"; };
-    const char * getMD5(){ return "d78d3cb249ce23087ade7e7d0c40cfa7"; };
+    virtual const char * getType(){ return "geometry_msgs/WrenchStamped"; };
+    virtual const char * getMD5(){ return "d78d3cb249ce23087ade7e7d0c40cfa7"; };
 
   };
 

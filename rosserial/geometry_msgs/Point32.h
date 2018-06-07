@@ -101,8 +101,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Point32"; };
-    const char * getMD5(){ return "cc153912f1453b708d221682bc23d9ac"; };
+    virtual const char * getType(){ return "geometry_msgs/Point32"; };
+    virtual const char * getMD5(){ return "cc153912f1453b708d221682bc23d9ac"; };
 
   };
 

@@ -47,8 +47,8 @@ static const char LOADCONTROLLER[] = "controller_manager_msgs/LoadController";
      return offset;
     }
 
-    const char * getType(){ return LOADCONTROLLER; };
-    const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
+    virtual const char * getType(){ return LOADCONTROLLER; };
+    virtual const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
 
   };
 
@@ -90,8 +90,8 @@ static const char LOADCONTROLLER[] = "controller_manager_msgs/LoadController";
      return offset;
     }
 
-    const char * getType(){ return LOADCONTROLLER; };
-    const char * getMD5(){ return "6f6da3883749771fac40d6deb24a8c02"; };
+    virtual const char * getType(){ return LOADCONTROLLER; };
+    virtual const char * getMD5(){ return "6f6da3883749771fac40d6deb24a8c02"; };
 
   };
 

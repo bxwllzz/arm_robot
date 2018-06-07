@@ -30,8 +30,8 @@ static const char QUERYCALIBRATIONSTATE[] = "control_msgs/QueryCalibrationState"
      return offset;
     }
 
-    const char * getType(){ return QUERYCALIBRATIONSTATE; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return QUERYCALIBRATIONSTATE; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -73,8 +73,8 @@ static const char QUERYCALIBRATIONSTATE[] = "control_msgs/QueryCalibrationState"
      return offset;
     }
 
-    const char * getType(){ return QUERYCALIBRATIONSTATE; };
-    const char * getMD5(){ return "28af3beedcb84986b8e470dc5470507d"; };
+    virtual const char * getType(){ return QUERYCALIBRATIONSTATE; };
+    virtual const char * getMD5(){ return "28af3beedcb84986b8e470dc5470507d"; };
 
   };
 

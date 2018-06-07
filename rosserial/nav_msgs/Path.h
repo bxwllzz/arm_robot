@@ -61,8 +61,8 @@ namespace nav_msgs
      return offset;
     }
 
-    const char * getType(){ return "nav_msgs/Path"; };
-    const char * getMD5(){ return "6227e2b7e9cce15051f669a5e197bbf7"; };
+    virtual const char * getType(){ return "nav_msgs/Path"; };
+    virtual const char * getMD5(){ return "6227e2b7e9cce15051f669a5e197bbf7"; };
 
   };
 

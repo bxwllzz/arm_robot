@@ -64,8 +64,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/NavSatStatus"; };
-    const char * getMD5(){ return "331cdbddfa4bc96ffc3b9ad98900a54c"; };
+    virtual const char * getType(){ return "sensor_msgs/NavSatStatus"; };
+    virtual const char * getMD5(){ return "331cdbddfa4bc96ffc3b9ad98900a54c"; };
 
   };
 

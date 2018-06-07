@@ -94,8 +94,8 @@ static const char TWOINTS[] = "roscpp_tutorials/TwoInts";
      return offset;
     }
 
-    const char * getType(){ return TWOINTS; };
-    const char * getMD5(){ return "36d09b846be0b371c5f190354dd3153e"; };
+    virtual const char * getType(){ return TWOINTS; };
+    virtual const char * getMD5(){ return "36d09b846be0b371c5f190354dd3153e"; };
 
   };
 
@@ -151,8 +151,8 @@ static const char TWOINTS[] = "roscpp_tutorials/TwoInts";
      return offset;
     }
 
-    const char * getType(){ return TWOINTS; };
-    const char * getMD5(){ return "b88405221c77b1878a3cbbfff53428d7"; };
+    virtual const char * getType(){ return TWOINTS; };
+    virtual const char * getMD5(){ return "b88405221c77b1878a3cbbfff53428d7"; };
 
   };
 

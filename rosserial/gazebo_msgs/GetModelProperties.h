@@ -47,8 +47,8 @@ static const char GETMODELPROPERTIES[] = "gazebo_msgs/GetModelProperties";
      return offset;
     }
 
-    const char * getType(){ return GETMODELPROPERTIES; };
-    const char * getMD5(){ return "ea31c8eab6fc401383cf528a7c0984ba"; };
+    virtual const char * getType(){ return GETMODELPROPERTIES; };
+    virtual const char * getMD5(){ return "ea31c8eab6fc401383cf528a7c0984ba"; };
 
   };
 
@@ -307,8 +307,8 @@ static const char GETMODELPROPERTIES[] = "gazebo_msgs/GetModelProperties";
      return offset;
     }
 
-    const char * getType(){ return GETMODELPROPERTIES; };
-    const char * getMD5(){ return "b7f370938ef77b464b95f1bab3ec5028"; };
+    virtual const char * getType(){ return GETMODELPROPERTIES; };
+    virtual const char * getMD5(){ return "b7f370938ef77b464b95f1bab3ec5028"; };
 
   };
 

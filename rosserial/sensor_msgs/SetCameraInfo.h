@@ -36,8 +36,8 @@ static const char SETCAMERAINFO[] = "sensor_msgs/SetCameraInfo";
      return offset;
     }
 
-    const char * getType(){ return SETCAMERAINFO; };
-    const char * getMD5(){ return "ee34be01fdeee563d0d99cd594d5581d"; };
+    virtual const char * getType(){ return SETCAMERAINFO; };
+    virtual const char * getMD5(){ return "ee34be01fdeee563d0d99cd594d5581d"; };
 
   };
 
@@ -96,8 +96,8 @@ static const char SETCAMERAINFO[] = "sensor_msgs/SetCameraInfo";
      return offset;
     }
 
-    const char * getType(){ return SETCAMERAINFO; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return SETCAMERAINFO; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

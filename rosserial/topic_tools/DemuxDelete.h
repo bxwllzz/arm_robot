@@ -47,8 +47,8 @@ static const char DEMUXDELETE[] = "topic_tools/DemuxDelete";
      return offset;
     }
 
-    const char * getType(){ return DEMUXDELETE; };
-    const char * getMD5(){ return "d8f94bae31b356b24d0427f80426d0c3"; };
+    virtual const char * getType(){ return DEMUXDELETE; };
+    virtual const char * getMD5(){ return "d8f94bae31b356b24d0427f80426d0c3"; };
 
   };
 
@@ -72,8 +72,8 @@ static const char DEMUXDELETE[] = "topic_tools/DemuxDelete";
      return offset;
     }
 
-    const char * getType(){ return DEMUXDELETE; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return DEMUXDELETE; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

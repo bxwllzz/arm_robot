@@ -93,8 +93,8 @@ namespace visualization_msgs
      return offset;
     }
 
-    const char * getType(){ return "visualization_msgs/InteractiveMarkerInit"; };
-    const char * getMD5(){ return "d5f2c5045a72456d228676ab91048734"; };
+    virtual const char * getType(){ return "visualization_msgs/InteractiveMarkerInit"; };
+    virtual const char * getMD5(){ return "d5f2c5045a72456d228676ab91048734"; };
 
   };
 

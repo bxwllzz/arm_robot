@@ -338,8 +338,8 @@ namespace rosgraph_msgs
      return offset;
     }
 
-    const char * getType(){ return "rosgraph_msgs/TopicStatistics"; };
-    const char * getMD5(){ return "10152ed868c5097a5e2e4a89d7daa710"; };
+    virtual const char * getType(){ return "rosgraph_msgs/TopicStatistics"; };
+    virtual const char * getMD5(){ return "10152ed868c5097a5e2e4a89d7daa710"; };
 
   };
 

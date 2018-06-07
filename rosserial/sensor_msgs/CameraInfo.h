@@ -159,8 +159,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/CameraInfo"; };
-    const char * getMD5(){ return "c9a58c1b0b154e0e6da7578cb991d214"; };
+    virtual const char * getType(){ return "sensor_msgs/CameraInfo"; };
+    virtual const char * getMD5(){ return "c9a58c1b0b154e0e6da7578cb991d214"; };
 
   };
 

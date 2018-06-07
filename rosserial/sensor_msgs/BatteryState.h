@@ -317,8 +317,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/BatteryState"; };
-    const char * getMD5(){ return "476f837fa6771f6e16e3bf4ef96f8770"; };
+    virtual const char * getType(){ return "sensor_msgs/BatteryState"; };
+    virtual const char * getMD5(){ return "476f837fa6771f6e16e3bf4ef96f8770"; };
 
   };
 

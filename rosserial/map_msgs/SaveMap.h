@@ -36,8 +36,8 @@ static const char SAVEMAP[] = "map_msgs/SaveMap";
      return offset;
     }
 
-    const char * getType(){ return SAVEMAP; };
-    const char * getMD5(){ return "716e25f9d9dc76ceba197f93cbf05dc7"; };
+    virtual const char * getType(){ return SAVEMAP; };
+    virtual const char * getMD5(){ return "716e25f9d9dc76ceba197f93cbf05dc7"; };
 
   };
 
@@ -61,8 +61,8 @@ static const char SAVEMAP[] = "map_msgs/SaveMap";
      return offset;
     }
 
-    const char * getType(){ return SAVEMAP; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return SAVEMAP; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

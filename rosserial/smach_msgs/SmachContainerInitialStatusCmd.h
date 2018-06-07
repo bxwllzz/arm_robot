@@ -100,8 +100,8 @@ namespace smach_msgs
      return offset;
     }
 
-    const char * getType(){ return "smach_msgs/SmachContainerInitialStatusCmd"; };
-    const char * getMD5(){ return "45f8cf31fc29b829db77f23001f788d6"; };
+    virtual const char * getType(){ return "smach_msgs/SmachContainerInitialStatusCmd"; };
+    virtual const char * getMD5(){ return "45f8cf31fc29b829db77f23001f788d6"; };
 
   };
 

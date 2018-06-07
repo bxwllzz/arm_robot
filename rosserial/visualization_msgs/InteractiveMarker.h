@@ -151,8 +151,8 @@ namespace visualization_msgs
      return offset;
     }
 
-    const char * getType(){ return "visualization_msgs/InteractiveMarker"; };
-    const char * getMD5(){ return "dd86d22909d5a3364b384492e35c10af"; };
+    virtual const char * getType(){ return "visualization_msgs/InteractiveMarker"; };
+    virtual const char * getMD5(){ return "dd86d22909d5a3364b384492e35c10af"; };
 
   };
 

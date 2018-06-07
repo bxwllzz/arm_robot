@@ -73,8 +73,8 @@ namespace actionlib_tutorials
      return offset;
     }
 
-    const char * getType(){ return "actionlib_tutorials/FibonacciResult"; };
-    const char * getMD5(){ return "b81e37d2a31925a0e8ae261a8699cb79"; };
+    virtual const char * getType(){ return "actionlib_tutorials/FibonacciResult"; };
+    virtual const char * getMD5(){ return "b81e37d2a31925a0e8ae261a8699cb79"; };
 
   };
 

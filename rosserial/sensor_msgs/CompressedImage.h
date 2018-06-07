@@ -79,8 +79,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/CompressedImage"; };
-    const char * getMD5(){ return "8f7a12909da2c9d3332d540a0977563f"; };
+    virtual const char * getType(){ return "sensor_msgs/CompressedImage"; };
+    virtual const char * getMD5(){ return "8f7a12909da2c9d3332d540a0977563f"; };
 
   };
 

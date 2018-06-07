@@ -65,8 +65,8 @@ static const char SETPEN[] = "turtlesim/SetPen";
      return offset;
     }
 
-    const char * getType(){ return SETPEN; };
-    const char * getMD5(){ return "9f452acce566bf0c0954594f69a8e41b"; };
+    virtual const char * getType(){ return SETPEN; };
+    virtual const char * getMD5(){ return "9f452acce566bf0c0954594f69a8e41b"; };
 
   };
 
@@ -90,8 +90,8 @@ static const char SETPEN[] = "turtlesim/SetPen";
      return offset;
     }
 
-    const char * getType(){ return SETPEN; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return SETPEN; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

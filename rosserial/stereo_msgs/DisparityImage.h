@@ -167,8 +167,8 @@ namespace stereo_msgs
      return offset;
     }
 
-    const char * getType(){ return "stereo_msgs/DisparityImage"; };
-    const char * getMD5(){ return "04a177815f75271039fa21f16acad8c9"; };
+    virtual const char * getType(){ return "stereo_msgs/DisparityImage"; };
+    virtual const char * getMD5(){ return "04a177815f75271039fa21f16acad8c9"; };
 
   };
 

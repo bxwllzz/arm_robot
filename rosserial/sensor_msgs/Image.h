@@ -125,8 +125,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/Image"; };
-    const char * getMD5(){ return "060021388200f6f0f447d0fcd9c64743"; };
+    virtual const char * getType(){ return "sensor_msgs/Image"; };
+    virtual const char * getMD5(){ return "060021388200f6f0f447d0fcd9c64743"; };
 
   };
 

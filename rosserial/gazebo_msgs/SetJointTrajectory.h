@@ -95,8 +95,8 @@ static const char SETJOINTTRAJECTORY[] = "gazebo_msgs/SetJointTrajectory";
      return offset;
     }
 
-    const char * getType(){ return SETJOINTTRAJECTORY; };
-    const char * getMD5(){ return "649dd2eba5ffd358069238825f9f85ab"; };
+    virtual const char * getType(){ return SETJOINTTRAJECTORY; };
+    virtual const char * getMD5(){ return "649dd2eba5ffd358069238825f9f85ab"; };
 
   };
 
@@ -155,8 +155,8 @@ static const char SETJOINTTRAJECTORY[] = "gazebo_msgs/SetJointTrajectory";
      return offset;
     }
 
-    const char * getType(){ return SETJOINTTRAJECTORY; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return SETJOINTTRAJECTORY; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

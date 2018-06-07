@@ -61,8 +61,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/PoseArray"; };
-    const char * getMD5(){ return "916c28c5764443f268b296bb671b9d97"; };
+    virtual const char * getType(){ return "geometry_msgs/PoseArray"; };
+    virtual const char * getMD5(){ return "916c28c5764443f268b296bb671b9d97"; };
 
   };
 

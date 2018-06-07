@@ -31,8 +31,8 @@ static const char GETLOGGERS[] = "roscpp/GetLoggers";
      return offset;
     }
 
-    const char * getType(){ return GETLOGGERS; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return GETLOGGERS; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -81,8 +81,8 @@ static const char GETLOGGERS[] = "roscpp/GetLoggers";
      return offset;
     }
 
-    const char * getType(){ return GETLOGGERS; };
-    const char * getMD5(){ return "32e97e85527d4678a8f9279894bb64b0"; };
+    virtual const char * getType(){ return GETLOGGERS; };
+    virtual const char * getMD5(){ return "32e97e85527d4678a8f9279894bb64b0"; };
 
   };
 

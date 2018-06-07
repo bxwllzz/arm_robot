@@ -149,8 +149,8 @@ namespace turtlesim
      return offset;
     }
 
-    const char * getType(){ return "turtlesim/Pose"; };
-    const char * getMD5(){ return "863b248d5016ca62ea2e895ae5265cf9"; };
+    virtual const char * getType(){ return "turtlesim/Pose"; };
+    virtual const char * getMD5(){ return "863b248d5016ca62ea2e895ae5265cf9"; };
 
   };
 

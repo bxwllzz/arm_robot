@@ -93,8 +93,8 @@ namespace base_local_planner
      return offset;
     }
 
-    const char * getType(){ return "base_local_planner/Position2DInt"; };
-    const char * getMD5(){ return "3b834ede922a0fff22c43585c533b49f"; };
+    virtual const char * getType(){ return "base_local_planner/Position2DInt"; };
+    virtual const char * getMD5(){ return "3b834ede922a0fff22c43585c533b49f"; };
 
   };
 

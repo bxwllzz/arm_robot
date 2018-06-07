@@ -47,8 +47,8 @@ static const char REQUESTMESSAGEINFO[] = "rosserial_msgs/RequestMessageInfo";
      return offset;
     }
 
-    const char * getType(){ return REQUESTMESSAGEINFO; };
-    const char * getMD5(){ return "dc67331de85cf97091b7d45e5c64ab75"; };
+    virtual const char * getType(){ return REQUESTMESSAGEINFO; };
+    virtual const char * getMD5(){ return "dc67331de85cf97091b7d45e5c64ab75"; };
 
   };
 
@@ -106,8 +106,8 @@ static const char REQUESTMESSAGEINFO[] = "rosserial_msgs/RequestMessageInfo";
      return offset;
     }
 
-    const char * getType(){ return REQUESTMESSAGEINFO; };
-    const char * getMD5(){ return "fe452186a069bed40f09b8628fe5eac8"; };
+    virtual const char * getType(){ return REQUESTMESSAGEINFO; };
+    virtual const char * getMD5(){ return "fe452186a069bed40f09b8628fe5eac8"; };
 
   };
 

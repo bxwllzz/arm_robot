@@ -64,8 +64,8 @@ namespace nav_msgs
      return offset;
     }
 
-    const char * getType(){ return "nav_msgs/Odometry"; };
-    const char * getMD5(){ return "cd5e73d190d741a2f92e81eda573aca7"; };
+    virtual const char * getType(){ return "nav_msgs/Odometry"; };
+    virtual const char * getMD5(){ return "cd5e73d190d741a2f92e81eda573aca7"; };
 
   };
 

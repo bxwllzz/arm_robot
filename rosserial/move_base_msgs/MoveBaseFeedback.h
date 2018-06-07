@@ -35,8 +35,8 @@ namespace move_base_msgs
      return offset;
     }
 
-    const char * getType(){ return "move_base_msgs/MoveBaseFeedback"; };
-    const char * getMD5(){ return "3fb824c456a757373a226f6d08071bf0"; };
+    virtual const char * getType(){ return "move_base_msgs/MoveBaseFeedback"; };
+    virtual const char * getMD5(){ return "3fb824c456a757373a226f6d08071bf0"; };
 
   };
 

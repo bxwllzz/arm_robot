@@ -47,8 +47,8 @@ namespace tf2_msgs
      return offset;
     }
 
-    const char * getType(){ return "tf2_msgs/LookupTransformAction"; };
-    const char * getMD5(){ return "7ee01ba91a56c2245c610992dbaa3c37"; };
+    virtual const char * getType(){ return "tf2_msgs/LookupTransformAction"; };
+    virtual const char * getMD5(){ return "7ee01ba91a56c2245c610992dbaa3c37"; };
 
   };
 

@@ -100,8 +100,8 @@ static const char APPLYJOINTEFFORT[] = "gazebo_msgs/ApplyJointEffort";
      return offset;
     }
 
-    const char * getType(){ return APPLYJOINTEFFORT; };
-    const char * getMD5(){ return "2c3396ab9af67a509ecd2167a8fe41a2"; };
+    virtual const char * getType(){ return APPLYJOINTEFFORT; };
+    virtual const char * getMD5(){ return "2c3396ab9af67a509ecd2167a8fe41a2"; };
 
   };
 
@@ -160,8 +160,8 @@ static const char APPLYJOINTEFFORT[] = "gazebo_msgs/ApplyJointEffort";
      return offset;
     }
 
-    const char * getType(){ return APPLYJOINTEFFORT; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return APPLYJOINTEFFORT; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

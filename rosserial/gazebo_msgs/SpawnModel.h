@@ -104,8 +104,8 @@ static const char SPAWNMODEL[] = "gazebo_msgs/SpawnModel";
      return offset;
     }
 
-    const char * getType(){ return SPAWNMODEL; };
-    const char * getMD5(){ return "6d0eba5753761cd57e6263a056b79930"; };
+    virtual const char * getType(){ return SPAWNMODEL; };
+    virtual const char * getMD5(){ return "6d0eba5753761cd57e6263a056b79930"; };
 
   };
 
@@ -164,8 +164,8 @@ static const char SPAWNMODEL[] = "gazebo_msgs/SpawnModel";
      return offset;
     }
 
-    const char * getType(){ return SPAWNMODEL; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return SPAWNMODEL; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

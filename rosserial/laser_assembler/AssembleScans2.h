@@ -78,8 +78,8 @@ static const char ASSEMBLESCANS2[] = "laser_assembler/AssembleScans2";
      return offset;
     }
 
-    const char * getType(){ return ASSEMBLESCANS2; };
-    const char * getMD5(){ return "b341004f74e15bf5e1b2053a9183bdc7"; };
+    virtual const char * getType(){ return ASSEMBLESCANS2; };
+    virtual const char * getMD5(){ return "b341004f74e15bf5e1b2053a9183bdc7"; };
 
   };
 
@@ -108,8 +108,8 @@ static const char ASSEMBLESCANS2[] = "laser_assembler/AssembleScans2";
      return offset;
     }
 
-    const char * getType(){ return ASSEMBLESCANS2; };
-    const char * getMD5(){ return "96cec5374164b3b3d1d7ef5d7628a7ed"; };
+    virtual const char * getType(){ return ASSEMBLESCANS2; };
+    virtual const char * getMD5(){ return "96cec5374164b3b3d1d7ef5d7628a7ed"; };
 
   };
 

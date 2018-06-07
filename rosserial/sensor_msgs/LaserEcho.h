@@ -73,8 +73,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/LaserEcho"; };
-    const char * getMD5(){ return "8bc5ae449b200fba4d552b4225586696"; };
+    virtual const char * getType(){ return "sensor_msgs/LaserEcho"; };
+    virtual const char * getMD5(){ return "8bc5ae449b200fba4d552b4225586696"; };
 
   };
 

@@ -44,8 +44,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Pose2D"; };
-    const char * getMD5(){ return "938fa65709584ad8e77d238529be13b8"; };
+    virtual const char * getType(){ return "geometry_msgs/Pose2D"; };
+    virtual const char * getMD5(){ return "938fa65709584ad8e77d238529be13b8"; };
 
   };
 

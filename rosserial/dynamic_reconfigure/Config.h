@@ -159,8 +159,8 @@ namespace dynamic_reconfigure
      return offset;
     }
 
-    const char * getType(){ return "dynamic_reconfigure/Config"; };
-    const char * getMD5(){ return "958f16a05573709014982821e6822580"; };
+    virtual const char * getType(){ return "dynamic_reconfigure/Config"; };
+    virtual const char * getMD5(){ return "958f16a05573709014982821e6822580"; };
 
   };
 

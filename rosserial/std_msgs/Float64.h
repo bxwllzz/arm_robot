@@ -34,8 +34,8 @@ namespace std_msgs
      return offset;
     }
 
-    const char * getType(){ return "std_msgs/Float64"; };
-    const char * getMD5(){ return "fdb28210bfa9d7c91146260178d9a584"; };
+    virtual const char * getType(){ return "std_msgs/Float64"; };
+    virtual const char * getMD5(){ return "fdb28210bfa9d7c91146260178d9a584"; };
 
   };
 

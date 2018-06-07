@@ -55,8 +55,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Polygon"; };
-    const char * getMD5(){ return "cd60a26494a087f577976f0329fa120e"; };
+    virtual const char * getType(){ return "geometry_msgs/Polygon"; };
+    virtual const char * getMD5(){ return "cd60a26494a087f577976f0329fa120e"; };
 
   };
 

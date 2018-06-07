@@ -153,8 +153,8 @@ namespace trajectory_msgs
      return offset;
     }
 
-    const char * getType(){ return "trajectory_msgs/JointTrajectoryPoint"; };
-    const char * getMD5(){ return "f3cd1e1c4d320c79d6985c904ae5dcd3"; };
+    virtual const char * getType(){ return "trajectory_msgs/JointTrajectoryPoint"; };
+    virtual const char * getMD5(){ return "f3cd1e1c4d320c79d6985c904ae5dcd3"; };
 
   };
 

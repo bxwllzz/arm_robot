@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/AccelStamped"; };
-    const char * getMD5(){ return "d8a98a5d81351b6eb0578c78557e7659"; };
+    virtual const char * getType(){ return "geometry_msgs/AccelStamped"; };
+    virtual const char * getMD5(){ return "d8a98a5d81351b6eb0578c78557e7659"; };
 
   };
 

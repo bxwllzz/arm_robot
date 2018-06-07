@@ -150,8 +150,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/MultiDOFJointState"; };
-    const char * getMD5(){ return "690f272f0640d2631c305eeb8301e59d"; };
+    virtual const char * getType(){ return "sensor_msgs/MultiDOFJointState"; };
+    virtual const char * getMD5(){ return "690f272f0640d2631c305eeb8301e59d"; };
 
   };
 

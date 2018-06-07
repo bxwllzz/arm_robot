@@ -47,8 +47,8 @@ static const char MUXSELECT[] = "topic_tools/MuxSelect";
      return offset;
     }
 
-    const char * getType(){ return MUXSELECT; };
-    const char * getMD5(){ return "d8f94bae31b356b24d0427f80426d0c3"; };
+    virtual const char * getType(){ return MUXSELECT; };
+    virtual const char * getMD5(){ return "d8f94bae31b356b24d0427f80426d0c3"; };
 
   };
 
@@ -89,8 +89,8 @@ static const char MUXSELECT[] = "topic_tools/MuxSelect";
      return offset;
     }
 
-    const char * getType(){ return MUXSELECT; };
-    const char * getMD5(){ return "3db0a473debdbafea387c9e49358c320"; };
+    virtual const char * getType(){ return MUXSELECT; };
+    virtual const char * getMD5(){ return "3db0a473debdbafea387c9e49358c320"; };
 
   };
 

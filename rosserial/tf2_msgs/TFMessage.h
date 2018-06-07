@@ -55,8 +55,8 @@ namespace tf2_msgs
      return offset;
     }
 
-    const char * getType(){ return "tf2_msgs/TFMessage"; };
-    const char * getMD5(){ return "94810edda583a504dfda3829e70d7eec"; };
+    virtual const char * getType(){ return "tf2_msgs/TFMessage"; };
+    virtual const char * getMD5(){ return "94810edda583a504dfda3829e70d7eec"; };
 
   };
 

@@ -41,8 +41,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/PolygonStamped"; };
-    const char * getMD5(){ return "c6be8f7dc3bee7fe9e8d296070f53340"; };
+    virtual const char * getType(){ return "geometry_msgs/PolygonStamped"; };
+    virtual const char * getMD5(){ return "c6be8f7dc3bee7fe9e8d296070f53340"; };
 
   };
 

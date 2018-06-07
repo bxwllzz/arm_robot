@@ -124,8 +124,8 @@ static const char APPLYBODYWRENCH[] = "gazebo_msgs/ApplyBodyWrench";
      return offset;
     }
 
-    const char * getType(){ return APPLYBODYWRENCH; };
-    const char * getMD5(){ return "e37e6adf97eba5095baa77dffb71e5bd"; };
+    virtual const char * getType(){ return APPLYBODYWRENCH; };
+    virtual const char * getMD5(){ return "e37e6adf97eba5095baa77dffb71e5bd"; };
 
   };
 
@@ -184,8 +184,8 @@ static const char APPLYBODYWRENCH[] = "gazebo_msgs/ApplyBodyWrench";
      return offset;
     }
 
-    const char * getType(){ return APPLYBODYWRENCH; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return APPLYBODYWRENCH; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

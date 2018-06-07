@@ -53,8 +53,8 @@ namespace rosgraph_msgs
      return offset;
     }
 
-    const char * getType(){ return "rosgraph_msgs/Clock"; };
-    const char * getMD5(){ return "a9c97c1d230cfc112e270351a944ee47"; };
+    virtual const char * getType(){ return "rosgraph_msgs/Clock"; };
+    virtual const char * getMD5(){ return "a9c97c1d230cfc112e270351a944ee47"; };
 
   };
 

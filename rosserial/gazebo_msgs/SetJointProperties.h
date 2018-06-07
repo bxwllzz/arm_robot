@@ -53,8 +53,8 @@ static const char SETJOINTPROPERTIES[] = "gazebo_msgs/SetJointProperties";
      return offset;
     }
 
-    const char * getType(){ return SETJOINTPROPERTIES; };
-    const char * getMD5(){ return "331fd8f35fd27e3c1421175590258e26"; };
+    virtual const char * getType(){ return SETJOINTPROPERTIES; };
+    virtual const char * getMD5(){ return "331fd8f35fd27e3c1421175590258e26"; };
 
   };
 
@@ -113,8 +113,8 @@ static const char SETJOINTPROPERTIES[] = "gazebo_msgs/SetJointProperties";
      return offset;
     }
 
-    const char * getType(){ return SETJOINTPROPERTIES; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return SETJOINTPROPERTIES; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

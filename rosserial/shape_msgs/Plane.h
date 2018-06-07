@@ -37,8 +37,8 @@ namespace shape_msgs
      return offset;
     }
 
-    const char * getType(){ return "shape_msgs/Plane"; };
-    const char * getMD5(){ return "2c1b92ed8f31492f8e73f6a4a44ca796"; };
+    virtual const char * getType(){ return "shape_msgs/Plane"; };
+    virtual const char * getMD5(){ return "2c1b92ed8f31492f8e73f6a4a44ca796"; };
 
   };
 

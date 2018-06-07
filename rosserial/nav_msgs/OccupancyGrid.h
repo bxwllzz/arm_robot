@@ -79,8 +79,8 @@ namespace nav_msgs
      return offset;
     }
 
-    const char * getType(){ return "nav_msgs/OccupancyGrid"; };
-    const char * getMD5(){ return "3381f2d731d4076ec5c71b0759edbe4e"; };
+    virtual const char * getType(){ return "nav_msgs/OccupancyGrid"; };
+    virtual const char * getMD5(){ return "3381f2d731d4076ec5c71b0759edbe4e"; };
 
   };
 

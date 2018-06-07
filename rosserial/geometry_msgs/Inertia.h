@@ -70,8 +70,8 @@ namespace geometry_msgs
      return offset;
     }
 
-    const char * getType(){ return "geometry_msgs/Inertia"; };
-    const char * getMD5(){ return "1d26e4bb6c83ff141c5cf0d883c2b0fe"; };
+    virtual const char * getType(){ return "geometry_msgs/Inertia"; };
+    virtual const char * getMD5(){ return "1d26e4bb6c83ff141c5cf0d883c2b0fe"; };
 
   };
 

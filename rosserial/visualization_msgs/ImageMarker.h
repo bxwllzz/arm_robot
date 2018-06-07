@@ -253,8 +253,8 @@ namespace visualization_msgs
      return offset;
     }
 
-    const char * getType(){ return "visualization_msgs/ImageMarker"; };
-    const char * getMD5(){ return "1de93c67ec8858b831025a08fbf1b35c"; };
+    virtual const char * getType(){ return "visualization_msgs/ImageMarker"; };
+    virtual const char * getMD5(){ return "1de93c67ec8858b831025a08fbf1b35c"; };
 
   };
 

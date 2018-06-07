@@ -102,8 +102,8 @@ static const char TELEPORTABSOLUTE[] = "turtlesim/TeleportAbsolute";
      return offset;
     }
 
-    const char * getType(){ return TELEPORTABSOLUTE; };
-    const char * getMD5(){ return "a130bc60ee6513855dc62ea83fcc5b20"; };
+    virtual const char * getType(){ return TELEPORTABSOLUTE; };
+    virtual const char * getMD5(){ return "a130bc60ee6513855dc62ea83fcc5b20"; };
 
   };
 
@@ -127,8 +127,8 @@ static const char TELEPORTABSOLUTE[] = "turtlesim/TeleportAbsolute";
      return offset;
     }
 
-    const char * getType(){ return TELEPORTABSOLUTE; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return TELEPORTABSOLUTE; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

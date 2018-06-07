@@ -66,8 +66,8 @@ static const char GETPLAN[] = "nav_msgs/GetPlan";
      return offset;
     }
 
-    const char * getType(){ return GETPLAN; };
-    const char * getMD5(){ return "e25a43e0752bcca599a8c2eef8282df8"; };
+    virtual const char * getType(){ return GETPLAN; };
+    virtual const char * getMD5(){ return "e25a43e0752bcca599a8c2eef8282df8"; };
 
   };
 
@@ -96,8 +96,8 @@ static const char GETPLAN[] = "nav_msgs/GetPlan";
      return offset;
     }
 
-    const char * getType(){ return GETPLAN; };
-    const char * getMD5(){ return "0002bc113c0259d71f6cf8cbc9430e18"; };
+    virtual const char * getType(){ return GETPLAN; };
+    virtual const char * getMD5(){ return "0002bc113c0259d71f6cf8cbc9430e18"; };
 
   };
 

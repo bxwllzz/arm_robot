@@ -63,8 +63,8 @@ namespace roscpp
      return offset;
     }
 
-    const char * getType(){ return "roscpp/Logger"; };
-    const char * getMD5(){ return "a6069a2ff40db7bd32143dd66e1f408e"; };
+    virtual const char * getType(){ return "roscpp/Logger"; };
+    virtual const char * getMD5(){ return "a6069a2ff40db7bd32143dd66e1f408e"; };
 
   };
 

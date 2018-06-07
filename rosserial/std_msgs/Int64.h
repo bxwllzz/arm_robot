@@ -61,8 +61,8 @@ namespace std_msgs
      return offset;
     }
 
-    const char * getType(){ return "std_msgs/Int64"; };
-    const char * getMD5(){ return "34add168574510e6e17f5d23ecc077ef"; };
+    virtual const char * getType(){ return "std_msgs/Int64"; };
+    virtual const char * getMD5(){ return "34add168574510e6e17f5d23ecc077ef"; };
 
   };
 

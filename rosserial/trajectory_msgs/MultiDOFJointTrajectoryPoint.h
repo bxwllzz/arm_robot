@@ -130,8 +130,8 @@ namespace trajectory_msgs
      return offset;
     }
 
-    const char * getType(){ return "trajectory_msgs/MultiDOFJointTrajectoryPoint"; };
-    const char * getMD5(){ return "3ebe08d1abd5b65862d50e09430db776"; };
+    virtual const char * getType(){ return "trajectory_msgs/MultiDOFJointTrajectoryPoint"; };
+    virtual const char * getMD5(){ return "3ebe08d1abd5b65862d50e09430db776"; };
 
   };
 

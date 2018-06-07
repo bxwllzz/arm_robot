@@ -75,8 +75,8 @@ static const char SETCOSTMAP[] = "navfn/SetCostmap";
      return offset;
     }
 
-    const char * getType(){ return SETCOSTMAP; };
-    const char * getMD5(){ return "370ec969cdb71f9cde7c7cbe0d752308"; };
+    virtual const char * getType(){ return SETCOSTMAP; };
+    virtual const char * getMD5(){ return "370ec969cdb71f9cde7c7cbe0d752308"; };
 
   };
 
@@ -100,8 +100,8 @@ static const char SETCOSTMAP[] = "navfn/SetCostmap";
      return offset;
     }
 
-    const char * getType(){ return SETCOSTMAP; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return SETCOSTMAP; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

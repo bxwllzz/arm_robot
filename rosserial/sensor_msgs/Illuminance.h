@@ -45,8 +45,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/Illuminance"; };
-    const char * getMD5(){ return "8cf5febb0952fca9d650c3d11a81a188"; };
+    virtual const char * getType(){ return "sensor_msgs/Illuminance"; };
+    virtual const char * getMD5(){ return "8cf5febb0952fca9d650c3d11a81a188"; };
 
   };
 

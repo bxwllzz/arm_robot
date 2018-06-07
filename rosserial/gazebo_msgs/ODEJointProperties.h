@@ -279,8 +279,8 @@ namespace gazebo_msgs
      return offset;
     }
 
-    const char * getType(){ return "gazebo_msgs/ODEJointProperties"; };
-    const char * getMD5(){ return "1b744c32a920af979f53afe2f9c3511f"; };
+    virtual const char * getType(){ return "gazebo_msgs/ODEJointProperties"; };
+    virtual const char * getMD5(){ return "1b744c32a920af979f53afe2f9c3511f"; };
 
   };
 

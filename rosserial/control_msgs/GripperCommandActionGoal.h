@@ -47,8 +47,8 @@ namespace control_msgs
      return offset;
     }
 
-    const char * getType(){ return "control_msgs/GripperCommandActionGoal"; };
-    const char * getMD5(){ return "aa581f648a35ed681db2ec0bf7a82bea"; };
+    virtual const char * getType(){ return "control_msgs/GripperCommandActionGoal"; };
+    virtual const char * getMD5(){ return "aa581f648a35ed681db2ec0bf7a82bea"; };
 
   };
 

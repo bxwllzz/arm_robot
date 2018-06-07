@@ -112,8 +112,8 @@ namespace dynamic_reconfigure
      return offset;
     }
 
-    const char * getType(){ return "dynamic_reconfigure/GroupState"; };
-    const char * getMD5(){ return "a2d87f51dc22930325041a2f8b1571f8"; };
+    virtual const char * getType(){ return "dynamic_reconfigure/GroupState"; };
+    virtual const char * getMD5(){ return "a2d87f51dc22930325041a2f8b1571f8"; };
 
   };
 

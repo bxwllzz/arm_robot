@@ -48,8 +48,8 @@ static const char RELOADCONTROLLERLIBRARIES[] = "controller_manager_msgs/ReloadC
      return offset;
     }
 
-    const char * getType(){ return RELOADCONTROLLERLIBRARIES; };
-    const char * getMD5(){ return "18442b59be9479097f11c543bddbac62"; };
+    virtual const char * getType(){ return RELOADCONTROLLERLIBRARIES; };
+    virtual const char * getMD5(){ return "18442b59be9479097f11c543bddbac62"; };
 
   };
 
@@ -91,8 +91,8 @@ static const char RELOADCONTROLLERLIBRARIES[] = "controller_manager_msgs/ReloadC
      return offset;
     }
 
-    const char * getType(){ return RELOADCONTROLLERLIBRARIES; };
-    const char * getMD5(){ return "6f6da3883749771fac40d6deb24a8c02"; };
+    virtual const char * getType(){ return RELOADCONTROLLERLIBRARIES; };
+    virtual const char * getMD5(){ return "6f6da3883749771fac40d6deb24a8c02"; };
 
   };
 

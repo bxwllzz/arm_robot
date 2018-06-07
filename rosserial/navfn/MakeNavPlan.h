@@ -41,8 +41,8 @@ static const char MAKENAVPLAN[] = "navfn/MakeNavPlan";
      return offset;
     }
 
-    const char * getType(){ return MAKENAVPLAN; };
-    const char * getMD5(){ return "2fe3126bd5b2d56edd5005220333d4fd"; };
+    virtual const char * getType(){ return MAKENAVPLAN; };
+    virtual const char * getMD5(){ return "2fe3126bd5b2d56edd5005220333d4fd"; };
 
   };
 
@@ -115,8 +115,8 @@ static const char MAKENAVPLAN[] = "navfn/MakeNavPlan";
      return offset;
     }
 
-    const char * getType(){ return MAKENAVPLAN; };
-    const char * getMD5(){ return "8b8ed7edf1b237dc9ddda8c8ffed5d3a"; };
+    virtual const char * getType(){ return MAKENAVPLAN; };
+    virtual const char * getMD5(){ return "8b8ed7edf1b237dc9ddda8c8ffed5d3a"; };
 
   };
 

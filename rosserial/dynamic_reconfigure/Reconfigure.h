@@ -36,8 +36,8 @@ static const char RECONFIGURE[] = "dynamic_reconfigure/Reconfigure";
      return offset;
     }
 
-    const char * getType(){ return RECONFIGURE; };
-    const char * getMD5(){ return "ac41a77620a4a0348b7001641796a8a1"; };
+    virtual const char * getType(){ return RECONFIGURE; };
+    virtual const char * getMD5(){ return "ac41a77620a4a0348b7001641796a8a1"; };
 
   };
 
@@ -66,8 +66,8 @@ static const char RECONFIGURE[] = "dynamic_reconfigure/Reconfigure";
      return offset;
     }
 
-    const char * getType(){ return RECONFIGURE; };
-    const char * getMD5(){ return "ac41a77620a4a0348b7001641796a8a1"; };
+    virtual const char * getType(){ return RECONFIGURE; };
+    virtual const char * getMD5(){ return "ac41a77620a4a0348b7001641796a8a1"; };
 
   };
 

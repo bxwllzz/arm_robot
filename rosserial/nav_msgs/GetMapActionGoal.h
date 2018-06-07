@@ -47,8 +47,8 @@ namespace nav_msgs
      return offset;
     }
 
-    const char * getType(){ return "nav_msgs/GetMapActionGoal"; };
-    const char * getMD5(){ return "4b30be6cd12b9e72826df56b481f40e0"; };
+    virtual const char * getType(){ return "nav_msgs/GetMapActionGoal"; };
+    virtual const char * getMD5(){ return "4b30be6cd12b9e72826df56b481f40e0"; };
 
   };
 

@@ -31,8 +31,8 @@ static const char GETMAP[] = "nav_msgs/GetMap";
      return offset;
     }
 
-    const char * getType(){ return GETMAP; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return GETMAP; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 
@@ -61,8 +61,8 @@ static const char GETMAP[] = "nav_msgs/GetMap";
      return offset;
     }
 
-    const char * getType(){ return GETMAP; };
-    const char * getMD5(){ return "6cdd0a18e0aff5b0a3ca2326a89b54ff"; };
+    virtual const char * getType(){ return GETMAP; };
+    virtual const char * getMD5(){ return "6cdd0a18e0aff5b0a3ca2326a89b54ff"; };
 
   };
 

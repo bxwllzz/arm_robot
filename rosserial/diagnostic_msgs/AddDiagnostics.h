@@ -47,8 +47,8 @@ static const char ADDDIAGNOSTICS[] = "diagnostic_msgs/AddDiagnostics";
      return offset;
     }
 
-    const char * getType(){ return ADDDIAGNOSTICS; };
-    const char * getMD5(){ return "c26cf6e164288fbc6050d74f838bcdf0"; };
+    virtual const char * getType(){ return ADDDIAGNOSTICS; };
+    virtual const char * getMD5(){ return "c26cf6e164288fbc6050d74f838bcdf0"; };
 
   };
 
@@ -107,8 +107,8 @@ static const char ADDDIAGNOSTICS[] = "diagnostic_msgs/AddDiagnostics";
      return offset;
     }
 
-    const char * getType(){ return ADDDIAGNOSTICS; };
-    const char * getMD5(){ return "937c9679a518e3a18d831e57125ea522"; };
+    virtual const char * getType(){ return ADDDIAGNOSTICS; };
+    virtual const char * getMD5(){ return "937c9679a518e3a18d831e57125ea522"; };
 
   };
 

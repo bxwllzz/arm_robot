@@ -47,8 +47,8 @@ static const char NODELETUNLOAD[] = "nodelet/NodeletUnload";
      return offset;
     }
 
-    const char * getType(){ return NODELETUNLOAD; };
-    const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
+    virtual const char * getType(){ return NODELETUNLOAD; };
+    virtual const char * getMD5(){ return "c1f3d28f1b044c871e6eff2e9fc3c667"; };
 
   };
 
@@ -90,8 +90,8 @@ static const char NODELETUNLOAD[] = "nodelet/NodeletUnload";
      return offset;
     }
 
-    const char * getType(){ return NODELETUNLOAD; };
-    const char * getMD5(){ return "358e233cde0c8a8bcfea4ce193f8fc15"; };
+    virtual const char * getType(){ return NODELETUNLOAD; };
+    virtual const char * getMD5(){ return "358e233cde0c8a8bcfea4ce193f8fc15"; };
 
   };
 

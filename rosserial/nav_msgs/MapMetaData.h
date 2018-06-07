@@ -109,8 +109,8 @@ namespace nav_msgs
      return offset;
     }
 
-    const char * getType(){ return "nav_msgs/MapMetaData"; };
-    const char * getMD5(){ return "10cfc8a2818024d3248802c00c95f11b"; };
+    virtual const char * getType(){ return "nav_msgs/MapMetaData"; };
+    virtual const char * getMD5(){ return "10cfc8a2818024d3248802c00c95f11b"; };
 
   };
 

@@ -99,8 +99,8 @@ namespace visualization_msgs
      return offset;
     }
 
-    const char * getType(){ return "visualization_msgs/MenuEntry"; };
-    const char * getMD5(){ return "b90ec63024573de83b57aa93eb39be2d"; };
+    virtual const char * getType(){ return "visualization_msgs/MenuEntry"; };
+    virtual const char * getMD5(){ return "b90ec63024573de83b57aa93eb39be2d"; };
 
   };
 

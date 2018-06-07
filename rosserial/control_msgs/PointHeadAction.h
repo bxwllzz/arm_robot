@@ -47,8 +47,8 @@ namespace control_msgs
      return offset;
     }
 
-    const char * getType(){ return "control_msgs/PointHeadAction"; };
-    const char * getMD5(){ return "7252920f1243de1b741f14f214125371"; };
+    virtual const char * getType(){ return "control_msgs/PointHeadAction"; };
+    virtual const char * getMD5(){ return "7252920f1243de1b741f14f214125371"; };
 
   };
 

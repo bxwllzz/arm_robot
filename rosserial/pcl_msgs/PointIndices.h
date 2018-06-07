@@ -79,8 +79,8 @@ namespace pcl_msgs
      return offset;
     }
 
-    const char * getType(){ return "pcl_msgs/PointIndices"; };
-    const char * getMD5(){ return "458c7998b7eaf99908256472e273b3d4"; };
+    virtual const char * getType(){ return "pcl_msgs/PointIndices"; };
+    virtual const char * getMD5(){ return "458c7998b7eaf99908256472e273b3d4"; };
 
   };
 

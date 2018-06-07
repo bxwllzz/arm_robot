@@ -47,8 +47,8 @@ namespace control_msgs
      return offset;
     }
 
-    const char * getType(){ return "control_msgs/FollowJointTrajectoryActionFeedback"; };
-    const char * getMD5(){ return "d8920dc4eae9fc107e00999cce4be641"; };
+    virtual const char * getType(){ return "control_msgs/FollowJointTrajectoryActionFeedback"; };
+    virtual const char * getMD5(){ return "d8920dc4eae9fc107e00999cce4be641"; };
 
   };
 

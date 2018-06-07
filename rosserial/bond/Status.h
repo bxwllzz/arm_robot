@@ -135,8 +135,8 @@ namespace bond
      return offset;
     }
 
-    const char * getType(){ return "bond/Status"; };
-    const char * getMD5(){ return "eacc84bf5d65b6777d4c50f463dfb9c8"; };
+    virtual const char * getType(){ return "bond/Status"; };
+    virtual const char * getMD5(){ return "eacc84bf5d65b6777d4c50f463dfb9c8"; };
 
   };
 

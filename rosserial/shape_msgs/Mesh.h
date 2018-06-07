@@ -81,8 +81,8 @@ namespace shape_msgs
      return offset;
     }
 
-    const char * getType(){ return "shape_msgs/Mesh"; };
-    const char * getMD5(){ return "1ffdae9486cd3316a121c578b47a85cc"; };
+    virtual const char * getType(){ return "shape_msgs/Mesh"; };
+    virtual const char * getMD5(){ return "1ffdae9486cd3316a121c578b47a85cc"; };
 
   };
 

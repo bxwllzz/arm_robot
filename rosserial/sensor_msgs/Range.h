@@ -140,8 +140,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/Range"; };
-    const char * getMD5(){ return "c005c34273dc426c67a020a87bc24148"; };
+    virtual const char * getType(){ return "sensor_msgs/Range"; };
+    virtual const char * getMD5(){ return "c005c34273dc426c67a020a87bc24148"; };
 
   };
 

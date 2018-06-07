@@ -47,8 +47,8 @@ static const char BODYREQUEST[] = "gazebo_msgs/BodyRequest";
      return offset;
     }
 
-    const char * getType(){ return BODYREQUEST; };
-    const char * getMD5(){ return "5eade9afe7f232d78005bd0cafeab755"; };
+    virtual const char * getType(){ return BODYREQUEST; };
+    virtual const char * getMD5(){ return "5eade9afe7f232d78005bd0cafeab755"; };
 
   };
 
@@ -72,8 +72,8 @@ static const char BODYREQUEST[] = "gazebo_msgs/BodyRequest";
      return offset;
     }
 
-    const char * getType(){ return BODYREQUEST; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return BODYREQUEST; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

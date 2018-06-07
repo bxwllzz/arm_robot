@@ -47,8 +47,8 @@ static const char DELETELIGHT[] = "gazebo_msgs/DeleteLight";
      return offset;
     }
 
-    const char * getType(){ return DELETELIGHT; };
-    const char * getMD5(){ return "4fb676dfb4741fc866365702a859441c"; };
+    virtual const char * getType(){ return DELETELIGHT; };
+    virtual const char * getMD5(){ return "4fb676dfb4741fc866365702a859441c"; };
 
   };
 
@@ -107,8 +107,8 @@ static const char DELETELIGHT[] = "gazebo_msgs/DeleteLight";
      return offset;
     }
 
-    const char * getType(){ return DELETELIGHT; };
-    const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
+    virtual const char * getType(){ return DELETELIGHT; };
+    virtual const char * getMD5(){ return "2ec6f3eff0161f4257b808b12bc830c2"; };
 
   };
 

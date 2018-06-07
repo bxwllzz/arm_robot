@@ -99,8 +99,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/RegionOfInterest"; };
-    const char * getMD5(){ return "bdb633039d588fcccb441a4d43ccfe09"; };
+    virtual const char * getType(){ return "sensor_msgs/RegionOfInterest"; };
+    virtual const char * getMD5(){ return "bdb633039d588fcccb441a4d43ccfe09"; };
 
   };
 

@@ -47,8 +47,8 @@ namespace actionlib_tutorials
      return offset;
     }
 
-    const char * getType(){ return "actionlib_tutorials/FibonacciActionResult"; };
-    const char * getMD5(){ return "bee73a9fe29ae25e966e105f5553dd03"; };
+    virtual const char * getType(){ return "actionlib_tutorials/FibonacciActionResult"; };
+    virtual const char * getMD5(){ return "bee73a9fe29ae25e966e105f5553dd03"; };
 
   };
 

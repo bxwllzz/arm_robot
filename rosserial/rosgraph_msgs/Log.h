@@ -176,8 +176,8 @@ namespace rosgraph_msgs
      return offset;
     }
 
-    const char * getType(){ return "rosgraph_msgs/Log"; };
-    const char * getMD5(){ return "acffd30cd6b6de30f120938c17c593fb"; };
+    virtual const char * getType(){ return "rosgraph_msgs/Log"; };
+    virtual const char * getMD5(){ return "acffd30cd6b6de30f120938c17c593fb"; };
 
   };
 

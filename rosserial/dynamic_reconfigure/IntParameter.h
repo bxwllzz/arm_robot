@@ -70,8 +70,8 @@ namespace dynamic_reconfigure
      return offset;
     }
 
-    const char * getType(){ return "dynamic_reconfigure/IntParameter"; };
-    const char * getMD5(){ return "65fedc7a0cbfb8db035e46194a350bf1"; };
+    virtual const char * getType(){ return "dynamic_reconfigure/IntParameter"; };
+    virtual const char * getMD5(){ return "65fedc7a0cbfb8db035e46194a350bf1"; };
 
   };
 

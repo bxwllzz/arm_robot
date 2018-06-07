@@ -109,8 +109,8 @@ namespace nav_msgs
      return offset;
     }
 
-    const char * getType(){ return "nav_msgs/GridCells"; };
-    const char * getMD5(){ return "b9e4f5df6d28e272ebde00a3994830f5"; };
+    virtual const char * getType(){ return "nav_msgs/GridCells"; };
+    virtual const char * getMD5(){ return "b9e4f5df6d28e272ebde00a3994830f5"; };
 
   };
 

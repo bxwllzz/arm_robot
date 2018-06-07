@@ -104,8 +104,8 @@ static const char GETPOLLEDIMAGE[] = "polled_camera/GetPolledImage";
      return offset;
     }
 
-    const char * getType(){ return GETPOLLEDIMAGE; };
-    const char * getMD5(){ return "c77ed43e530fd48e9e7a2a93845e154c"; };
+    virtual const char * getType(){ return GETPOLLEDIMAGE; };
+    virtual const char * getMD5(){ return "c77ed43e530fd48e9e7a2a93845e154c"; };
 
   };
 
@@ -187,8 +187,8 @@ static const char GETPOLLEDIMAGE[] = "polled_camera/GetPolledImage";
      return offset;
     }
 
-    const char * getType(){ return GETPOLLEDIMAGE; };
-    const char * getMD5(){ return "dbf1f851bc511800e6129ccd5a3542ab"; };
+    virtual const char * getType(){ return GETPOLLEDIMAGE; };
+    virtual const char * getMD5(){ return "dbf1f851bc511800e6129ccd5a3542ab"; };
 
   };
 

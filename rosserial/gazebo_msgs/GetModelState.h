@@ -67,8 +67,8 @@ static const char GETMODELSTATE[] = "gazebo_msgs/GetModelState";
      return offset;
     }
 
-    const char * getType(){ return GETMODELSTATE; };
-    const char * getMD5(){ return "19d412713cefe4a67437e17a951e759e"; };
+    virtual const char * getType(){ return GETMODELSTATE; };
+    virtual const char * getMD5(){ return "19d412713cefe4a67437e17a951e759e"; };
 
   };
 
@@ -142,8 +142,8 @@ static const char GETMODELSTATE[] = "gazebo_msgs/GetModelState";
      return offset;
     }
 
-    const char * getType(){ return GETMODELSTATE; };
-    const char * getMD5(){ return "ccd51739bb00f0141629e87b792e92b9"; };
+    virtual const char * getType(){ return GETMODELSTATE; };
+    virtual const char * getMD5(){ return "ccd51739bb00f0141629e87b792e92b9"; };
 
   };
 

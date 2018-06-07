@@ -68,8 +68,8 @@ static const char SETPIDGAINS[] = "control_toolbox/SetPidGains";
      return offset;
     }
 
-    const char * getType(){ return SETPIDGAINS; };
-    const char * getMD5(){ return "4a43159879643e60937bf2893b633607"; };
+    virtual const char * getType(){ return SETPIDGAINS; };
+    virtual const char * getMD5(){ return "4a43159879643e60937bf2893b633607"; };
 
   };
 
@@ -93,8 +93,8 @@ static const char SETPIDGAINS[] = "control_toolbox/SetPidGains";
      return offset;
     }
 
-    const char * getType(){ return SETPIDGAINS; };
-    const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
+    virtual const char * getType(){ return SETPIDGAINS; };
+    virtual const char * getMD5(){ return "d41d8cd98f00b204e9800998ecf8427e"; };
 
   };
 

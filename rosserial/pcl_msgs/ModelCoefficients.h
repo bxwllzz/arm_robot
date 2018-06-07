@@ -79,8 +79,8 @@ namespace pcl_msgs
      return offset;
     }
 
-    const char * getType(){ return "pcl_msgs/ModelCoefficients"; };
-    const char * getMD5(){ return "ca27dea75e72cb894cd36f9e5005e93e"; };
+    virtual const char * getType(){ return "pcl_msgs/ModelCoefficients"; };
+    virtual const char * getMD5(){ return "ca27dea75e72cb894cd36f9e5005e93e"; };
 
   };
 

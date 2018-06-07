@@ -116,8 +116,8 @@ namespace gazebo_msgs
      return offset;
     }
 
-    const char * getType(){ return "gazebo_msgs/ODEPhysics"; };
-    const char * getMD5(){ return "667d56ddbd547918c32d1934503dc335"; };
+    virtual const char * getType(){ return "gazebo_msgs/ODEPhysics"; };
+    virtual const char * getMD5(){ return "667d56ddbd547918c32d1934503dc335"; };
 
   };
 

@@ -254,8 +254,8 @@ namespace sensor_msgs
      return offset;
     }
 
-    const char * getType(){ return "sensor_msgs/MultiEchoLaserScan"; };
-    const char * getMD5(){ return "6fefb0c6da89d7c8abe4b339f5c2f8fb"; };
+    virtual const char * getType(){ return "sensor_msgs/MultiEchoLaserScan"; };
+    virtual const char * getMD5(){ return "6fefb0c6da89d7c8abe4b339f5c2f8fb"; };
 
   };
 

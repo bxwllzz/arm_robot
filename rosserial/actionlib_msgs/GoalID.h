@@ -70,8 +70,8 @@ namespace actionlib_msgs
      return offset;
     }
 
-    const char * getType(){ return "actionlib_msgs/GoalID"; };
-    const char * getMD5(){ return "302881f31927c1df708a2dbab0e80ee8"; };
+    virtual const char * getType(){ return "actionlib_msgs/GoalID"; };
+    virtual const char * getMD5(){ return "302881f31927c1df708a2dbab0e80ee8"; };
 
   };
 

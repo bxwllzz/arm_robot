@@ -303,8 +303,8 @@ namespace visualization_msgs
      return offset;
     }
 
-    const char * getType(){ return "visualization_msgs/Marker"; };
-    const char * getMD5(){ return "4048c9de2a16f4ae8e0538085ebf1b97"; };
+    virtual const char * getType(){ return "visualization_msgs/Marker"; };
+    virtual const char * getMD5(){ return "4048c9de2a16f4ae8e0538085ebf1b97"; };
 
   };
 

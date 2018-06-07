@@ -103,8 +103,8 @@ namespace control_msgs
      return offset;
     }
 
-    const char * getType(){ return "control_msgs/JointControllerState"; };
-    const char * getMD5(){ return "987ad85e4756f3aef7f1e5e7fe0595d1"; };
+    virtual const char * getType(){ return "control_msgs/JointControllerState"; };
+    virtual const char * getMD5(){ return "987ad85e4756f3aef7f1e5e7fe0595d1"; };
 
   };
 

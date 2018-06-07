@@ -93,8 +93,8 @@ namespace actionlib
      return offset;
     }
 
-    const char * getType(){ return "actionlib/TwoIntsGoal"; };
-    const char * getMD5(){ return "36d09b846be0b371c5f190354dd3153e"; };
+    virtual const char * getType(){ return "actionlib/TwoIntsGoal"; };
+    virtual const char * getMD5(){ return "36d09b846be0b371c5f190354dd3153e"; };
 
   };
 

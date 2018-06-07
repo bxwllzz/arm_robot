@@ -63,8 +63,8 @@ namespace diagnostic_msgs
      return offset;
     }
 
-    const char * getType(){ return "diagnostic_msgs/KeyValue"; };
-    const char * getMD5(){ return "cf57fdc6617a881a88c16e768132149c"; };
+    virtual const char * getType(){ return "diagnostic_msgs/KeyValue"; };
+    virtual const char * getMD5(){ return "cf57fdc6617a881a88c16e768132149c"; };
 
   };
 

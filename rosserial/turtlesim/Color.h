@@ -50,8 +50,8 @@ namespace turtlesim
      return offset;
     }
 
-    const char * getType(){ return "turtlesim/Color"; };
-    const char * getMD5(){ return "353891e354491c51aabe32df673fb446"; };
+    virtual const char * getType(){ return "turtlesim/Color"; };
+    virtual const char * getMD5(){ return "353891e354491c51aabe32df673fb446"; };
 
   };
 

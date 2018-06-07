@@ -118,8 +118,8 @@ namespace gazebo_msgs
      return offset;
     }
 
-    const char * getType(){ return "gazebo_msgs/ModelStates"; };
-    const char * getMD5(){ return "48c080191eb15c41858319b4d8a609c2"; };
+    virtual const char * getType(){ return "gazebo_msgs/ModelStates"; };
+    virtual const char * getMD5(){ return "48c080191eb15c41858319b4d8a609c2"; };
 
   };
 
