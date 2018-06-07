@@ -17,10 +17,10 @@
 
 #include <ros.h>
 #include <std_msgs/String.h>
-#include <sensor_msgs/Imu.h>
 #include <sensor_msgs/Temperature.h>
-#include <sensor_msgs/MagneticField.h>
 #include <sensor_msgs/JointState.h>
+#include <arm_robot_msgs/Imu.h>
+#include <arm_robot_msgs/MagneticField.h>
 
 #include "dmabuffer_uart.hpp"
 #include "high_resolution_clock.h"
@@ -43,17 +43,17 @@ ros::NodeHandle nh;
 std_msgs::String str_msg;
 ros::Publisher chatter("chatter", &str_msg);
 
-sensor_msgs::Imu imu_camera_msg;
-ros::Publisher pub_imu_camera("imu_camera", &imu_camera_msg);
-
 sensor_msgs::Temperature temp_camera_msg;
 ros::Publisher pub_temp_camera("temp_camera", &temp_camera_msg);
 
-sensor_msgs::MagneticField mag_camera_msg;
-ros::Publisher pub_mag_camera("mag_camera", &mag_camera_msg);
-
 sensor_msgs::JointState servo_state_msg;
 ros::Publisher pub_servo_state("/servo_joint_states", &servo_state_msg);
+
+arm_robot_msgs::Imu imu_camera_msg;
+ros::Publisher pub_imu_camera("imu_camera", &imu_camera_msg);
+
+arm_robot_msgs::MagneticField mag_camera_msg;
+ros::Publisher pub_mag_camera("mag_camera", &mag_camera_msg);
 
 void ros_receiver_callback(const std_msgs::String& msg) {
     str_msg.data = msg.data;
@@ -80,6 +80,8 @@ extern "C" void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
 
 static IMUMeasure imu_measure;
 static MagMeasure mag_measure;
+static uint32_t count_send_mag = 0;
+static uint32_t count_send_imu = 0;
 
 static void handle_debug() {
     static uint32_t count_main_loop = 0;
@@ -88,25 +90,27 @@ static void handle_debug() {
     if (HAL_GetTick() > soft_timer_1s) {
         soft_timer_1s += 1000;
         uint32_t count = soft_timer_1s / 1000;
+
+        str_msg.data = "STM32: Hello world!";
+        chatter.publish(&str_msg);
         
         static uint32_t last_count_imu = 0;
         static uint32_t last_count_mag = 0;
 
-        str_msg.data = "STM32: Hello world!";
-        chatter.publish(&str_msg);
-
-        terminal.nprintf<100>("count %d: main %d Hz, imu %d Hz, mag %d Hz\n",
+        terminal.nprintf<100>("count %d: main %d Hz, imu %d Hz (%d), mag %d Hz(%d)\n",
                 count, count_main_loop,
-                bmx055_camera.count_imu_measure - last_count_imu,
-                bmx055_camera.count_mag_measure - last_count_mag);
+                bmx055_camera.count_imu_measure - last_count_imu, count_send_imu, 
+                bmx055_camera.count_mag_measure - last_count_mag, count_send_mag);
 
         count_main_loop = 0;
         last_count_imu = bmx055_camera.count_imu_measure;
         last_count_mag = bmx055_camera.count_mag_measure;
+        count_send_mag = 0;
+        count_send_imu = 0;
         
-        ros::Time ros_time = nh.now();
-        time_t sec = ros_time.sec;
-        terminal.write_string(ctime(&sec));
+//        ros::Time ros_time = nh.now();
+//        time_t sec = ros_time.sec;
+//        terminal.write_string(ctime(&sec));
         
         //    terminal.nprintf<200>("imu: %" PRIu64 " nsec, accel=(%f, %f, %f), temp=%f, gyro=(%f, %f, %f)\n",
         //        imu_measure.nsec,
@@ -115,9 +119,9 @@ static void handle_debug() {
         //        imu_measure.gyro[0], imu_measure.gyro[1], imu_measure.gyro[2]
         //    );
 
-        terminal.nprintf<100>("mag: %" PRIu64 " nsec, (%f, %f, %f)\n",
-                mag_measure.nsec, mag_measure.mag[0], mag_measure.mag[1],
-                mag_measure.mag[2]);
+//        terminal.nprintf<100>("mag: %" PRIu64 " nsec, (%f, %f, %f)\n",
+//                mag_measure.nsec, mag_measure.mag[0], mag_measure.mag[1],
+//                mag_measure.mag[2]);
 
         // terminal.nprintf<50>("SysTick: %" PRIu64 " %" PRIu64 "\n", MY_GetCycleCount(), MY_GetNanoSecFromCycle(MY_GetCycleCount()));
         // terminal.nprintf<50>("DWT: %" PRIu64 " %" PRIu64 "\n", MY_DWTGetCycleCount(), MY_GetNanoSecFromCycle(MY_DWTGetCycleCount()));
@@ -182,30 +186,19 @@ static void handle_imu() {
         imu_camera_msg.header.seq = imu_measure.seq;
         imu_camera_msg.header.stamp = nh.fromNSec(imu_measure.nsec);
 //        imu_camera_msg.header.frame_id = "";
-        imu_camera_msg.orientation.x = 0;
-        imu_camera_msg.orientation.y = 0;
-        imu_camera_msg.orientation.z = 0;
-        imu_camera_msg.orientation.w = 1;
-//        for (int i = 0; i < 9; i++) {
-//            imu_camera_msg.orientation_covariance[i] = 0;
-//        }
         imu_camera_msg.angular_velocity.x = imu_measure.gyro[0];
         imu_camera_msg.angular_velocity.y = imu_measure.gyro[1];
         imu_camera_msg.angular_velocity.z = imu_measure.gyro[2];
-//        for (int i = 0; i < 9; i++) {
-//            imu_camera_msg.angular_velocity_covariance[i] = 0;
-//        }
         imu_camera_msg.linear_acceleration.x = imu_measure.accel[0];
         imu_camera_msg.linear_acceleration.y = imu_measure.accel[1];
         imu_camera_msg.linear_acceleration.z = imu_measure.accel[2];
-//        for (int i = 0; i < 9; i++) {
-//            imu_camera_msg.linear_acceleration_covariance[i] = 0;
-//        }
         ret = pub_imu_camera.publish(&imu_camera_msg);
         if (ret < 0) {
             terminal.write_string(
                     "node_handler: failed to publish imu_camera (");
             terminal.nprintf("%d)\n", ret);
+        } else if (nh.connected()) {
+            count_send_imu++;
         }
         temp_camera_msg.header.seq = imu_measure.seq;
         temp_camera_msg.header.stamp = nh.fromNSec(imu_measure.nsec);
@@ -224,6 +217,7 @@ static void handle_imu() {
             }
         }
     }
+    
     if (bmx055_camera.get_mag_measure(mag_measure) > 0) {
         mag_camera_msg.header.seq = mag_measure.seq;
         mag_camera_msg.header.stamp = nh.fromNSec(mag_measure.nsec);
@@ -231,14 +225,13 @@ static void handle_imu() {
         mag_camera_msg.magnetic_field.x = mag_measure.mag[0];
         mag_camera_msg.magnetic_field.y = mag_measure.mag[1];
         mag_camera_msg.magnetic_field.z = mag_measure.mag[2];
-//        for (int i = 0; i < 9; i++) {
-//            mag_camera_msg.magnetic_field_covariance[i] = 0;
-//        }
         ret = pub_mag_camera.publish(&mag_camera_msg);
         if (ret < 0) {
             terminal.write_string(
                     "node_handler: failed to publish mag_camera (");
             terminal.nprintf("%d)\n", ret);
+        } else if (nh.connected()) {
+            count_send_mag++;
         }
     }
 }
