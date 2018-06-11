@@ -50,7 +50,7 @@ sensor_msgs::Temperature temp_camera_msg;
 ros::Publisher pub_temp_camera("temp_camera", &temp_camera_msg);
 
 sensor_msgs::JointState servo_state_msg;
-ros::Publisher pub_servo_state("/servo_joint_states", &servo_state_msg);
+ros::Publisher pub_servo_state("servo_joint_states", &servo_state_msg);
 
 arm_robot_msgs::Imu imu_camera_msg;
 ros::Publisher pub_imu_camera("imu_camera_raw", &imu_camera_msg);
