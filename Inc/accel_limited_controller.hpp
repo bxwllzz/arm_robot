@@ -6,6 +6,8 @@
 
 #include "stm32f1xx_hal.h"
 
+#include "main_cpp.hpp"
+
 class AccelLimitedController {
 public:
     float current_pos;
@@ -25,7 +27,7 @@ public:
     float tol_pos = 0.001;
 
     AccelLimitedController(float _current_pos = 0, float _current_vel = 0,
-            int _update_interval_ms = 100) :
+            int _update_interval_ms = 10) :
             current_pos(_current_pos), current_vel(_current_vel), update_interval_ms(
                     _update_interval_ms), last_time_ms(HAL_GetTick()) {
 
@@ -67,7 +69,7 @@ public:
             vel = std::max(vel, limit_vel);
         }
         // 限制加速度
-        float accel = (vel - current_vel) / actual_interval * 1000;
+        float accel = (vel - current_vel) / actual_interval;
         accel = std::min(accel, max_accel);
         accel = std::max(accel, -max_accel);
         vel = current_vel + accel * actual_interval;
@@ -78,6 +80,8 @@ public:
 
         output_vel = vel;
         output_pos = pos;
+        terminal.nprintf<70>("servo: interval = %.3f,  pos = %.2f, vel = %.2f\n", 
+            actual_interval, pos, vel);
         return true;
     }
 };

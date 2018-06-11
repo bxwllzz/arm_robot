@@ -1,6 +1,7 @@
 #include <time.h>
 #include <inttypes.h>
 #include <cstdio>
+#include <functional>
 
 #include "main.h"
 #include "stm32f1xx_hal.h"
@@ -19,8 +20,10 @@
 #include <std_msgs/String.h>
 #include <sensor_msgs/Temperature.h>
 #include <sensor_msgs/JointState.h>
+#include <control_msgs/SingleJointPositionGoal.h>
 #include <arm_robot_msgs/Imu.h>
 #include <arm_robot_msgs/MagneticField.h>
+#include <STM32Hardware.h>
 
 #include "dmabuffer_uart.hpp"
 #include "high_resolution_clock.h"
@@ -50,16 +53,33 @@ sensor_msgs::JointState servo_state_msg;
 ros::Publisher pub_servo_state("/servo_joint_states", &servo_state_msg);
 
 arm_robot_msgs::Imu imu_camera_msg;
-ros::Publisher pub_imu_camera("imu_camera", &imu_camera_msg);
+ros::Publisher pub_imu_camera("imu_camera_raw", &imu_camera_msg);
 
 arm_robot_msgs::MagneticField mag_camera_msg;
-ros::Publisher pub_mag_camera("mag_camera", &mag_camera_msg);
+ros::Publisher pub_mag_camera("mag_camera_raw", &mag_camera_msg);
 
 void ros_receiver_callback(const std_msgs::String& msg) {
     str_msg.data = msg.data;
     chatter.publish(&str_msg);
 }
 ros::Subscriber<std_msgs::String> receiver("receiver", ros_receiver_callback);
+
+template <const char* name>
+void servo_control_callback(const control_msgs::SingleJointPositionGoal& msg) {
+    float angle_deg = msg.position / (float)M_PI * 180;
+    float actual_set;
+    if (strcmp("yaw", name) == 0) {
+        actual_set = servo_yaw.set_angle(angle_deg);
+        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
+    } else if (strcmp("pitch", name) == 0) {
+        actual_set = servo_pitch.set_angle(angle_deg);
+        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
+    }
+}
+ros::Subscriber<control_msgs::SingleJointPositionGoal> sub_servo_yaw("servo/yaw",
+        servo_control_callback<"yaw">);
+ros::Subscriber<control_msgs::SingleJointPositionGoal> sub_servo_pitch("servo/pitch",
+        servo_control_callback<"pitch">);
 
 extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
     nh.getHardware()->dma_buffer.on_tx_dma_complete(huart);
@@ -82,10 +102,19 @@ static IMUMeasure imu_measure;
 static MagMeasure mag_measure;
 static uint32_t count_send_mag = 0;
 static uint32_t count_send_imu = 0;
+static uint32_t count_update_servo = 0;
+static uint32_t count_send_servo = 0;
 
 static void handle_debug() {
     static uint32_t count_main_loop = 0;
     static uint32_t soft_timer_1s = 0;
+    
+    uint8_t read_buf[64];
+    int ret;
+    do {
+        ret = terminal.readsome(read_buf, 64);
+        terminal.write(read_buf, ret);
+    } while (ret > 0);
     
     if (HAL_GetTick() > soft_timer_1s) {
         soft_timer_1s += 1000;
@@ -96,28 +125,38 @@ static void handle_debug() {
         
         static uint32_t last_count_imu = 0;
         static uint32_t last_count_mag = 0;
+        static uint32_t last_count_i2c_error = 0;
 
-        terminal.nprintf<100>("count %d: main %d Hz, imu %d Hz (%d), mag %d Hz(%d)\n",
-                count, count_main_loop,
-                bmx055_camera.count_imu_measure - last_count_imu, count_send_imu, 
-                bmx055_camera.count_mag_measure - last_count_mag, count_send_mag);
+        terminal.nprintf<100>(
+                "count %d: main %d Hz, imu %d Hz (%d), mag %d Hz(%d), i2c error %d, servo %d Hz(%d)\n", 
+                count,
+                count_main_loop,
+                bmx055_camera.count_imu_measure - last_count_imu,
+                count_send_imu,
+                bmx055_camera.count_mag_measure - last_count_mag,
+                count_send_mag, 
+                bmx055_camera.count_i2c_error - last_count_i2c_error,
+                count_update_servo, count_send_servo);
 
         count_main_loop = 0;
         last_count_imu = bmx055_camera.count_imu_measure;
         last_count_mag = bmx055_camera.count_mag_measure;
+        last_count_i2c_error = bmx055_camera.count_i2c_error;
         count_send_mag = 0;
         count_send_imu = 0;
+        count_update_servo = 0;
+        count_send_servo = 0;
         
 //        ros::Time ros_time = nh.now();
 //        time_t sec = ros_time.sec;
 //        terminal.write_string(ctime(&sec));
         
-        //    terminal.nprintf<200>("imu: %" PRIu64 " nsec, accel=(%f, %f, %f), temp=%f, gyro=(%f, %f, %f)\n",
-        //        imu_measure.nsec,
-        //        imu_measure.accel[0], imu_measure.accel[1], imu_measure.accel[2],
-        //        imu_measure.temperature,
-        //        imu_measure.gyro[0], imu_measure.gyro[1], imu_measure.gyro[2]
-        //    );
+//    terminal.nprintf<200>("imu: %" PRIu64 " nsec, accel=(%f, %f, %f), temp=%f, gyro=(%f, %f, %f)\n",
+//        imu_measure.nsec,
+//        imu_measure.accel[0], imu_measure.accel[1], imu_measure.accel[2],
+//        imu_measure.temperature,
+//        imu_measure.gyro[0], imu_measure.gyro[1], imu_measure.gyro[2]
+//    );
 
 //        terminal.nprintf<100>("mag: %" PRIu64 " nsec, (%f, %f, %f)\n",
 //                mag_measure.nsec, mag_measure.mag[0], mag_measure.mag[1],
@@ -175,7 +214,32 @@ static void handle_button() {
     }
 }
 
+static void init_imu() {
+    terminal.write_string("bmx055_camera initializing...");
+    int imu_fail_count = 0;
+    while (bmx055_camera.init() < 0) {
+        imu_fail_count++;
+        terminal.nprintf("failed %d!\n", imu_fail_count);
+        HAL_I2C_DeInit(bmx055_camera.hi2c);
+        MX_I2C1_Init();
+        terminal.write_string("bmx055_camera initializing...");
+    }
+    terminal.write_string("ok!\n");
+}
+
 static void update_imu() {
+    // auto re-init imu after 50ms failed
+    if (HAL_GetTick() - bmx055_camera.last_success_i2c >= 50) {
+        terminal.write_string("bmx055_camera communicate failed >= 100ms, reinitializing...");
+        HAL_I2C_DeInit(bmx055_camera.hi2c);
+        MX_I2C1_Init();
+        if (bmx055_camera.init() < 0) {
+            terminal.write_string("failed!\n");
+            return;
+        } else {
+            terminal.write_string("ok!\n");
+        }
+    }
     bmx055_camera.update();
 }
 
@@ -237,25 +301,48 @@ static void handle_imu() {
 }
 
 static void update_servo() {
-    static uint32_t timer_100ms = 0;
     static uint32_t count = 0;
-    static const char* name[2] = {"camera_yaw_joint", "camera_pitch_joint"};
+    static const char* name[2] = { "camera_yaw_joint", "camera_pitch_joint" };
     static float position[2];
-    if (HAL_GetTick() > timer_100ms) {
-        timer_100ms += 100;
+    
+    bool updated = false;
+    updated |= servo_yaw.update();
+    updated |= servo_pitch.update();
+    
+    if (updated) {
+        count_update_servo++;
+        
         servo_state_msg.header.seq = count;
         servo_state_msg.header.stamp = nh.now();
         servo_state_msg.name_length = 2;
-        servo_state_msg.name = (char**)name;
+        servo_state_msg.name = (char**) name;
         servo_state_msg.position_length = 2;
         position[0] = servo_yaw.get_angle() / 180 * M_PI;
         position[1] = servo_pitch.get_angle() / 180 * M_PI;
         servo_state_msg.position = position;
+        
         if (pub_servo_state.publish(&servo_state_msg) < 0) {
             terminal.write_string(
                     "node_handler: failed to publish servo_state\n");
+        } else {
+            count_send_servo++;
         }
     }
+}
+
+static void init_ros() {
+    terminal.write_string("ros::NodeHandler initializing...");
+    STM32Hardware::terminal = &terminal;
+    nh.initNode();
+    nh.advertise(chatter);
+    nh.advertise(pub_imu_camera);
+    nh.advertise(pub_temp_camera);
+    nh.advertise(pub_mag_camera);
+    nh.advertise(pub_servo_state);
+    nh.subscribe(receiver);
+    nh.subscribe(sub_servo_yaw);
+    nh.subscribe(sub_servo_pitch);
+    terminal.write_string("finished!\n");
 }
 
 extern "C" void loop_forever(void) {
@@ -279,27 +366,11 @@ extern "C" void loop_forever(void) {
     terminal.write_string("finished!\n");
     
     // initialize bmx055_camera
-    terminal.write_string("bmx055_camera initializing...");
-    int imu_fail_count = 0;
-    while (bmx055_camera.init() < 0) {
-        imu_fail_count++;
-        terminal.nprintf("failed %d!\n", imu_fail_count);
-        HAL_Delay(50);
-        terminal.write_string("bmx055_camera initializing...");
-    }
-    terminal.write_string("ok!\n");
+    init_imu();
     
     // initialize ros::NodeHandler
-    terminal.write_string("ros::NodeHandler initializing...");
-    nh.initNode();
-    nh.advertise(chatter);
-    nh.advertise(pub_imu_camera);
-    nh.advertise(pub_temp_camera);
-    nh.advertise(pub_mag_camera);
-    nh.advertise(pub_servo_state);
-    nh.subscribe(receiver);
-    terminal.write_string("finished!\n");
-
+    init_ros();
+    
     while (1) {
         handle_debug();
         

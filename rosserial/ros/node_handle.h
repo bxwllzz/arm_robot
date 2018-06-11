@@ -245,10 +245,15 @@ public:
                 if (data == 0xff) {
                     mode_++;
                     last_msg_timeout_time = c_time + SERIAL_MSG_TIMEOUT;
-                } else if (hardware_.time() - c_time > (SYNC_SECONDS * 1000)) {
+                } else {
+                    if (hardware_.terminal) {
+                        hardware_.terminal->nprintf("? %d\n", data);
+                    }
+                    if (hardware_.time() - c_time > (SYNC_SECONDS * 1000)) {
                     /* We have been stuck in spinOnce too long, return error */
                     configured_ = false;
                     return SPIN_TIMEOUT;
+                    }
                 }
             } else if (mode_ == MODE_PROTOCOL_VER) {
                 if (data == PROTOCOL_VER) {

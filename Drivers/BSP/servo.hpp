@@ -12,11 +12,11 @@ namespace hustac {
 class Servo {
 public:
     Servo(TIM_HandleTypeDef* _htim, uint32_t _channel, float _range,
-            float init_angle = 0, int _update_interval_ms = 100) :
+            float init_angle = 0, int _update_interval_ms = 10) :
             htim(_htim), channel(_channel), range(_range), controller(
                     init_angle, 0, _update_interval_ms) {
-        controller.max_vel = 30;
-        controller.max_accel = 30;
+        controller.max_vel = 90;
+        controller.max_accel = 90;
     }
     // 启动舵机
     void start() {
@@ -28,8 +28,11 @@ public:
         HAL_TIM_PWM_Stop(htim, channel);
     }
     // 设定期望角度
-    void set_angle(float angle) {
+    float set_angle(float angle) {
+        angle = std::min(angle, range / 2);
+        angle = std::max(angle, -range / 2);
         controller.target_pos = angle;
+        return angle;
     }
     // 获取当前角度
     float get_angle() {
@@ -48,8 +51,7 @@ public:
     }
 private:
     int _angle2width(float angle) {
-        angle /= range * (max_width_ms - min_width_ms);
-        int ms = (int) std::round(angle);
+        int ms = (int) std::round((angle / range + 0.5) * (max_width_ms - min_width_ms) + min_width_ms);
         ms = std::min(ms, max_width_ms);
         ms = std::max(ms, min_width_ms);
         return ms;

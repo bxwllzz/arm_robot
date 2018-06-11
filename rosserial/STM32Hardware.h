@@ -49,6 +49,8 @@ using namespace hustac;
 
 class STM32Hardware {
 public:
+    static DMABuffer_UART<512, 128>* terminal;
+
     DMABuffer_UART<1024, 1024> dma_buffer;
 
 public:

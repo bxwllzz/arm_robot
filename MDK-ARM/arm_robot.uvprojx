@@ -337,7 +337,7 @@
               <MiscControls>--cpp11</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Drivers/CMSIS/Include;  ../Drivers/BSP;  ../Drivers/BMX055;  ../SEGGER_RTT;  ../rosserial</IncludePath>
+              <IncludePath>  ../Drivers/BSP;   ../Drivers/BMX055;   ../SEGGER_RTT;   ../rosserial;../Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -378,16 +378,6 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
-        <Group>
-          <GroupName>Drivers/CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>system_stm32f1xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..//Src/system_stm32f1xx.c</FilePath>
-            </File>
-          </Files>
-        </Group>
         <Group>
           <GroupName>Drivers/STM32F1xx_HAL_Driver</GroupName>
           <Files>
@@ -546,6 +536,11 @@
               <FileType>8</FileType>
               <FilePath>..\rosserial\time.cpp</FilePath>
             </File>
+            <File>
+              <FileName>STM32Hardware.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\rosserial\STM32Hardware.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -561,6 +556,11 @@
         <Group>
           <GroupName>Application/User</GroupName>
           <Files>
+            <File>
+              <FileName>main_cpp.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\Src\main_cpp.cpp</FilePath>
+            </File>
             <File>
               <FileName>stm32f1xx_it.c</FileName>
               <FileType>1</FileType>
@@ -611,15 +611,20 @@
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
             </File>
-            <File>
-              <FileName>main_cpp.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\Src\main_cpp.cpp</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>
+        </Group>
+        <Group>
+          <GroupName>Drivers/CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>system_stm32f1xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..//Src/system_stm32f1xx.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>
