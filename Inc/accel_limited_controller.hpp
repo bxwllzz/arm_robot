@@ -80,8 +80,8 @@ public:
 
         output_vel = vel;
         output_pos = pos;
-        terminal.nprintf<70>("servo: interval = %.3f,  pos = %.2f, vel = %.2f\n", 
-            actual_interval, pos, vel);
+//        terminal.nprintf<70>("servo: interval = %.3f,  pos = %.2f, vel = %.2f\n", 
+//            actual_interval, pos, vel);
         return true;
     }
 };

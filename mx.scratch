@@ -11,17 +11,6 @@
 <filestoremove>
     <file>
     <name>..\Drivers\CMSIS\Device\ST\STM32F1xx\Source\Templates\arm\startup_stm32f103xe.s</name>
-    <name>..\Src\main.c</name>
-    <name>..\Src\gpio.c</name>
-    <name>..\Src\adc.c</name>
-    <name>..\Src\can.c</name>
-    <name>..\Src\dma.c</name>
-    <name>..\Src\i2c.c</name>
-    <name>..\Src\tim.c</name>
-    <name>..\Src\usart.c</name>
-    <name>..\Src\stm32f1xx_it.c</name>
-    <name>..\Src\stm32f1xx_hal_msp.c</name>
-    <name>..\\Src\system_stm32f1xx.c</name>
     </file>
 </filestoremove>
 
@@ -30,11 +19,6 @@
 	   <include></include>
     </Aincludes>
 	<Cincludes>
-	   		<include>../Drivers/STM32F1xx_HAL_Driver/Inc</include>
-	   		<include>../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy</include>
-	   		<include>../Drivers/CMSIS/Device/ST/STM32F1xx/Include</include>
-	   		<include>../Drivers/CMSIS/Include</include>
-	   		<include>../Inc</include>
     </Cincludes>
 </inctoremove>
 

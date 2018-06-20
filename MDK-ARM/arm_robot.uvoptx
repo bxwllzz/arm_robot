@@ -153,168 +153,7 @@
           <Name>-U-O142 -O2254 -S0 -C0 -N00("ARM CoreSight SW-DP") -D00(2BA01477) -L00(0) -TO18 -TC10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC800 -FN1 -FF0STM32F10x_512 -FS08000000 -FL040000 -FP0($$Device:STM32F103RC$Flash\STM32F10x_512.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>2627</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231538</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2627</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>2633</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231552</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2633</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>2702</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231782</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2702</Expression>
-        </Bp>
-        <Bp>
-          <Number>3</Number>
-          <Type>0</Type>
-          <LineNumber>2706</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231786</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2706</Expression>
-        </Bp>
-        <Bp>
-          <Number>4</Number>
-          <Type>0</Type>
-          <LineNumber>2750</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231930</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2750</Expression>
-        </Bp>
-        <Bp>
-          <Number>5</Number>
-          <Type>0</Type>
-          <LineNumber>2768</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231990</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2768</Expression>
-        </Bp>
-        <Bp>
-          <Number>6</Number>
-          <Type>0</Type>
-          <LineNumber>2795</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134232082</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2795</Expression>
-        </Bp>
-        <Bp>
-          <Number>7</Number>
-          <Type>0</Type>
-          <LineNumber>2799</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134232086</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2799</Expression>
-        </Bp>
-        <Bp>
-          <Number>8</Number>
-          <Type>0</Type>
-          <LineNumber>2828</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134232182</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2828</Expression>
-        </Bp>
-        <Bp>
-          <Number>9</Number>
-          <Type>0</Type>
-          <LineNumber>2594</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134231410</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\arm_robot\../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c\2594</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -580,7 +419,7 @@
 
   <Group>
     <GroupName>Drivers/BSP</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -624,7 +463,7 @@
 
   <Group>
     <GroupName>Drivers/BMX055</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -700,7 +539,7 @@
 
   <Group>
     <GroupName>Application/rosserial</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -764,7 +603,7 @@
 
   <Group>
     <GroupName>Application/User</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -903,21 +742,13 @@
   </Group>
 
   <Group>
-    <GroupName>::CMSIS</GroupName>
-    <tvExp>0</tvExp>
-    <tvExpOptDlg>0</tvExpOptDlg>
-    <cbSel>0</cbSel>
-    <RteFlg>1</RteFlg>
-  </Group>
-
-  <Group>
     <GroupName>Drivers/CMSIS</GroupName>
     <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
     <File>
-      <GroupNumber>9</GroupNumber>
+      <GroupNumber>8</GroupNumber>
       <FileNumber>41</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
@@ -928,6 +759,14 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+  </Group>
+
+  <Group>
+    <GroupName>::CMSIS</GroupName>
+    <tvExp>0</tvExp>
+    <tvExpOptDlg>0</tvExpOptDlg>
+    <cbSel>0</cbSel>
+    <RteFlg>1</RteFlg>
   </Group>
 
 </ProjectOpt>

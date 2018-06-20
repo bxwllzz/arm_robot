@@ -63,6 +63,12 @@ public:
 
     // 可读取的字节数
     int get_rx_available() {
+//        if (huart->RxState == HAL_UART_STATE_READY) {
+//            if (HAL_UART_Receive_DMA(huart, rx_buf, (uint16_t) rx_buf_len)
+//                != HAL_OK) {
+//                _Error_Handler((char*)__FILE__, __LINE__);
+//            }
+//        }
         size_t rx_dma_index = _get_rx_dma_index();
         if (rx_dma_index >= rx_read_index) {
             return rx_dma_index - rx_read_index;
@@ -142,6 +148,16 @@ public:
 #define REENTER_CRITICAL()  prim = __get_PRIMASK(); __disable_irq()
 #define EXIT_CRITICAL()     __set_PRIMASK(prim)
 
+    void on_uart_error(UART_HandleTypeDef* _huart) {
+        if (_huart == huart) {
+            rx_read_index = 0;
+            if (HAL_UART_Receive_DMA(huart, rx_buf, (uint16_t) rx_buf_len)
+                    != HAL_OK) {
+                _Error_Handler((char*)__FILE__, __LINE__);
+            }
+        }
+    }
+    
     void on_tx_dma_complete(UART_HandleTypeDef* _huart) {
         if (_huart == huart) {
             _flush();

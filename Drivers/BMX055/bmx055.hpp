@@ -116,8 +116,9 @@ public:
 
     volatile uint32_t count_imu_measure;
     volatile uint32_t count_mag_measure;
+    
     volatile uint32_t count_i2c_error;
-
+    volatile uint32_t first_error_i2c;
     volatile uint32_t last_success_i2c;
 
 private:
@@ -196,8 +197,8 @@ public:
         count_mag_measure = 0;
         count_i2c_error = 0;
 
+        first_error_i2c = 0;
         last_success_i2c = 0;
-
     
         last_read_accel = 0;   // ns
         last_read_gyro = 0;    // ns
@@ -313,7 +314,7 @@ public:
         
         // 坐标变换 -> gravity
         _imu_measure.accel[0] = -z;
-        _imu_measure.accel[1] = x;
+        _imu_measure.accel[1] = -x;
         _imu_measure.accel[2] = -y;
         
         // 单位转换 -> m/s^2
@@ -358,9 +359,9 @@ public:
         z /= LSB_per_degps;
         
         // 坐标变换
-        _imu_measure.gyro[0] = -y;
+        _imu_measure.gyro[0] = z;
         _imu_measure.gyro[1] = x;
-        _imu_measure.gyro[2] = z;
+        _imu_measure.gyro[2] = y;
         
         // 单位转换 rad per second
         _imu_measure.gyro[0] *= M_PI / 180;
@@ -415,7 +416,7 @@ public:
                 BMA2x2_ACCEL_XYZ_TEMP_DATA_SIZE) == HAL_OK) {
                     uint64_t now = MY_GetNanoSecFromCycle(
                             MY_GetCycleCount());
-                    if (last_read_accel > 0 &&
+                    if (last_read_accel > 0 && count_imu_measure >= 3 &&
                         ((now - last_read_accel) / 1000 >= imu_update_interval * 1300 || (now - last_read_accel) / 1000 <= imu_update_interval * 700)) {
                         terminal.nprintf<50>("bmx055: read accel, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_accel) / 1000);
                     }
@@ -431,6 +432,9 @@ public:
                     stop_loop = true;
                     com_rslt = -1;
                     count_i2c_error++;
+                    if (!first_error_i2c) {
+                        first_error_i2c = HAL_GetTick();
+                    }
                     terminal.write_string("bmx055: read accel, cannot start i2c dma read\n");
                 }
                 break;
@@ -439,10 +443,14 @@ public:
                     terminal.write_string("bmx055: read accel error, retry\n");
                     com_rslt = -1;
                     count_i2c_error++;
+                    if (!first_error_i2c) {
+                        first_error_i2c = HAL_GetTick();
+                    }
                     state = State::READ_ACCEL;
                 } else if (i2c_dma_read_complete) {
 //                    terminal.write_string("bmx055: read accel complete\n");
                     last_success_i2c = HAL_GetTick();
+                    first_error_i2c = 0;
                     
                     state = State::READ_GYRO;
                 } else {
@@ -456,7 +464,7 @@ public:
                 BMG160_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
                     uint64_t now = MY_GetNanoSecFromCycle(
                             MY_GetCycleCount());
-                    if (last_read_accel > 0 &&
+                    if (last_read_gyro > 0 && count_imu_measure >= 3 &&
                         ((now - last_read_gyro) / 1000 >= imu_update_interval * 1300 || (now - last_read_gyro) / 1000 <= imu_update_interval * 700)) {
                         terminal.nprintf<50>("bmx055: read gyro, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_gyro) / 1000);
                     }
@@ -469,6 +477,9 @@ public:
                     stop_loop = true;
                     com_rslt = -1;
                     count_i2c_error++;
+                    if (!first_error_i2c) {
+                        first_error_i2c = HAL_GetTick();
+                    }
                     terminal.write_string("bmx055: read gyro, cannot start i2c dma read\n");
                 }
                 break;
@@ -477,10 +488,14 @@ public:
                     terminal.write_string("bmx055: read gyro error, retry\n");
                     com_rslt = -1;
                     count_i2c_error++;
+                    if (!first_error_i2c) {
+                        first_error_i2c = HAL_GetTick();
+                    }
                     state = State::READ_GYRO;
                 } else  if (i2c_dma_read_complete) {
 //                    terminal.write_string("bmx055: read gyro complete\n");
                     last_success_i2c = HAL_GetTick();
+                    first_error_i2c = 0;
                     
                     if (is_new_imu_measure) {
                         terminal.write_string("bmx055: imu_meaure overwrite, please get it in time!\n");
@@ -503,7 +518,7 @@ public:
                 BMM050_ALL_DATA_FRAME_LENGTH) == HAL_OK) {
                     uint64_t now = MY_GetNanoSecFromCycle(
                             MY_GetCycleCount());
-                    if (last_read_accel > 0 &&
+                    if (last_read_mag > 0 && count_mag_measure >=3 &&
                         ((now - last_read_mag) / 1000 >= mag_update_interval * 1300 || (now - last_read_mag) / 1000 <= mag_update_interval * 700)) {
                         terminal.nprintf<50>("bmx055: read mag, bad interval %" PRIu32 " us\n", (uint32_t)(now - last_read_mag) / 1000);
                     }
@@ -519,6 +534,9 @@ public:
                     terminal.write_string("bmx055: read mag, cannot start i2c dma read\n");
                     com_rslt = -1;
                     count_i2c_error++;
+                    if (!first_error_i2c) {
+                        first_error_i2c = HAL_GetTick();
+                    }
                     state = State::IDLE;
                 }
                 break;
@@ -527,10 +545,14 @@ public:
                     terminal.write_string("bmx055: read mag error, retry\n");
                     com_rslt = -1;
                     count_i2c_error++;
+                    if (!first_error_i2c) {
+                        first_error_i2c = HAL_GetTick();
+                    }
                     state = State::IDLE;
                 } else if (i2c_dma_read_complete) {
 //                    terminal.write_string("bmx055: read mag complete\n");
                     last_success_i2c = HAL_GetTick();
+                    first_error_i2c = 0;
                     
                     if (is_new_mag_measure) {
                         terminal.write_string("bmx055: _mag_measure overwrite, please get it in time!\n");

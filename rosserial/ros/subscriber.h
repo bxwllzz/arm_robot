@@ -35,6 +35,8 @@
 #ifndef ROS_SUBSCRIBER_H_
 #define ROS_SUBSCRIBER_H_
 
+#include <functional>
+
 #include "rosserial_msgs/TopicInfo.h"
 
 namespace ros
@@ -101,7 +103,7 @@ template<typename MsgT>
 class Subscriber<MsgT, void>: public Subscriber_
 {
 public:
-  typedef void(*CallbackT)(const MsgT&);
+  typedef std::function<void(const MsgT&)> CallbackT;
   MsgT msg;
 
   Subscriber(const char * topic_name, CallbackT cb, int endpoint = rosserial_msgs::TopicInfo::ID_SUBSCRIBER) :

@@ -47,16 +47,16 @@ std_msgs::String str_msg;
 ros::Publisher chatter("chatter", &str_msg);
 
 sensor_msgs::Temperature temp_camera_msg;
-ros::Publisher pub_temp_camera("temp_camera", &temp_camera_msg);
+ros::Publisher pub_temp_camera("camera/temp_raw", &temp_camera_msg);
 
 sensor_msgs::JointState servo_state_msg;
 ros::Publisher pub_servo_state("servo_joint_states", &servo_state_msg);
 
 arm_robot_msgs::Imu imu_camera_msg;
-ros::Publisher pub_imu_camera("imu_camera_raw", &imu_camera_msg);
+ros::Publisher pub_imu_camera("camera/imu_raw", &imu_camera_msg);
 
 arm_robot_msgs::MagneticField mag_camera_msg;
-ros::Publisher pub_mag_camera("mag_camera_raw", &mag_camera_msg);
+ros::Publisher pub_mag_camera("camera/mag_raw", &mag_camera_msg);
 
 void ros_receiver_callback(const std_msgs::String& msg) {
     str_msg.data = msg.data;
@@ -64,22 +64,26 @@ void ros_receiver_callback(const std_msgs::String& msg) {
 }
 ros::Subscriber<std_msgs::String> receiver("receiver", ros_receiver_callback);
 
-template <const char* name>
-void servo_control_callback(const control_msgs::SingleJointPositionGoal& msg) {
+void servo_control_callback(const char *name, const control_msgs::SingleJointPositionGoal& msg) {
     float angle_deg = msg.position / (float)M_PI * 180;
     float actual_set;
     if (strcmp("yaw", name) == 0) {
         actual_set = servo_yaw.set_angle(angle_deg);
-        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
+//        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
     } else if (strcmp("pitch", name) == 0) {
         actual_set = servo_pitch.set_angle(angle_deg);
-        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
+//        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
     }
 }
 ros::Subscriber<control_msgs::SingleJointPositionGoal> sub_servo_yaw("servo/yaw",
-        servo_control_callback<"yaw">);
+    std::bind(servo_control_callback, "yaw", std::placeholders::_1));
 ros::Subscriber<control_msgs::SingleJointPositionGoal> sub_servo_pitch("servo/pitch",
-        servo_control_callback<"pitch">);
+    std::bind(servo_control_callback, "pitch", std::placeholders::_1));
+
+extern "C" void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
+    terminal.write_string("HAL_UART_ErrorCallback\n");
+    nh.getHardware()->dma_buffer.on_uart_error(huart);
+}
 
 extern "C" void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
     nh.getHardware()->dma_buffer.on_tx_dma_complete(huart);
@@ -228,19 +232,44 @@ static void init_imu() {
 }
 
 static void update_imu() {
+    static uint32_t timer_1s = 0;
+    static uint32_t last_try_init = 0;
+    bool need_reset = false;
+    const char* error_info = NULL;
     // auto re-init imu after 50ms failed
-    if (HAL_GetTick() - bmx055_camera.last_success_i2c >= 50) {
-        terminal.write_string("bmx055_camera communicate failed >= 100ms, reinitializing...");
-        HAL_I2C_DeInit(bmx055_camera.hi2c);
-        MX_I2C1_Init();
-        if (bmx055_camera.init() < 0) {
-            terminal.write_string("failed!\n");
-            return;
+    if (bmx055_camera.first_error_i2c && HAL_GetTick() - bmx055_camera.first_error_i2c >= 10) {
+        error_info = "bmx055_camera communicate failed >= 10 ms, reinitializing...";
+        need_reset = true;
+    } else if (bmx055_camera.last_success_i2c && HAL_GetTick() - bmx055_camera.last_success_i2c >= 10) {
+        error_info = "bmx055_camera communicate not success >= 10 ms, reinitializing...";
+        need_reset = true;
+    }
+    if (HAL_GetTick() >= timer_1s) {
+        timer_1s += 1000;
+        if (bmx055_camera.count_i2c_error >= 10) {
+            error_info = "bmx055_camera more 10 i2c error last second, reinitializing...";
+            need_reset = true;
         } else {
-            terminal.write_string("ok!\n");
+            bmx055_camera.count_i2c_error = 0;
         }
     }
-    bmx055_camera.update();
+    // retry init with max freq 1 Hz
+    if (need_reset) {
+        if (!last_try_init || HAL_GetTick() - last_try_init >= 1000) {
+            last_try_init = HAL_GetTick();
+            terminal.write_string(error_info);
+            HAL_I2C_DeInit(bmx055_camera.hi2c);
+            MX_I2C1_Init();
+            if (bmx055_camera.init() < 0) {
+                terminal.write_string("failed!\n");
+                return;
+            } else {
+                terminal.write_string("ok!\n");
+            }
+        }
+    } else {
+        bmx055_camera.update();
+    }
 }
 
 static void handle_imu() {
