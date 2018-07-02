@@ -66,12 +66,15 @@ ros::Subscriber<std_msgs::String> receiver("receiver", ros_receiver_callback);
 
 void servo_control_callback(const char *name, const control_msgs::SingleJointPositionGoal& msg) {
     float angle_deg = msg.position / (float)M_PI * 180;
+    float max_vel_deg = msg.max_velocity / (float)M_PI * 180;
     float actual_set;
     if (strcmp("yaw", name) == 0) {
         actual_set = servo_yaw.set_angle(angle_deg);
+        servo_yaw.set_max_velocity(max_vel_deg);
 //        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
     } else if (strcmp("pitch", name) == 0) {
         actual_set = servo_pitch.set_angle(angle_deg);
+        servo_pitch.set_max_velocity(max_vel_deg);
 //        terminal.nprintf<50>("servo %s, set angle = %f\n", name, actual_set);
     }
 }
@@ -225,6 +228,11 @@ static void init_imu() {
         imu_fail_count++;
         terminal.nprintf("failed %d!\n", imu_fail_count);
         HAL_I2C_DeInit(bmx055_camera.hi2c);
+        
+        if (imu_fail_count >= 100) {
+            return;
+        }
+        
         MX_I2C1_Init();
         terminal.write_string("bmx055_camera initializing...");
     }
@@ -234,24 +242,23 @@ static void init_imu() {
 static void update_imu() {
     static uint32_t timer_1s = 0;
     static uint32_t last_try_init = 0;
-    bool need_reset = false;
+    static bool need_reset = false;
     const char* error_info = NULL;
     // auto re-init imu after 50ms failed
-    if (bmx055_camera.first_error_i2c && HAL_GetTick() - bmx055_camera.first_error_i2c >= 10) {
-        error_info = "bmx055_camera communicate failed >= 10 ms, reinitializing...";
+    if (!need_reset && bmx055_camera.first_error_i2c && HAL_GetTick() - bmx055_camera.first_error_i2c >= 10) {
+        error_info = "bmx055_camera communicate failed >= 10 ms, reinitializing...\n";
         need_reset = true;
-    } else if (bmx055_camera.last_success_i2c && HAL_GetTick() - bmx055_camera.last_success_i2c >= 10) {
-        error_info = "bmx055_camera communicate not success >= 10 ms, reinitializing...";
+    } else if (!need_reset && bmx055_camera.last_success_i2c && HAL_GetTick() - bmx055_camera.last_success_i2c >= 10) {
+        error_info = "bmx055_camera communicate not success >= 10 ms, reinitializing...\n";
         need_reset = true;
     }
     if (HAL_GetTick() >= timer_1s) {
         timer_1s += 1000;
-        if (bmx055_camera.count_i2c_error >= 10) {
-            error_info = "bmx055_camera more 10 i2c error last second, reinitializing...";
+        if (!need_reset && bmx055_camera.count_i2c_error >= 10) {
+            error_info = "bmx055_camera more 10 i2c error last second, reinitializing...\n";
             need_reset = true;
-        } else {
-            bmx055_camera.count_i2c_error = 0;
         }
+        bmx055_camera.count_i2c_error = 0;
     }
     // retry init with max freq 1 Hz
     if (need_reset) {
@@ -261,10 +268,10 @@ static void update_imu() {
             HAL_I2C_DeInit(bmx055_camera.hi2c);
             MX_I2C1_Init();
             if (bmx055_camera.init() < 0) {
-                terminal.write_string("failed!\n");
+                terminal.write_string("bmx055_camera reset failed!\n");
                 return;
             } else {
-                terminal.write_string("ok!\n");
+                terminal.write_string("bmx055_camera reset ok!\n");
             }
         }
     } else {

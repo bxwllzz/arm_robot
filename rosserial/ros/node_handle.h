@@ -393,7 +393,7 @@ public:
             snprintf(buf, 100,
                     "time sync: RTT = %8" PRIu32 " us, offset = %6" PRId32 " us, adjust = %6" PRId32 " us, std = %6" PRId32 " us",
             RTT_nsec / 1000, time_offset_ns / 1000, time_adjust_ns / 1000, (int32_t)(std::sqrt(time_variance) * 1000000));
-            logdebug(buf);
+            loginfo(buf);
         }
 
         last_sync_receive_time = hardware_.time();

@@ -313,14 +313,14 @@ public:
         _imu_measure.temperature += 23;
         
         // 坐标变换 -> gravity
-        _imu_measure.accel[0] = -z;
-        _imu_measure.accel[1] = -x;
-        _imu_measure.accel[2] = -y;
+        _imu_measure.accel[0] = x;
+        _imu_measure.accel[1] = y;
+        _imu_measure.accel[2] = z;
         
         // 单位转换 -> m/s^2
-        _imu_measure.accel[0] *= -9.80665f;
-        _imu_measure.accel[1] *= -9.80665f;
-        _imu_measure.accel[2] *= -9.80665f;
+        _imu_measure.accel[0] *= 9.80665f;
+        _imu_measure.accel[1] *= 9.80665f;
+        _imu_measure.accel[2] *= 9.80665f;
         
         // todo: 误差校准
 //        ax += AX_OFFSET;
@@ -359,9 +359,9 @@ public:
         z /= LSB_per_degps;
         
         // 坐标变换
-        _imu_measure.gyro[0] = z;
-        _imu_measure.gyro[1] = x;
-        _imu_measure.gyro[2] = y;
+        _imu_measure.gyro[0] = x;
+        _imu_measure.gyro[1] = y;
+        _imu_measure.gyro[2] = z;
         
         // 单位转换 rad per second
         _imu_measure.gyro[0] *= M_PI / 180;

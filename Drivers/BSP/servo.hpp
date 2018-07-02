@@ -15,8 +15,8 @@ public:
             float init_angle = 0, int _update_interval_ms = 10) :
             htim(_htim), channel(_channel), range(_range), controller(
                     init_angle, 0, _update_interval_ms) {
-        controller.max_vel = 90;
-        controller.max_accel = 90;
+        controller.max_vel = 15;
+        controller.max_accel = 30;
     }
     // 启动舵机
     void start() {
@@ -37,6 +37,11 @@ public:
     // 获取当前角度
     float get_angle() {
         return controller.current_pos;
+    }
+    // 设置最大速度
+    float set_max_velocity(float max_velocity) {
+        controller.max_vel = max_velocity;
+        return max_velocity;
     }
     // 控制更新
     bool update() {
