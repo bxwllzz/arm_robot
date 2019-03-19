@@ -1,52 +1,10 @@
-# arm_robot
-STM32 project for control board of double 7-DOF mobile robot from HUST AC
+# 构建说明
 
-- MCU: STM32F103RCT6
-- Board: Customized (as described in `arm_robot.ioc`)
-- Develop environment: STM32CubeMX + SW4STM32 (or MDK5) + J-Link
-- Language: C99, C++11
+1. 使用 STM32CubeMX 打开 arm_robot_xxxx.ioc, 生成项目
+2. 在当前目录下, 执行`python patch-src`, 打代码补丁以兼容 gcc 编译器
+3. 在 Clion 中 Import Project
 
-# Peripherals
-- PWM
-  - [x] Servo
-    - Camera pitch (LD-1501MG)
-    - Camera yaw (LD-3015MG)
-    - [x] smoothed movement
-  - [ ] Lifter (customized)
-- UART (non-block DMA r/w)
-  - [x] PC Debug
-  - [x] rosserial
-    - [x] high resolution time sync (~microsecond resolution), based on Kalman filter and RTT (Round Trip Time) @ 2Hz
-    - [x] publish imu bmx055 data
-      - accel and gyro (`arm_robot_msgs::Imu`): imu_camera_raw @ 1kHz
-      - mag (`arm_robot_msgs::MagneticField`): mag_camera_raw @ 20Hz
-      - temp (`sensor_msgs::Temperature`): temp_camera @ 1Hz
-    - [x] publish servo joint states (`sensor_msgs::JointState`): servo_joint_states @ 100Hz
-    - [x] subscribe servo control
-      - camera servo pitch (`control_msgs::SingleJointPositionGoal`): servo/pitch
-      - camera servo yaw (`control_msgs::SingleJointPositionGoal`): servo/yaw
-- RS-485
-  - [ ] left arm (7-DOF customized from zeda-tech.com)
-  - [ ] right arm (7-DOF customized from zeda-tech.com)
-- I2C
-  - IMU beside camera (BMX055)
-  - IMU top (BMX055)
-  - IMU bottom (BMX055)
-  - [x] BMX055 driver
-  - [x] non-block DMA r/w
-  - [x] auto reconnect/reinit if failed repeatly
-- CAN
-  - [ ] Left front wheel (C620 Brushless DC Motor Speed Controller)
-  - [ ] Left back wheel (C620 Brushless DC Motor Speed Controller)
-  - [ ] Right back wheel (C620 Brushless DC Motor Speed Controller)
-  - [ ] Right front wheel (C620 Brushless DC Motor Speed Controller)
-- GPIO
-  - [x] Button
-    - [x] press mode
-    - [x] press + holding mode
-    - [x] press + auto repeat mode
-  - [ ] LED
+# 注意事项
 
-# ROS side code
-
-https://github.com/HUSTWZH/hustarm
+1. 增加 .c 或 .cpp 等源文件后, 需要调用 Clion 中的 Tools -> CMake -> Reload CMake Project
+2. 修改 arm_robot_xxxx.ioc 项目后, 需要重新执行步骤 1、2
