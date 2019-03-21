@@ -340,6 +340,12 @@ inline void Robot::emergency_stop(bool enable) {
 }
 
 inline void Robot::spin_once() {
+    if (timer_100ms_.is_timeout()) {
+        LED_RESET.toggle();
+        LED1.toggle();
+        LED2.toggle();
+    }
+    
     uint64_t now = MY_GetNanoSecFromCycle(MY_GetCycleCount());
     // 计算主循环最大时间间隔
     if (last_loop_ && now - last_loop_ > max_loop_interval_) {
@@ -436,11 +442,6 @@ inline void Robot::spin_once() {
 //        }
 //        ret = RS485_ARM_RIGHT.write_string("test rs485: hello world");
 //        printf("Sent %d\n", ret);
-    }
-    if (timer_100ms_.is_timeout()) {
-        LED_RESET.toggle();
-        LED1.toggle();
-        LED2.toggle();
     }
     
     // GPIO输入
