@@ -177,7 +177,7 @@ inline int PipeTCPClient::readsome(void *data, size_t len) {
         } else {
             // 读取失败, 重新连接
             if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK) {
-                perror("PipeUDPBroadcast: read() failed");
+                perror("PipeTCPClient: read() failed");
                 lock.unlock();
                 reconnect();
                 return -2;
@@ -200,12 +200,12 @@ inline int PipeTCPClient::write(void *data, size_t len) {
             return len;
         } else if (ret >= 0) {
             // 仅成功写入部分
-            fprintf(stderr, "PipeUDPBroadcast: write() %d/%d\n", ret, len);
+            fprintf(stderr, "PipeTCPClient: write() %d/%d\n", ret, len);
             return ret;
         } else {
             // 写入失败, 重新连接
-            perror("PipeUDPBroadcast: write() failed");
             if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                perror("PipeTCPClient: write() failed");
                 lock.unlock();
                 reconnect();
                 return -2;
