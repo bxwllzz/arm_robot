@@ -66,9 +66,7 @@
 #define __NVIC_PRIO_BITS          4U       /*!< STM32F4XX uses 4 Bits for the Priority Levels */
 #define __Vendor_SysTickConfig    0U       /*!< Set to 1 if different SysTick Config is used  */
 #ifndef __FPU_PRESENT
-#ifndef __FPU_PRESENT
-#define __FPU_PRESENT             1U
-#endif
+#define __FPU_PRESENT 1U
 #endif       /*!< FPU present                                   */
 
 /**
