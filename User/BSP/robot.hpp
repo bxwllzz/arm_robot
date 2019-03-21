@@ -42,11 +42,11 @@
 
 //#define DISABLE_BATTERY
 #define DISABLE_HAND
-//#define DISABLE_ARM_RIGHT
+#define DISABLE_ARM_RIGHT
 //#define DISABLE_ARM_LEFT
 //#define DISABLE_BASE
 #define DISABLE_ARM_DEMO
-//#define DISABLE_HEAD
+#define DISABLE_HEAD
 #define DISABLE_LIFT
 
 namespace hustac {
