@@ -281,7 +281,7 @@ public:
                 desired_point_.time_nsec = duration;
                 // 线性插值
                 if (linear_interpolate(current_trajectory_.points[next_point_index_ - 1], current_trajectory_.points[next_point_index_], desired_point_) != 0) {
-                    _Error_Handler((char*)__FILE__, __LINE__);
+                    Error_Handler();
                 }
                 // 设定电机状态
                 _set_motor_positions(desired_point_.positions);
