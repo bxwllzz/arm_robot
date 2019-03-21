@@ -5994,7 +5994,7 @@ BMG160_RETURN_FUNCTION_TYPE bmg160_get_power_mode(u8 *v_power_mode_u8)
 	u8 data2 = BMG160_INIT_VALUE;
 	u8 data3 = BMG160_INIT_VALUE;
 
-	if (p_bmg160 == BMG160_INIT_VALUE) {
+	if (p_bmg160 == (struct bmg160_t *)BMG160_INIT_VALUE) {
 		return  E_BMG160_NULL_PTR;
 		} else {
 		/* read the power mode*/
@@ -6065,7 +6065,7 @@ BMG160_RETURN_FUNCTION_TYPE bmg160_set_power_mode(u8 v_power_mode_u8)
 	u8 v_autosleepduration = BMG160_INIT_VALUE;
 	u8 v_bw_u8r = BMG160_INIT_VALUE;
 
-	if (p_bmg160 == BMG160_INIT_VALUE) {
+	if (p_bmg160 == (struct bmg160_t *)BMG160_INIT_VALUE) {
 		return  E_BMG160_NULL_PTR;
 		} else {
 		if (v_power_mode_u8 < BMG160_BIT_LENGTH_POWER_MODE) {

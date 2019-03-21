@@ -11,17 +11,22 @@ def file_replace(path, old, new):
 if __name__ == '__main__':
     file_replace(
         'Middlewares/Third_Party/LwIP/system/arch/cc.h', 
-        '#define LWIP_PROVIDE_ERRNO', '''\
+        '\n#define LWIP_PROVIDE_ERRNO', '''\
 // #define LWIP_PROVIDE_ERRNO
 #include <sys/errno.h>'''
     )
 
     file_replace(
-        'Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f427xx.h', 
+        'Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f427xx.h',
         '#define __FPU_PRESENT             1U', '''\
 #ifndef __FPU_PRESENT
-#define __FPU_PRESENT             1U
+#define __FPU_PRESENT 1U
 #endif'''
+    )
+
+    file_replace(
+        'Drivers/CMSIS/Include/cmsis_gcc.h',
+        'register uint32_t result;', 'uint32_t result;'
     )
 
     input("Press any key to exit")
