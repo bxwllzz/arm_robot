@@ -632,12 +632,15 @@ public:
             printf(
                 "Message from device dropped: message larger than buffer.\n");
             return -1;
-        } else if ((ret = hardware_.write(message_out, l)) != l) {
-            printf(
-                "Message from device dropped: write(l=%d) failed ret=%d.\n", l, ret);
-            return -2;
         } else {
-            return 0;
+            ret = hardware_.write(message_out, l);
+            if (ret != l) {
+                printf(
+                    "Message from device dropped: write(l=%d) failed ret=%d.\n", l, ret);
+                return -2;
+            } else {
+                return 0;
+            }
         }
     }
     
