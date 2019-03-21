@@ -87,7 +87,7 @@ public:
     const std::array<const char*, 4> joint_names_ = {"lf_wheel_joint", "lb_wheel_joint", "rb_wheel_joint", "rf_wheel_joint"};
     static const int interval_pub_joint_ = 10; // 每隔若干毫秒发送一次关节消息
     static const int interval_pub_odom_ = 10; // 每隔若干毫秒发送一次里程计消息
-    static const int timeout_twist_ = 50; // 速度控制指令超时, 超过若干毫秒未接收到速度指令, 则停机
+    static const int timeout_twist_ = 200; // 速度控制指令超时, 超过若干毫秒未接收到速度指令, 则停机
     
     // 关节状态信息, 定义如何积分, 如何求均值
     struct JointStatus {
@@ -137,6 +137,7 @@ public:
     struct OdometryStatus {
         uint64_t t = 0;
         Twist2D twist = {};
+        float constraint_error_vel = 0;
         float pose_x = 0;
         float pose_y = 0;
         float pose_w = 0;
@@ -153,6 +154,7 @@ public:
             twist.linear_x += rhs.twist.linear_x;
             twist.linear_y += rhs.twist.linear_y;
             twist.angular += rhs.twist.angular;
+            constraint_error_vel += rhs.constraint_error_vel;
             return *this;
         }
         OdometryStatus& operator -=(const OdometryStatus& rhs) {
@@ -166,6 +168,7 @@ public:
             twist.linear_x -= rhs.twist.linear_x;
             twist.linear_y -= rhs.twist.linear_y;
             twist.angular -= rhs.twist.angular;
+            constraint_error_vel -= rhs.constraint_error_vel;
             return *this;
         }
         template <typename T>
@@ -182,6 +185,7 @@ public:
             result.twist.linear_x = lhs.twist.linear_x / rhs;
             result.twist.linear_y = lhs.twist.linear_y / rhs;
             result.twist.angular = lhs.twist.angular / rhs;
+            result.constraint_error_vel = lhs.constraint_error_vel;
             return result;
         }
     };
@@ -279,6 +283,7 @@ inline void ROSAdapterBase::spin_once() {
         OdometryStatus odometry_status = {
             .t = controller_.motor_.last_all_recved_,
             .twist = controller_.actual_velocity(),
+            .constraint_error_vel = controller_.constraint_error_velocity_,
             .pose_x = controller_.odometry().x(),
             .pose_y = controller_.odometry().y(),
             .pose_w = controller_.odometry().angle(),
@@ -330,6 +335,8 @@ inline void ROSAdapterBase::spin_once() {
         msg_odom_.twist.twist.linear.x = odometry_status_buffers_.back().twist.linear_x;
         msg_odom_.twist.twist.linear.y = odometry_status_buffers_.back().twist.linear_y;
         msg_odom_.twist.twist.angular.z = odometry_status_buffers_.back().twist.angular;
+        // 使用协方差矩阵中的第二个元素记录运动约束误差
+        msg_odom_.twist.covariance[1] = odometry_status_buffers_.back().constraint_error_vel;
         msg_odom_.pose.pose.position.x = odom_status.pose_x;
         msg_odom_.pose.pose.position.y = odom_status.pose_y;
         msg_odom_.pose.pose.orientation.z = q_z;
