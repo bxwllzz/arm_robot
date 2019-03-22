@@ -106,6 +106,7 @@ using rosserial_msgs::TopicInfo;
 template<class Hardware, int MAX_SUBSCRIBERS = 50, int MAX_PUBLISHERS = 50>
 class NodeHandle_ : public NodeHandleBase_ {
 protected:
+    const char* name_;
     Hardware hardware_;
     
     /* time used for syncing */
@@ -134,8 +135,8 @@ protected:
      * Setup Functions
      */
 public:
-    NodeHandle_()
-        : configured_(false) {
+    NodeHandle_(const char* name)
+        : name_(name), configured_(false) {
         
         for (unsigned int i = 0; i < MAX_PUBLISHERS; i++)
             publishers[i] = 0;
@@ -203,6 +204,7 @@ protected:
     int checksum_;
     
     bool configured_;
+    uint32_t configured_t_;
     
     /* used for syncing the time */
     uint32_t last_sync_time;
@@ -221,7 +223,7 @@ public:
             // 过长时间(2倍于同步间隔)没有收到同步时间响应
             // 认为断开连接
             configured_ = false;
-            printf("NodeHandle: Lost\n");
+            printf("NodeHandle %s: Lost (sync timeout)\n", name_);
             hardware_.init();
         }
         
@@ -236,7 +238,7 @@ public:
                 if ((hardware_.time() - c_time) > spin_timeout_) {
                     // 一次更新所耗费时间大于上限
                     // Exit the spin, processing timeout exceeded.
-                    printf("NodeHandle: spin timeout\n");
+                    printf("NodeHandle %s: spin timeout\n", name_);
                     return SPIN_TIMEOUT;
                 }
             }
@@ -245,7 +247,7 @@ public:
             if (mode_ != MODE_FIRST_FF) {
                 if (c_time > last_msg_timeout_time) {
                     // 一帧消息接收超时
-                    printf("NodeHandle: msg timeout\n");
+                    printf("NodeHandle %s: msg timeout\n", name_);
                     mode_ = MODE_FIRST_FF;
                 }
             }
@@ -271,7 +273,7 @@ public:
                 } else {
                     // 错误的协议版本, 发送同步时间请求以告知上位机协议版本
                     mode_ = MODE_FIRST_FF;
-                    printf("NodeHandle: bad PROTOCOL_VER\n");
+                    printf("NodeHandle %s: bad PROTOCOL_VER\n", name_);
                     if (configured_ == false)
                         requestSyncTime(); /* send a msg back showing our protocol version */
                 }
@@ -293,7 +295,7 @@ public:
                 if ((checksum_ % 256) == 255) {
                     if (message_in_ == NULL || bytes_ > message_in_size_) {
                         mode_ = MODE_FIRST_FF; /* Abandon the frame if the msg len is wrong */
-                        printf("NodeHandle: msg too long: %d/%d\n", bytes_, message_in_size_);
+                        printf("NodeHandle %s: msg too long: %d/%d\n", name_, bytes_, message_in_size_);
                     } else {
                         mode_++;
                     }
@@ -307,7 +309,7 @@ public:
                     //                    printf("size: %d\n", bytes_);
                 } else {
                     mode_ = MODE_FIRST_FF; /* Abandon the frame if the msg len is wrong */
-                    printf("NodeHandle: bad size checksum\n");
+                    printf("NodeHandle %s: bad size checksum\n", name_);
                 }
             } else if (mode_ == MODE_TOPIC_L) /* bottom half of topic id */
             {
@@ -339,10 +341,11 @@ public:
                         // 上位机请求下位机开始通信
                         requestSyncTime();
                         if (negotiateTopics() == 0) {
-                            printf("NodeHandle: negotiate topics\n");
+                            printf("NodeHandle %s: negotiate topics\n", name_);
                             if (!configured_) {
                                 configured_ = true;
-                                printf("NodeHandle: Connected to PC\n");
+                                configured_t_ = hardware_.time();
+                                printf("NodeHandle %s: Connected to PC\n", name_);
                             }
                         }
                         last_sync_time = c_time;
@@ -358,14 +361,14 @@ public:
                     } else if (topic_ == TopicInfo::ID_TX_STOP) {
                         // 接收到了上位机结束消息
                         configured_ = false;
-                        printf("NodeHandle: Disconnected\n");
+                        printf("NodeHandle %s: Disconnected\n", name_);
                     } else {
                         // 接收到了其他消息
                         if (subscribers[topic_ - 100])
                             subscribers[topic_ - 100]->callback(message_in_);
                     }
                 } else {
-                    printf("NodeHandle: bad data checksum\n");
+                    printf("NodeHandle %s: bad data checksum\n", name_);
                 }
 //                if (message_in_ != NULL) {
 //                    free(message_in_);
@@ -461,8 +464,10 @@ public:
             
             if (timer_print_sync_.is_timeout()) {
                 snprintf(buf, 256,
-                         "%u.%09u RTT=%d OFFSET=%+d STD=%d ADJ=%+d",
-                         (unsigned int) now().sec, (unsigned int) now().nsec, int(RTT_nsec / 1000), int(time_offset_ns / 1000),
+//                         "%u.%09u RTT=%d OFFSET=%+d STD=%d ADJ=%+d",
+                         "\tRTT=% 5d OFFSET=% +5d STD=% 3d ADJ=% +3d",
+//                         (unsigned int) now().sec, (unsigned int) now().nsec,
+                         int(RTT_nsec / 1000), int(time_offset_ns / 1000),
                          int(std::sqrt(time_variance) * 1000000), int(time_adjust_ns / 1000));
                 loginfo(buf);
             }
@@ -604,6 +609,9 @@ public:
     virtual int publish(int id, const Msg* msg) {
         if (id >= 100 && !configured_)
             return 0;
+        if (hardware_.time() - configured_t_ <= 20)
+            // delay 20ms to send msg
+            return 0;
         
         uint8_t* message_out = message_out_;
 //        std::unique_ptr<uint8_t[]> message_out = std::make_unique<uint8_t[]>(OUTPUT_SIZE);
@@ -630,13 +638,19 @@ public:
         int ret;
         if (l > message_out_size_) {
             printf(
-                "Message from device dropped: message larger than buffer.\n");
+                "NodeHandle %s: Message from device dropped: message larger than buffer.\n", name_);
             return -1;
         } else {
             ret = hardware_.write(message_out, l);
             if (ret != l) {
                 printf(
-                    "Message from device dropped: write(l=%d) failed ret=%d.\n", l, ret);
+                    "NodeHandle %s: Message from device dropped: write(l=%d) failed ret=%d.\n", name_, l, ret);
+                if (ret < 0) {
+                    // 认为断开连接
+                    configured_ = false;
+                    printf("NodeHandle %s: Lost (cannot send)\n", name_);
+                    hardware_.init();
+                }
                 return -2;
             } else {
                 return 0;

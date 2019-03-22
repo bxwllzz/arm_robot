@@ -206,7 +206,7 @@ public:
 #undef define_gpio_output
         
         // ROS
-        , nh_cpp_(), nh_py_()
+        , nh_cpp_("CPP"), nh_py_("PY")
         // 电池
         , battery_("BAT", &hadc1, &hadc2)
         // 移动底盘
@@ -355,7 +355,10 @@ inline void Robot::spin_once() {
     count_main_loop_++;
     if (timer_debug_.is_timeout()) {
         printf(
-            "[%lu%s]: %d-%d", timer_debug_.count_, EmergencyStoppable::all_emergency_stop() ? "-STOP" : "",
+            "[%s%s-%lu%s]: %d-%d",
+            nh_cpp_.connected() ? "T" : "F",
+            nh_py_.connected() ? "T" : "F",
+            timer_debug_.count_, EmergencyStoppable::all_emergency_stop() ? "-STOP" : "",
             int(1000000 / count_main_loop_),
             int(max_loop_interval_ / 1000));
 #ifndef DISABLE_BATTERY
