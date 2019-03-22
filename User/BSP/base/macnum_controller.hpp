@@ -186,7 +186,7 @@ public:
     static constexpr float radius_wheel_ = 0.076f; // 轮子半径
     static constexpr float radius_left_right_ = 0.24f; // 左右轮距离/2
     static constexpr float radius_front_back_ = 0.26f; // 前后轮距离/2
-    static constexpr Twist2D max_velocity_ = {.linear_x = 0.5f, .linear_y = 0.5f, .angular = float(M_PI) / 2};
+    static constexpr Twist2D max_velocity_ = {.linear_x = 1.0f, .linear_y = 1.0f, .angular = float(M_PI) / 2};
     
     const char* name_;
     C620Motor& motor_;
