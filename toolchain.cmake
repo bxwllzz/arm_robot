@@ -3,8 +3,7 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR cortex-m4)
 
-#set(TOOLCHAIN_PATH "I:/SysGCC/gcc-arm-none-eabi-7-2018-q2-update-win32")
-set(TOOLCHAIN_PATH "I:/SysGCC/gcc-arm-none-eabi-8-2018-q4-major-win32")
+set(TOOLCHAIN_PATH "C:/SSD/SysGCC/gcc-arm-none-eabi-8-2018-q4-major-win32")
 
 set(CMAKE_C_COMPILER "${TOOLCHAIN_PATH}/bin/arm-none-eabi-gcc.exe")
 set(CMAKE_CXX_COMPILER "${TOOLCHAIN_PATH}/bin/arm-none-eabi-g++.exe")

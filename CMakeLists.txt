@@ -48,12 +48,12 @@ target_link_libraries(${PROJECT_NAME}.elf libarm_cortexM4lf_math.a)
 #set_property(INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 ## 在编译完成后, 生成 hex 与 bin 文件
-set(HEX_FILE ${PROJECT_NAME}.hex)
-set(BIN_FILE ${PROJECT_NAME}.bin)
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        # COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
-        COMMAND I:/SysGCC/gcc-arm-none-eabi-7-2018-q2-update-win32/bin/arm-none-eabi-objcopy.exe -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
-        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
-        COMMENT "Building ${HEX_FILE}
-Building ${BIN_FILE}")
+#set(HEX_FILE ${PROJECT_NAME}.hex)
+#set(BIN_FILE ${PROJECT_NAME}.bin)
+#add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
+#        # COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
+#        COMMAND I:/SysGCC/gcc-arm-none-eabi-7-2018-q2-update-win32/bin/arm-none-eabi-objcopy.exe -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
+#        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
+#        COMMENT "Building ${HEX_FILE}
+#Building ${BIN_FILE}")
 
