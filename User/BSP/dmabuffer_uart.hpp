@@ -39,12 +39,12 @@ class DMABuffer_UART;
 // 基于DMA+FIFO缓冲区的UART
 // 支持半双工模式, 半双工模式下将在发送过程中, 自动禁用接收, 避免回环
 class DMABuffer_UART {
-    /* 全局函数, 统一管理所有硬件回调 */
+    /* 全局函数, 统一管理初始化与所有硬件回调 */
 private:
     static std::list<DMABuffer_UART *> instances; // 用于记录所有实例
 public:
-    static void init_uart(const char *name_ = NULL);    // 初始化指定的UART
-    static DMABuffer_UART *get_uart(const char *name_); // 初始化指定的UART
+    static void init_uart(const char *name_ = nullptr);         // 初始化指定名称的UART
+    static DMABuffer_UART *get_uart(const char *name_);         // 获取指定名称的UART
     static void on_uart_rx_abort_complete(UART_HandleTypeDef *huart_);
     static void on_uart_error(UART_HandleTypeDef *huart_);      // 当发生UART错误时, 由HAL层调用
     static void on_rx_dma_complete(UART_HandleTypeDef *huart_); // 当完成DMA接收时, 由HAL层调用
@@ -54,47 +54,41 @@ public:
 public:
     const char *name_;          // 名称
     UART_HandleTypeDef *huart_; // 对应的huart_
-    /* 启用半双工通信 */
-    bool half_duplix_;
-    GPIOOutput *write_enable_pin_ = NULL; // 写入使能输出引脚
+    uint8_t *tx_buf_;           // 发送缓冲区
+    const size_t tx_buf_len_;   // 发送缓冲区长度
+    uint8_t *rx_buf_;           // 接收缓冲区
+    const size_t rx_buf_len_;   // 接收缓冲区长度
     
-    /* Tx 发送 */
-    uint8_t *tx_buf_;                        // 发送缓冲区
-    const size_t tx_buf_len_;                // 发送缓冲区长度
-    volatile size_t tx_write_count_ = 0; // 发送缓冲区写入索引
-    volatile size_t tx_dma_start_count_ = 0; // 当前DMA发送的起始位置
-    volatile size_t tx_dma_length_ = 0; // 当前DMA发送的长度
+    /* 半双工通信配置 */
+    bool half_duplex_;
+    GPIOOutput *write_enable_pin_ = nullptr;   // 写入使能输出引脚
     
-    size_t tx_callback_index_; // 发送回调阈值
-    std::function<void()> tx_callback_;
+    uint32_t count_uart_error_ = 0; // UART错误计数
     
-    /* Rx 接收 */
-    uint8_t *rx_buf_;                  // 接收缓冲区
-    const size_t rx_buf_len_;          // 接收缓冲区长度
-    volatile bool enable_read_ = true; // 禁用读取
+    /* Tx 发送状态 */
+    volatile size_t tx_write_count_ = 0;        // 发送缓冲区累计写入字节数
+    volatile size_t tx_dma_start_count_ = 0;    // 当前DMA发送的起始位置
+    volatile size_t tx_dma_length_ = 0;         // 当前DMA发送的长度
+    volatile uint32_t last_dma_tx_ = 0;         // 当前DMA发送的启动时间, 0表示当前没有进行DMA发送
     
-    volatile bool rx_dma_circular_ = false;
-    volatile uint32_t rx_read_count_ = 0; // 接收缓冲区读取计数
-    volatile size_t rx_dma_count_ = 0; // DMA接收总数
+    /* Rx 接收状态 */
+    volatile bool enable_read_ = true;          // 当前使能读取
+    volatile bool rx_dma_circular_ = false;     // 当前DMA接收模式
+    volatile size_t rx_dma_start_count_ = 0;    // 当前DMA接收起始位置
+    volatile size_t rx_dma_length_ = 0;         // 当前DMA接收长度, 0表示未处于DMA接收模式
     
-    volatile size_t rx_dma_start_count_ = 0; // 当前DMA接收起始位置
-    volatile size_t rx_dma_length_ = 0; // 当前DMA接收长度
+    volatile uint32_t rx_read_count_ = 0;   // DMA接收缓冲区已读取字节数
+    volatile size_t rx_dma_count_ = 0;      // DMA接收缓冲区累积可用字节数
     
-    uint32_t last_dma_tx_ = 0;
-    uint32_t count_uart_error_ = 0;
-    
-    size_t rx_callback_count_;          // 接收回调阈值
-    std::function<void()> rx_callback_; // 接收回调
-    
-    std::atomic_flag mutex_rx_state_;
-    volatile bool retry_rx_update_ = false;
+    std::function<void()> rx_callback_ = {};// 接收回调
+    size_t rx_callback_count_ = 0;          // 接收回调阈值
     
     /* 成员函数 */
 public:
     // 以全双工模式初始化
     DMABuffer_UART(const char *_name, UART_HandleTypeDef *_huart, uint8_t *_tx_buf, size_t _tx_buf_len,
                    uint8_t *_rx_buf, size_t _rx_buf_len)
-        : name_(_name), huart_(_huart), half_duplix_(false), tx_buf_(_tx_buf), tx_buf_len_(_tx_buf_len),
+        : name_(_name), huart_(_huart), half_duplex_(false), tx_buf_(_tx_buf), tx_buf_len_(_tx_buf_len),
           rx_buf_(_rx_buf), rx_buf_len_(_rx_buf_len) {
         instances.push_back(this);
     }
@@ -104,21 +98,21 @@ public:
                    UART_HandleTypeDef *_huart,
                    GPIOOutput *_write_enable_pin,
                    uint8_t *_tx_buf, size_t _tx_buf_len, uint8_t *_rx_buf, size_t _rx_buf_len)
-        : name_(_name), huart_(_huart), half_duplix_(true), tx_buf_(_tx_buf), tx_buf_len_(_tx_buf_len),
+        : name_(_name), huart_(_huart), half_duplex_(true), tx_buf_(_tx_buf), tx_buf_len_(_tx_buf_len),
           rx_buf_(_rx_buf), rx_buf_len_(_rx_buf_len), write_enable_pin_(_write_enable_pin) {
         instances.push_back(this);
     }
     
     // 设定数据接收回调, 以当前接收缓冲区读出位置为基准, 当接收缓冲区的可以用数据数量>=给定阈值时, 立刻调用回调
     // 注意: 可能在中断中调用回调函数, 也可能[立即]调用回调
-    int set_rx_callback(size_t count, std::function<void()> callback);
+    int set_rx_callback(size_t count, const std::function<void()>& callback);
     // 可读取的字节数
     int get_rx_available();
     // 读取一个字节
     // 出错时返回-1
     int get();
     // 读取但是不取走一个字符, 无范围检查
-    uint8_t _peek_unsafe(size_t index = 0) const;
+    const uint8_t &_peek_unsafe(size_t index = 0) const;
     const uint8_t &operator[](size_t index) const;
     // 读取(但不取走)一个字符
     int peek(size_t index = 0);
@@ -144,11 +138,6 @@ public:
 
 private:
     int _init() {
-        tx_write_count_ = 0;
-        rx_read_count_ = 0;
-        rx_dma_start_count_ = 0;
-        rx_dma_length_ = 0;
-        
         // interrupt of both UART and DMA should be enabled
         // Tx DMA should be normal mode
         // Rx DMA should be circular mode
@@ -198,6 +187,7 @@ private:
             temp &= ~DMA_SxCR_CIRC_Msk;
             temp |= DMA_NORMAL;
             huart_->hdmarx->Instance->CR = temp;
+//            printf("%s: Recv in normal mode! May lose data\n", name_);
         }
         
         HAL_StatusTypeDef ret = HAL_UART_Receive_DMA(huart_, rx_buf_ + start_index, (uint16_t) count);
@@ -213,19 +203,39 @@ private:
         }
     }
     
-    // 停止数据接收
-    int _stop_rx_dma() {
-        _update_rx_dma_count();
-        rx_dma_start_count_ = rx_dma_count_;
-        rx_dma_length_ = 0;
-        
-        if (HAL_UART_AbortReceive_IT(huart_) != HAL_OK) {
-            // 无法停止数据接收
-            return -1;
-        } else {
-            return 0;
-        }
+    // 暂停接收DMA
+    void _pause_rx_dma() {
+        /* Disable RXNE, PE and ERR (Frame error, noise error, overrun error) interrupts */
+        CLEAR_BIT(huart_->Instance->CR1, USART_CR1_PEIE);
+        CLEAR_BIT(huart_->Instance->CR3, USART_CR3_EIE);
+        /* Disable the UART DMA Rx request */
+        CLEAR_BIT(huart_->Instance->CR3, USART_CR3_DMAR);
     }
+    
+    // 恢复接收DMA
+    void _resume_rx_dma() {
+        /* Clear the Overrun flag before resuming the Rx transfer*/
+        __HAL_UART_CLEAR_OREFLAG(huart_);
+        /* Reenable PE and ERR (Frame error, noise error, overrun error) interrupts */
+        SET_BIT(huart_->Instance->CR1, USART_CR1_PEIE);
+        SET_BIT(huart_->Instance->CR3, USART_CR3_EIE);
+        /* Enable the UART DMA Rx request */
+        SET_BIT(huart_->Instance->CR3, USART_CR3_DMAR);
+    }
+    
+    // 停止数据接收
+//    int _stop_rx_dma() {
+//        _update_rx_dma_count();
+//        rx_dma_start_count_ = rx_dma_count_;
+//        rx_dma_length_ = 0;
+//
+//        if (HAL_UART_AbortReceive_IT(huart_) != HAL_OK) {
+//            // 无法停止数据接收
+//            return -1;
+//        } else {
+//            return 0;
+//        }
+//    }
     
     // 获取当前DMA读取索引
     //    size_t _get_rx_dma_index() const {
@@ -233,22 +243,28 @@ private:
     //    }
     
     // 获取并更新当前DMA读取计数
-    uint32_t _update_rx_dma_count() {
+    uint32_t _update_rx_dma_count(bool loop = false) {
         InterruptLock lock;
         std::unique_lock<InterruptLock> u_lock(lock);
         // 获取DMA接收的索引
         uint32_t rx_dma_index;
         if (rx_dma_length_) {
+            // 正在进行DMA接收
             rx_dma_index =
                 (rx_dma_start_count_ + (rx_dma_length_ - __HAL_DMA_GET_COUNTER(huart_->hdmarx))) % rx_buf_len_;
         } else {
+            // 没有进行DMA接收
             rx_dma_index = rx_dma_start_count_ % rx_buf_len_;
         }
         // 计算上一次DMA接收的索引
         uint32_t last_rx_dma_index = rx_dma_count_ % rx_buf_len_;
         if (last_rx_dma_index == rx_dma_index) {
-            // 未接收到新数据
-            // todo: 正好接收了一整圈?
+//            if (rx_dma_length_ && rx_dma_circular_ && loop) {
+//                // 正好接收了一整圈
+//                rx_dma_count_ += rx_dma_length_;
+//            } else {
+                // 未接收到新数据
+//            }
         } else {
             // 接收到新数据
             if (last_rx_dma_index < rx_dma_index) {
@@ -256,7 +272,8 @@ private:
                 rx_dma_count_ += rx_dma_index - last_rx_dma_index;
             } else {
                 // 超过buf_len
-                rx_dma_count_ += rx_buf_len_ - last_rx_dma_index + rx_dma_index;
+//                printf("loop len=%d %d->%d\n", rx_buf_len_, last_rx_dma_index, rx_dma_index);
+                rx_dma_count_ += rx_buf_len_ + rx_dma_index - last_rx_dma_index;
             }
         }
         
@@ -274,27 +291,27 @@ private:
     
     // 使能写
     void pause_rx() {
-        if (!half_duplix_)
+        if (!half_duplex_)
             return;
         if (write_enable_pin_) {
             write_enable_pin_->on();
         }
         if (enable_read_) {
             enable_read_ = false;
-            _stop_rx_dma();
+            _pause_rx_dma();
         }
     }
     
     // 使能读
     void resume_rx() {
-        if (!half_duplix_)
+        if (!half_duplex_)
             return;
         if (write_enable_pin_) {
             write_enable_pin_->off();
         }
         if (!enable_read_) {
             enable_read_ = true;
-            _start_rx_dma();
+            _resume_rx_dma();
         }
     }
     
@@ -325,11 +342,12 @@ private:
     // 当完成UART DMA接收时(非环形模式), 被外部调用
     void _on_rx_dma_complete(UART_HandleTypeDef *_huart) {
         if (_huart == huart_) {
-            _update_rx_dma_count();
+            _update_rx_dma_count(true);
             if (!rx_dma_circular_) {
+                // 恢复环形DMA接收模式
+//                printf("%s: _on_rx_dma_complete rx_dma_count_=%d\n", name_, rx_dma_count_);
                 _start_rx_dma();
             }
-            //            printf("%s: _on_rx_dma_complete rx_dma_count_=%d\n", name_, rx_dma_count_);
         }
     }
     
@@ -337,7 +355,7 @@ private:
     void _on_tx_dma_complete(UART_HandleTypeDef *_huart) {
         if (_huart == huart_) {
             //            if (strcmp(name_, "RS485_ARM_RIGHT") == 0) {
-            //                printf("OK\n");
+//            printf("OK\n");
             //            }
             last_dma_tx_ = 0;
             flush();
@@ -347,15 +365,16 @@ private:
 
 // 设定数据接收回调, 以当前接收缓冲区读出位置为基准, 当接收缓冲区的可以用数据数量>=给定阈值时, 立刻调用回调
 // 注意: 可能在中断中调用回调函数, 也可能[立即]调用回调
-inline int DMABuffer_UART::set_rx_callback(size_t count, std::function<void()> callback) {
+inline int DMABuffer_UART::set_rx_callback(size_t count, const std::function<void()>& callback) {
     if (!callback || rx_callback_) {
         return -1;
     }
-    rx_callback_count_ = rx_read_count_ + count;
-    rx_callback_ = callback;
-    if (rx_dma_start_count_ + rx_dma_length_ > rx_callback_count_) {
-        _stop_rx_dma();
-    }
+    if (rx_dma_start_count_ + rx_dma_length_ > rx_read_count_ + count) {
+        callback();
+    } else {
+        rx_callback_count_ = rx_read_count_ + count;
+        rx_callback_ = callback;
+    };
     return 0;
 }
 
@@ -379,7 +398,7 @@ inline int DMABuffer_UART::get() {
 }
 
 // 读取但是不取走一个字符, 无范围检查
-inline uint8_t DMABuffer_UART::_peek_unsafe(size_t index) const {
+inline const uint8_t &DMABuffer_UART::_peek_unsafe(size_t index) const {
     return rx_buf_[(rx_read_count_ + index) % rx_buf_len_];
 }
 inline const uint8_t &DMABuffer_UART::operator[](size_t index) const {
@@ -401,7 +420,7 @@ inline int DMABuffer_UART::read(uint8_t *data, size_t count) {
         return 0;
     }
     if (get_rx_available() >= (int) count) {
-        if (data != NULL) {
+        if (data != nullptr) {
             uint32_t rx_read_index = rx_read_count_ % rx_buf_len_;
             if (rx_read_index + count < rx_buf_len_) {
                 memcpy(data, &rx_buf_[rx_read_index], count);
@@ -425,7 +444,9 @@ inline int DMABuffer_UART::readsome(uint8_t *data, size_t max_len) {
     if (count <= 0) {
         return 0;
     }
-    if (data != NULL) {
+    if (count > max_len)
+        count = max_len;
+    if (data != nullptr) {
         uint32_t rx_read_index = rx_read_count_ % rx_buf_len_;
         if (rx_read_index + count < rx_buf_len_) {
             memcpy(data, &rx_buf_[rx_read_index], count);
@@ -491,7 +512,7 @@ inline int DMABuffer_UART::flush() {
             }
             pause_rx();
             //            while (true) {
-            int ret = HAL_UART_Transmit_DMA(huart_, &(tx_buf_[tx_dma_index]), block_len);
+            ret = HAL_UART_Transmit_DMA(huart_, &(tx_buf_[tx_dma_index]), block_len);
             if (ret == HAL_OK) {
                 tx_dma_length_ = block_len;
                 ret = block_len;
@@ -502,6 +523,7 @@ inline int DMABuffer_UART::flush() {
                 //                    break;
             } else {
                 u_lock.unlock();
+                resume_rx();
                 printf("%s: lck\n", name_);
                 ret = -2;
             }

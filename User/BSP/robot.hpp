@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include "lwip/stats.h"
 
 // ROS
 #include <ros.h>
@@ -40,10 +41,10 @@
 #include "ocservo_ttl.hpp"
 #include "ros_adapter_head.hpp"
 
-//#define DISABLE_BATTERY
+#define DISABLE_BATTERY
 #define DISABLE_HAND
 #define DISABLE_ARM_RIGHT
-//#define DISABLE_ARM_LEFT
+#define DISABLE_ARM_LEFT
 //#define DISABLE_BASE
 #define DISABLE_ARM_DEMO
 #define DISABLE_HEAD
@@ -69,6 +70,10 @@ public:
     uint64_t last_loop_ = 0;
     uint32_t max_loop_interval_ = 0;
     
+    uint32_t last_ros_count_pub_ok_ = 0;
+    uint32_t last_ros_bytes_pub_ok_ = 0;
+    uint32_t last_ros_count_pub_failed_ = 0;
+    uint32_t last_ros_bytes_pub_failed_ = 0;
     uint32_t last_arm_right_count_write_ = 0;
     uint32_t last_arm_right_count_read_ = 0;
     uint32_t last_arm_right_count_error_ = 0;
@@ -289,8 +294,8 @@ inline void Robot::init() {
     battery_.init();
 #endif
     // ROS 通信
-    nh_cpp_.initNode("11412", NH_CPP_BUF_IN, sizeof(NH_CPP_BUF_IN), NH_CPP_BUF_OUT, sizeof(NH_CPP_BUF_OUT));
-    nh_py_.initNode("11411", NH_PY_BUF_IN, sizeof(NH_PY_BUF_IN), NH_PY_BUF_OUT, sizeof(NH_PY_BUF_OUT));
+    nh_cpp_.initNode("192.168.123.2", 11412, NH_CPP_BUF_IN, sizeof(NH_CPP_BUF_IN), NH_CPP_BUF_OUT, sizeof(NH_CPP_BUF_OUT));
+    nh_py_.initNode("192.168.123.2", 11411, NH_PY_BUF_IN, sizeof(NH_PY_BUF_IN), NH_PY_BUF_OUT, sizeof(NH_PY_BUF_OUT));
     // 移动底盘
 #ifndef DISABLE_BASE
     macnum_motor_.init();
@@ -345,7 +350,6 @@ inline void Robot::spin_once() {
         LED1.toggle();
         LED2.toggle();
     }
-    
     uint64_t now = MY_GetNanoSecFromCycle(MY_GetCycleCount());
     // 计算主循环最大时间间隔
     if (last_loop_ && now - last_loop_ > max_loop_interval_) {
@@ -361,6 +365,17 @@ inline void Robot::spin_once() {
             timer_debug_.count_, EmergencyStoppable::all_emergency_stop() ? "-STOP" : "",
             int(1000000 / count_main_loop_),
             int(max_loop_interval_ / 1000));
+        
+        // ROS Node Handler
+        printf(" ROS-W%lu-E%lu-%luKB/s",
+               nh_cpp_.count_pub_ok_ - last_ros_count_pub_ok_,
+               nh_cpp_.count_pub_failed_ - last_ros_count_pub_failed_,
+               ((nh_cpp_.bytes_pub_ok_ - last_ros_bytes_pub_ok_)) / 1024);
+        last_ros_count_pub_ok_ = nh_cpp_.count_pub_ok_;
+        last_ros_count_pub_failed_ = nh_cpp_.count_pub_failed_;
+        last_ros_bytes_pub_ok_ = nh_cpp_.bytes_pub_ok_;
+        last_ros_bytes_pub_failed_ = nh_cpp_.bytes_pub_failed_;
+
 #ifndef DISABLE_BATTERY
         // battery
         printf(" %.2fV", battery_.voltage());
@@ -423,6 +438,13 @@ inline void Robot::spin_once() {
 #endif
         
         puts("");
+    
+//        stats_display();
+//        lwip_stats = {};
+//        for (int i = 0; i < LWIP_ARRAYSIZE(memp_pools); i++) {
+//            lwip_stats.memp[i] = memp_pools[i]->stats;
+//        }
+//        stats_init();
         
         count_main_loop_ = 0;
         max_loop_interval_ = 0;
@@ -456,7 +478,7 @@ inline void Robot::spin_once() {
 #endif
     // ROS 通信
     nh_cpp_.spinOnce();
-    nh_py_.spinOnce();
+//    nh_py_.spinOnce();
     // 文本指令
     handle_command();
     // 移动底盘

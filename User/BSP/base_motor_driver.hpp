@@ -11,8 +11,8 @@ class AbstractMotorDriver {
 public:
     static const uint32_t default_delay_init = 2000;    // 上电后延迟启动(ms)
     static const uint64_t default_interval_send = 100000;  // 帧发送最小间隔(ns)
-    static const uint64_t default_rx_resp_timeout_ns = 500000;  // 帧等待超时(ns)
-    static const uint64_t default_rx_interval_timeout_ns = 500000;  // 帧接收字符超时(ns)
+    static const uint64_t default_rx_resp_timeout_ns = 1000000;  // 帧等待超时(ns)
+    static const uint64_t default_rx_interval_timeout_ns = 1000000;  // 帧接收字符超时(ns)
     static const uint64_t default_dur_loop = 1000000; // 状态机周期(ns)
     static const uint32_t default_disconnect_timeout = 100; // 超过该事件后未响应, 则认为连接断开(ms)
     
@@ -143,6 +143,7 @@ public:
     
     // 通信状态机
     void spin_once() {
+respin:
         uint64_t current_ns = MY_GetNanoSecFromCycle(MY_GetCycleCount());
         int periods;
         switch (state_) {
@@ -175,7 +176,7 @@ public:
             last_sync_op_sending_ = current_ns;
             
             state_ = State::SYNC_WRITE_SENDING;
-            break;
+            
         case State::SYNC_WRITE_SENDING:
             // 正在发送请求 同步写各关节目标位置
             if (uart_.get_tx_sending() == 0) {
@@ -183,8 +184,9 @@ public:
                 dur_send_sync_op_ = current_ns - last_sync_op_sending_;
                 last_sync_op_sent_ = current_ns;
                 state_ = State::REQUEST;
+            } else {
+                break;
             }
-            break;
         case State::REQUEST:
             // 准备发送读请求 读取当前位置
             if (current_ns - last_op_sent_ >= interval_send_) {
@@ -196,16 +198,19 @@ public:
                 last_op_sending_ = current_ns;
                 
                 state_ = State::REQUEST_SENDING;
+            } else {
+                break;
             }
-            break;
         case State::REQUEST_SENDING:
             // 正在发送读请求 读取当前位置
             if (uart_.get_tx_sending() == 0) {
                 dur_send_op_ = current_ns - last_op_sending_;
                 last_op_sent_ = current_ns;
+//                printf("%s[%d]: sent op\n", name_, current_op_.id);
                 state_ = State::WAIT_RESPONSE;
+            } else {
+                break;
             }
-            break;
         case State::WAIT_RESPONSE:
             // 等待响应的第一个字节 (读取当前位置)
             if (uart_.get_rx_available() > 0) {
@@ -222,9 +227,11 @@ public:
                     }
                     count_error_++;
                     state_ = State::WAIT; // 读取失败后切换状态
+                    goto respin;
+                } else {
+                    break;
                 }
             }
-            break;
         case State::PENDING_RESPONSE:
             // 接收完整的响应帧 (读取当前位置)
             while (true) {
@@ -236,7 +243,7 @@ public:
                         // 若得到完整的数据包, 存储关节位置信息
                         dur_recv_resp_ = current_ns - last_recv_start_;
                         // 等待响应平均耗时0.2ms
-                        //                        printf("%s[%d]: op ok, dur_wait_resp_=%d us\n", name_, current_op_.id, dur_wait_resp_ / 1000);
+//                        printf("%s[%d]: op ok, dur_wait_resp_=%d us\n", name_, current_op_.id, dur_wait_resp_ / 1000);
                         
                         count_op_++;
                         current_op_success_ = true;
@@ -247,12 +254,12 @@ public:
                             current_op_.on_finish = decltype(current_op_.on_finish)();
                         }
                         state_ = State::WAIT; // 读取成功后切换状态
-                        break;
+                        goto respin;
                     } else if (ret < 0) {
                         // 接收出错
                         count_error_++;
-                        state_ = State::WAIT; // 读取成功后切换状态
-                        break;
+                        state_ = State::WAIT; // 读取失败后切换状态
+                        goto respin;
                     } else {
                         // 还在接收
                     }
@@ -264,9 +271,12 @@ public:
                                    int((current_ns - last_data_recved_) / 1000));
                         }
                         count_error_++;
-                        state_ = State::WAIT; // 读取失败后切换状态
+                        state_ = State::WAIT; // 读取超时后切换状态
+                        goto respin;
+                    } else {
+                        // 等待数据
+                        break;
                     }
-                    break;
                 }
                 current_ns = MY_GetNanoSecFromCycle(MY_GetCycleCount());
             }

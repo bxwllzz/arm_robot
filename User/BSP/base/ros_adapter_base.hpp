@@ -308,12 +308,13 @@ inline void ROSAdapterBase::spin_once() {
         msg_joint_.effort = joint_status.efforts.data();
         // 发送消息
         if (pub_joint_.publish(&msg_joint_) < 0) {
-            printf("%s: failed to publish msg_joint_\n", name_);
-            return false;
+//            printf("%s: failed to publish msg_joint_\n", name_);
+//            return false;
         } else {
             joint_status_buffers_.clear();
-            return true;
+//            return true;
         }
+        return true;
     });
     
     // 定时发布里程计状态, tf消息
@@ -345,7 +346,7 @@ inline void ROSAdapterBase::spin_once() {
         msg_odom_.pose.covariance[1] = odom_status.constraint_error;
         // 发送消息
         if (pub_odom_.publish(&msg_odom_) < 0) {
-            printf("%s: failed to publish msg_odom_\n", name_);
+//            printf("%s: failed to publish msg_odom_\n", name_);
             ret |= false;
         } else {
             odometry_status_buffers_.clear();
@@ -361,12 +362,13 @@ inline void ROSAdapterBase::spin_once() {
         msg_tf_.transform.rotation.w = q_w;
         // 发送消息
         if (brd_tf_.sendTransform(msg_tf_) < 0) {
-            printf("%s: failed to broadcast tf %s -> %s\n", name_, msg_tf_.header.frame_id, msg_tf_.child_frame_id);
+//            printf("%s: failed to broadcast tf %s -> %s\n", name_, msg_tf_.header.frame_id, msg_tf_.child_frame_id);
             ret |= false;
         } else {
             ret |= true;
         }
-        return ret;
+//        return ret;
+        return true;
     });
     
     // 检查速度指令是否超时

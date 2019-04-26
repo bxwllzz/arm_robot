@@ -140,7 +140,7 @@ public:
             } while (0);
 
             if (pub_joint_.publish(&msg_joint_) < 0) {
-                printf("node_handler: failed to publish hand_state\n");
+//                printf("node_handler: failed to publish hand_state\n");
             } else {
                 count_pub_joint_++;
             }

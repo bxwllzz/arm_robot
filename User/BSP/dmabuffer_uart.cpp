@@ -23,7 +23,7 @@ DMABuffer_UART* DMABuffer_UART::get_uart(const char* name) {
             return dmabuffer;
         }
     }
-    return NULL;
+    return nullptr;
 }
 void DMABuffer_UART::on_uart_rx_abort_complete(UART_HandleTypeDef* huart) {
     for (DMABuffer_UART* dmabuffer : instances) {

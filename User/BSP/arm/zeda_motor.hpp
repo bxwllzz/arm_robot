@@ -94,7 +94,7 @@ struct ZedaDevice {
     static uint32_t sizeof_goal_position() { return sizeof(Register::goal_position); }
     
     static uint32_t offset_read_data() { return offsetOf(&Register::present_position); }
-    static uint32_t sizeof_read_data() { return sizeof(&Register::present_position); }
+    static uint32_t sizeof_read_data() { return sizeof(Register::present_position); }
     
     uint8_t *memory() {
         return (uint8_t *) &registers;
@@ -279,7 +279,7 @@ protected:
 public:
     ZedaDriver(const char *name, DMABuffer_UART &rs485, const char *joint_prefix)
         : BaseMotorDriver(name, rs485) {
-        this->ignore_timeout_ = false;
+        this->ignore_timeout_ = true;
         this->ignore_busy_ = true;
         this->ignore_protocol_ = false;
         
@@ -296,6 +296,17 @@ public:
         
         // 初始化指令
         ZedaOperation op;
+        
+        // 修改ID
+//        op.id = 6;
+//        op.instruction = ZedaInstructionType::WRITE;
+//        op.reg_addr = offsetOf(&ZedaDevice::Register::id);
+//        op.reg_length = sizeof(ZedaDevice::Register::id);
+//        devices_[5].memory()[op.reg_addr] = 1;
+//        op.on_finish = [this](const ZedaOperation &op) {
+//            printf("ID changed\n");
+//        };
+//        add_operation(op);
         
         for (int i = 0; i < motor_count; i++) {
             // 读取所有寄存器
@@ -491,6 +502,7 @@ public:
     // 解析一帧消息
     // 返回值: 是完整的一帧=0, 不是一帧=-1, 帧不完整=-2, CRC校验错误=-3
     int _parse_update(uint8_t ch) override {
+//        printf("[%02X]", ch);
         Response &resp = current_resp_;
         switch (rx_state_) {
         case RxState::ID:
@@ -499,8 +511,9 @@ public:
                 // 跳过 0xFF
             } else if (ch != resp.id) {
                 if (!this->ignore_protocol_)
-                    printf("%s: bad ID=0x%02X (!=0x%02X)\n", name_, ch, resp.id);
+                    printf("%s[%d]: bad ID=0x%02X (!=0x%02X)\n", name_, resp.id, ch, resp.id);
                 rx_state_ = RxState::ID;
+                return -1;
             } else {
                 resp.id = ch;
                 rx_state_ = RxState::LENGHTH_L;
@@ -510,8 +523,9 @@ public:
             //            printf("%s: LENGHTH_L 0x%02X\n", name_, ch);
             if (ch != (resp.length & 0xFF)) {
                 if (!this->ignore_protocol_)
-                    printf("%s: bad LENGHTH_L=0x%02X (!=0x%02X)\n", name_, ch, resp.length & 0xFF);
+                    printf("%s[%d]: bad LENGHTH_L=0x%02X (!=0x%02X)\n", name_, resp.id, ch, resp.length & 0xFF);
                 rx_state_ = RxState::ID;
+                return -1;
             } else {
                 resp.length = uint16_t((resp.length & 0xFF00) | ch);
                 rx_state_ = RxState::LENGHTH_H;
@@ -521,8 +535,9 @@ public:
             //            printf("%s: LENGHTH_H 0x%02X\n", name_, ch);
             if (ch != (resp.length >> 8)) {
                 if (!this->ignore_protocol_)
-                    printf("%s: bad LENGHTH_H=0x%02X (!=0x%02X)\n", name_, ch, resp.length >> 8);
+                    printf("%s[%d]: bad LENGHTH_H=0x%02X (!=0x%02X)\n", name_, resp.id, ch, resp.length >> 8);
                 rx_state_ = RxState::ID;
+                return -1;
             } else {
                 resp.length = uint16_t((resp.length & 0x00FF) | ((uint16_t) ch << 8));
                 rx_state_ = RxState::INSTRUCTION;
@@ -532,8 +547,9 @@ public:
             //            printf("%s: INSTRUCTION 0x%02X\n", name_, ch);
             if (ch != (uint8_t) resp.instruction) {
                 if (!this->ignore_protocol_)
-                    printf("%s: bad INSTRUCTION=0x%02X (!=0x%02X)\n", name_, ch, (uint8_t) resp.instruction);
+                    printf("%s[%d]: bad INSTRUCTION=0x%02X (!=0x%02X)\n", name_, resp.id, ch, (uint8_t) resp.instruction);
                 rx_state_ = RxState::ID;
+                return -1;
             } else {
                 resp.instruction = (ZedaInstructionType) ch;
                 rx_state_ = RxState::Error;
@@ -543,7 +559,7 @@ public:
             //            printf("%s: Error 0x%02X\n", name_, ch);
             if (ch) {
                 if (!this->ignore_protocol_)
-                    printf("%s: Unexpected error = 0x%02X\n", name_, ch);
+                    printf("%s[%d]: Unexpected error = 0x%02X\n", name_, resp.id, ch);
             }
             resp.error = ch;
             if (resp.length - 4 > 0) {
@@ -635,7 +651,7 @@ public:
         int drop_count = this->uart_.readsome(NULL, 0xFFFF); // clear rx buffer
         if (drop_count > 0) {
             if (!this->ignore_protocol_)
-                printf("%s: %d bytes droped\n", this->name_, drop_count);
+                printf("%s[%d]: %d bytes droped\n", this->name_, op.id, drop_count);
         }
         rx_state_ = RxState::ID;
         

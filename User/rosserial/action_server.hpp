@@ -116,8 +116,11 @@ private:
         pub_status_msg_.status_list_length = 1;
         pub_status_msg_.status_list = (actionlib_msgs::GoalStatus *) &goal_status;
 
-        last_pub_status_ = HAL_GetTick();
-        pub_status_.publish(&pub_status_msg_);
+        if (pub_status_.publish(&pub_status_msg_) >= 0) {
+            last_pub_status_ = HAL_GetTick();
+        } else {
+            printf("ActionServer %s: failed to pub status\n", name_);
+        }
     }
 
     void _pub_status_array_none() {
@@ -127,8 +130,11 @@ private:
         pub_status_msg_.status_list_length = 0;
         pub_status_msg_.status_list = NULL;
 
-        last_pub_status_ = HAL_GetTick();
-        pub_status_.publish(&pub_status_msg_);
+        if (pub_status_.publish(&pub_status_msg_) >= 0) {
+            last_pub_status_ = HAL_GetTick();
+        } else {
+//            printf("ActionServer %s: failed to pub null status\n", name_);
+        }
     }
 
     void _pub_status(const actionlib_msgs::GoalID &goal_id, uint8_t status, const char *text = "") {
@@ -163,7 +169,9 @@ private:
         pub_result_msg_.status = goal_status_;
         pub_result_msg_.result = result;
 
-        pub_result_.publish(&pub_result_msg_);
+        if (pub_result_.publish(&pub_result_msg_) < 0) {
+            printf("ActionServer %s: failed to pub result\n", name_);
+        };
     }
 
     static const char *strstatus(uint8_t status) {

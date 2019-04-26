@@ -9,9 +9,10 @@
 using namespace hustac;
 
 static Pipe* debug_socket = NULL;
+static uint8_t debug_socket_snd_buf[512];
 
 extern "C" void debug_socket_init() {
-    debug_socket = new PipeUDPBroadcast("0.0.0.0", 1124, 1123);
+    debug_socket = new PipeUDPBroadcast("0.0.0.0", 1124, 1123, debug_socket_snd_buf, sizeof(debug_socket_snd_buf));
 }
 
 extern "C" int debug_socket_write(void* data, size_t len) {

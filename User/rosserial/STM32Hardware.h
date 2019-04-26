@@ -58,23 +58,27 @@ using namespace hustac;
 
 class STM32Hardware {
 public:
-    STM32Hardware()
-        : tcp_port_(0) {
-    }
+    STM32Hardware() = default;
     
     void init() {
+        if (tcp_server_ && strlen(tcp_server_) > 0 && tcp_port_ >= 0) {
+            if (!pipe_)
+                pipe_ = new(pipe_mem_) PipeTCPClient("192.168.123.2", tcp_port_);
+            else
+                pipe_->reconnect();
+        } else {
+            Error_Handler();
+        }
     }
     
-    void init(const char* port_name) {
-        tcp_port_ = std::atoi(port_name);
-        if (pipe_ == NULL)
-            pipe_ = new(pipe_mem_) PipeTCPClient("192.168.123.2", tcp_port_);
-        else
-            pipe_->reconnect();
+    void init(const char* server, uint16_t port) {
+        tcp_server_ = server;
+        tcp_port_ = port;
+        init();
     }
     
     int read() {
-        if (pipe_ == NULL)
+        if (!pipe_)
             init();
         uint8_t ch;
         int ret = pipe_->readsome(&ch, 1);
@@ -86,7 +90,7 @@ public:
     }
     
     int write(uint8_t* data, int len) {
-        if (pipe_ == NULL)
+        if (!pipe_)
             init();
         return pipe_->write(data, len);
     }
@@ -100,15 +104,16 @@ public:
     }
     
     ~STM32Hardware() {
-        if (pipe_ != NULL) {
+        if (pipe_) {
             delete pipe_;
-            pipe_ = NULL;
+            pipe_ = nullptr;
         }
     }
 
 public:
-    int tcp_port_;
-    PipeTCPClient* pipe_ = NULL;
+    const char* tcp_server_ = nullptr;
+    uint16_t tcp_port_ = 0;
+    PipeTCPClient* pipe_ = nullptr;
     uint8_t pipe_mem_[sizeof(PipeTCPClient)];
 };
 

@@ -75,8 +75,8 @@ const int SPIN_OK = 0;
 const int SPIN_ERR = -1;
 const int SPIN_TIMEOUT = -2;
 
-const uint32_t SYNC_INTERVAL = 100; // 每两次同步之间的时间间隔, ms
-const uint32_t LOST_TIMEOUT = 500; // 每两次同步之间的时间间隔, ms
+const uint32_t SYNC_INTERVAL = 100; // 时间同步的间隔, ms
+const uint32_t LOST_TIMEOUT = 2000;  // 无消息超时, ms
 const uint8_t MODE_FIRST_FF = 0;
 /*
  * The second sync byte is a protocol version. It's value is 0xff for the first
@@ -105,7 +105,7 @@ using rosserial_msgs::TopicInfo;
 /* Node Handle */
 template<class Hardware, int MAX_SUBSCRIBERS = 50, int MAX_PUBLISHERS = 50>
 class NodeHandle_ : public NodeHandleBase_ {
-protected:
+public:
     const char* name_;
     Hardware hardware_;
     
@@ -126,6 +126,11 @@ protected:
     size_t message_in_size_ = 0;
     uint8_t* message_out_ = NULL;
     size_t message_out_size_ = 0;
+    
+    uint32_t count_pub_ok_ = 0;
+    uint32_t bytes_pub_ok_ = 0;
+    uint32_t count_pub_failed_ = 0;
+    uint32_t bytes_pub_failed_ = 0;
     
     std::function<void()> connected_callback_;
     std::function<void()> disconnected_callback_;
@@ -158,26 +163,33 @@ public:
         return &hardware_;
     }
     
+    void _reset_status() {
+        mode_ = 0;
+        bytes_ = 0;
+        topic_ = 0;
+        index_ = 0;
+        checksum_ = 0;
+        configured_ = false;
+        prev_msg_need_send_ = false;
+        prev_msg_data_ = nullptr;
+        prev_msg_len_ = 0;
+    }
+    
     /* Start serial, initialize buffers */
     void initNode() {
         hardware_.init();
-        mode_ = 0;
-        bytes_ = 0;
-        index_ = 0;
-        topic_ = 0;
+        _reset_status();
     };
     
     /* Start a named port, which may be network server IP, initialize buffers */
-    void initNode(const char* portName, uint8_t* buf_in = NULL, size_t buf_in_size = 0, uint8_t* buf_out = NULL, size_t buf_out_size = 0) {
-        hardware_.init(portName);
-        mode_ = 0;
-        bytes_ = 0;
-        index_ = 0;
-        topic_ = 0;
+    void initNode(const char* server, uint16_t port, uint8_t* buf_in = nullptr, size_t buf_in_size = 0, uint8_t* buf_out = nullptr,
+                  size_t buf_out_size = 0) {
+        hardware_.init(server, port);
         message_in_ = buf_in;
         message_in_size_ = buf_in_size;
         message_out_ = buf_out;
         message_out_size_ = buf_out_size;
+        _reset_status();
     };
     
     virtual ~NodeHandle_() {
@@ -204,27 +216,38 @@ protected:
     int checksum_;
     
     bool configured_;
-    uint32_t configured_t_;
+    
+    bool prev_msg_need_send_ = false;
+    uint8_t* prev_msg_data_ = nullptr;
+    uint32_t prev_msg_len_ = 0;
     
     /* used for syncing the time */
-    uint32_t last_sync_time;
-    uint32_t last_sync_receive_time;
-    uint32_t last_msg_timeout_time; // 单帧消息接收超时, ms
+    uint32_t t_msg_start_recv_; // 开始接受帧的时间
+    uint32_t t_msg_recved_;     // 成功接受帧的时间
+    uint32_t t_sync_req_;       // 发出时间同步请求的时间
+    uint32_t t_sync_resp_;      // 收到时间同步响应的时间
 
 public:
+    
+    // 断开连接
+    void _disconnect(const char* reason = "") {
+        if (configured_) {
+            _reset_status();
+            printf("NodeHandle %s: Lost (%s)\n", name_, reason);
+            hardware_.init();
+        }
+    }
+    
     /* This function goes in your loop() function, it handles
      *  serial input and callbacks for subscribers.
      */
-    
     virtual int spinOnce() {
         /* restart if timed out */
         uint32_t c_time = hardware_.time();
-        if (configured_ && c_time - last_sync_receive_time > LOST_TIMEOUT) {
+        if (configured_ && c_time - t_msg_recved_ > LOST_TIMEOUT) {
             // 过长时间(2倍于同步间隔)没有收到同步时间响应
             // 认为断开连接
-            configured_ = false;
-            printf("NodeHandle %s: Lost (sync timeout)\n", name_);
-            hardware_.init();
+            _disconnect("no msg");
         }
         
         /* while available buffer, read data */
@@ -245,10 +268,9 @@ public:
             
             /* reset if message has timed out */
             if (mode_ != MODE_FIRST_FF) {
-                if (c_time > last_msg_timeout_time) {
+                if (c_time > t_msg_start_recv_) {
                     // 一帧消息接收超时
-                    printf("NodeHandle %s: msg timeout\n", name_);
-                    mode_ = MODE_FIRST_FF;
+                    _disconnect("msg interval timeout");
                 }
             }
             
@@ -263,7 +285,7 @@ public:
                 if (data == 0xff) {
                     mode_++;
                     // 记录当前时间, 以计算一帧消息的超时时间
-                    last_msg_timeout_time = c_time + SERIAL_MSG_TIMEOUT;
+                    t_msg_start_recv_ = c_time + SERIAL_MSG_TIMEOUT;
                 } else {
                     //                    printf("? %d\n", data);
                 }
@@ -274,7 +296,7 @@ public:
                     // 错误的协议版本, 发送同步时间请求以告知上位机协议版本
                     mode_ = MODE_FIRST_FF;
                     printf("NodeHandle %s: bad PROTOCOL_VER\n", name_);
-                    if (configured_ == false)
+                    if (!configured_)
                         requestSyncTime(); /* send a msg back showing our protocol version */
                 }
             } else if (mode_ == MODE_SIZE_L) /* bottom half of message size */
@@ -288,10 +310,6 @@ public:
                 bytes_ += data << 8;
                 mode_++;
             } else if (mode_ == MODE_SIZE_CHECKSUM) {
-//                if (bytes_ > INPUT_SIZE) {
-//                    mode_ = MODE_FIRST_FF; /* Abandon the frame if the msg len is wrong */
-//                    printf("NodeHandle: msg too long: %d > %d\n", bytes_, INPUT_SIZE);
-//                } else
                 if ((checksum_ % 256) == 255) {
                     if (message_in_ == NULL || bytes_ > message_in_size_) {
                         mode_ = MODE_FIRST_FF; /* Abandon the frame if the msg len is wrong */
@@ -337,19 +355,20 @@ public:
                 mode_ = MODE_FIRST_FF;
                 if ((checksum_ % 256) == 255) {
                     // 消息数据校验正确
+                    t_msg_recved_ = c_time;
                     if (topic_ == TopicInfo::ID_PUBLISHER) {
                         // 上位机请求下位机开始通信
+                        
+                        // 首先发送时间同步请求, 确认协议版本
                         requestSyncTime();
+                        // 发送下位机话题
                         if (negotiateTopics() == 0) {
-                            printf("NodeHandle %s: negotiate topics\n", name_);
+                            printf("NodeHandle %s: Negotiating topics\n", name_);
                             if (!configured_) {
                                 configured_ = true;
-                                configured_t_ = hardware_.time();
                                 printf("NodeHandle %s: Connected to PC\n", name_);
                             }
                         }
-                        last_sync_time = c_time;
-                        last_sync_receive_time = c_time;
                         return SPIN_ERR;
                     } else if (topic_ == TopicInfo::ID_TIME) {
                         // 接收到了时间同步响应
@@ -360,8 +379,7 @@ public:
                         param_recieved = true;
                     } else if (topic_ == TopicInfo::ID_TX_STOP) {
                         // 接收到了上位机结束消息
-                        configured_ = false;
-                        printf("NodeHandle %s: Disconnected\n", name_);
+                        _disconnect("Graceful");
                     } else {
                         // 接收到了其他消息
                         if (subscribers[topic_ - 100])
@@ -378,10 +396,9 @@ public:
         }
         
         /* occasionally sync time */
-        if (configured_ && c_time - last_sync_time >= SYNC_INTERVAL) {
+        if (configured_ && c_time - t_sync_req_ >= SYNC_INTERVAL) {
             // 在连接后, 每隔SYNC_INTERVAL同步一次时间
             requestSyncTime();
-            last_sync_time = c_time;
         }
         
         return SPIN_OK;
@@ -401,8 +418,11 @@ public:
         int ret;
         std_msgs::Time t;
         ret = publish(TopicInfo::ID_TIME, &t);
-        rt_time = hardware_.time_nsec();
-        // printf("requestSyncTime()\n");
+        if (ret >= 0) {
+            rt_time = hardware_.time_nsec();
+            // printf("requestSyncTime()\n");
+        }
+        t_sync_req_ = hardware_.time();
         return ret;
     }
     
@@ -446,7 +466,7 @@ public:
             float R = (RTT_nsec / 1e9f / 2) * (RTT_nsec / 1e9f / 2);
             // time drift (30 PPM)
             // 时间偏移率, 估计为 30 PPM (30 per million)
-            float Q = (hardware_.time() - last_sync_receive_time) / 1000.0f * (0.00003f * 0.00003f);
+            float Q = (hardware_.time() - t_sync_resp_) / 1000.0f * (0.00003f * 0.00003f);
             // variance minus
             // 估计当前的时间方差
             float P = time_variance + Q;
@@ -475,7 +495,7 @@ public:
             //                printf("\n");
         }
         
-        last_sync_receive_time = hardware_.time();
+        t_sync_resp_ = hardware_.time();
     }
     
     Time now() {
@@ -606,13 +626,46 @@ public:
         return 0;
     }
     
+    uint32_t last_print_ = 0;
+#define PRINTF_TH(...) {\
+    if (hardware_.time() - last_print_ > 500) {\
+        printf(__VA_ARGS__);\
+        last_print_ = hardware_.time();\
+    }\
+}
+    
     virtual int publish(int id, const Msg* msg) {
-        if (id >= 100 && !configured_)
-            return 0;
-        if (hardware_.time() - configured_t_ <= 20)
-            // delay 20ms to send msg
-            return 0;
-        
+        int ret;
+        if (id >= 100 && !configured_) {
+            // 尚未连接
+            count_pub_failed_++;
+            return -1;
+        }
+    
+        if (prev_msg_need_send_) {
+            ret = hardware_.write(prev_msg_data_, prev_msg_len_);
+            if (ret < prev_msg_len_) {
+                PRINTF_TH("NodeHandle %s: Dev msg dropped: handle prev msg\n", name_);
+                if (ret < 0) {
+                    // 认为断开连接
+                    count_pub_failed_++;
+                    bytes_pub_failed_ += prev_msg_len_;
+                    _disconnect("cannot send");
+                    return -1;
+                } else {
+                    prev_msg_data_ += ret;
+                    prev_msg_len_ -= ret;
+                    bytes_pub_ok_ += ret;
+                    count_pub_failed_++;
+                    return -1;
+                }
+            } else {
+                count_pub_ok_++;
+                bytes_pub_ok_ += prev_msg_len_;
+                prev_msg_need_send_ = false;
+            }
+        }
+
         uint8_t* message_out = message_out_;
 //        std::unique_ptr<uint8_t[]> message_out = std::make_unique<uint8_t[]>(OUTPUT_SIZE);
         
@@ -635,24 +688,42 @@ public:
         l += 7;
         message_out[l++] = 255 - (chk % 256);
         
-        int ret;
         if (l > message_out_size_) {
+            count_pub_failed_++;
+            bytes_pub_failed_ += l;
             printf(
-                "NodeHandle %s: Message from device dropped: message larger than buffer.\n", name_);
+                "NodeHandle %s: Dev msg dropped: larger than buffer.\n", name_);
             return -1;
         } else {
             ret = hardware_.write(message_out, l);
-            if (ret != l) {
-                printf(
-                    "NodeHandle %s: Message from device dropped: write(l=%d) failed ret=%d.\n", name_, l, ret);
+            if (ret < l) {
                 if (ret < 0) {
                     // 认为断开连接
-                    configured_ = false;
-                    printf("NodeHandle %s: Lost (cannot send)\n", name_);
-                    hardware_.init();
+                    count_pub_failed_++;
+                    bytes_pub_failed_ += l;
+                    PRINTF_TH(
+                        "NodeHandle %s: Dev msg dropped: ret=%d.\n", name_, ret);
+                    _disconnect("cannot send");
+                    return -1;
+                } else if (ret > 0) {
+                    // 已发送部分数据, 剩余数据下次发送
+                    prev_msg_need_send_ = true;
+                    prev_msg_data_ = message_out + ret;
+                    prev_msg_len_ = l - ret;
+                    bytes_pub_ok_ += ret;
+                    return 1;
+                } else {
+                    // 未发送任何数据
+                    count_pub_failed_++;
+                    bytes_pub_failed_ += l;
+                    PRINTF_TH(
+                        "NodeHandle %s: Dev msg dropped: write 0/%d.\n", name_, l);
+                    return -1;
                 }
-                return -2;
             } else {
+                // 已发送所有数据
+                count_pub_ok_++;
+                bytes_pub_ok_ += l;
                 return 0;
             }
         }

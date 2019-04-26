@@ -23,6 +23,7 @@ public:
     int write(void *, size_t) override;
     ~PipeTCPClient() override;
 protected:
+    void _reconnect();
     void _spin_once();
 protected:
     struct sockaddr_in server_addr_;
@@ -51,12 +52,16 @@ inline PipeTCPClient::~PipeTCPClient() {
 
 inline void PipeTCPClient::reconnect() {
     std::unique_lock<Mutex> lock(mutex_);
+    _reconnect();
+    lock.unlock();
+    _spin_once();
+}
+
+inline void PipeTCPClient::_reconnect() {
     if (sock_fd_ >= 0)
         lwip_close(sock_fd_);
     sock_fd_ = -1;
     connecting_ = false;
-    lock.unlock();
-    _spin_once();
 }
 
 inline void PipeTCPClient::_spin_once() {
@@ -151,16 +156,15 @@ inline void PipeTCPClient::_spin_once() {
         } else {
             // connecting
             if (int(osKernelSysTick() - last_connect_) >= connect_timeout_) {
-                lock.unlock();
 //                fprintf(stderr, "PipeTCPClient: Connect timeout\n");
-                reconnect();
+                _reconnect();
             }
         }
     } else {
         // connected
     }
     return;
-    error_exit:
+error_exit:
     if (sock_fd_ >= 0) lwip_close(sock_fd_);
     sock_fd_ = -1;
     connecting_ = false;
@@ -200,7 +204,7 @@ inline int PipeTCPClient::write(void *data, size_t len) {
             return len;
         } else if (ret >= 0) {
             // 仅成功写入部分
-            fprintf(stderr, "PipeTCPClient: write() %d/%d\n", ret, len);
+//            fprintf(stderr, "PipeTCPClient: write() %d/%d\n", ret, len);
             return ret;
         } else {
             // 写入失败, 重新连接
