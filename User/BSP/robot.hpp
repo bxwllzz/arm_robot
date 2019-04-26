@@ -44,7 +44,7 @@
 #define DISABLE_BATTERY
 #define DISABLE_HAND
 #define DISABLE_ARM_RIGHT
-#define DISABLE_ARM_LEFT
+//#define DISABLE_ARM_LEFT
 //#define DISABLE_BASE
 #define DISABLE_ARM_DEMO
 #define DISABLE_HEAD
@@ -478,7 +478,7 @@ inline void Robot::spin_once() {
 #endif
     // ROS 通信
     nh_cpp_.spinOnce();
-//    nh_py_.spinOnce();
+    nh_py_.spinOnce();
     // 文本指令
     handle_command();
     // 移动底盘

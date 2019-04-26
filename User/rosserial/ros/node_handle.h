@@ -419,10 +419,10 @@ public:
         std_msgs::Time t;
         ret = publish(TopicInfo::ID_TIME, &t);
         if (ret >= 0) {
+            t_sync_req_ = hardware_.time();
             rt_time = hardware_.time_nsec();
             // printf("requestSyncTime()\n");
         }
-        t_sync_req_ = hardware_.time();
         return ret;
     }
     

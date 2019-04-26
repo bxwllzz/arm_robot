@@ -309,12 +309,11 @@ inline void ROSAdapterBase::spin_once() {
         // 发送消息
         if (pub_joint_.publish(&msg_joint_) < 0) {
 //            printf("%s: failed to publish msg_joint_\n", name_);
-//            return false;
+            return false;
         } else {
             joint_status_buffers_.clear();
-//            return true;
+            return true;
         }
-        return true;
     });
     
     // 定时发布里程计状态, tf消息
@@ -367,8 +366,7 @@ inline void ROSAdapterBase::spin_once() {
         } else {
             ret |= true;
         }
-//        return ret;
-        return true;
+        return ret;
     });
     
     // 检查速度指令是否超时
